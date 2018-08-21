@@ -1,13 +1,23 @@
 <?php
 
-namespace App;
+/**
+ * Author huaixiu.zhen
+ * http://litblc.com
+ * User: litblc
+ * Date: 2018/08/21
+ * Time: 16:50
+ */
+
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class PasswordReset extends Authenticatable
 {
     use Notifiable;
+
+    protected $table = 'password_resets';
 
     /**
      * The attributes that are mass assignable.
@@ -15,15 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'email', 'token',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
 }
