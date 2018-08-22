@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "shyZhen/fmock",
+    "description": "a blog build whit laravel.",
+    "keywords": ["blog", "fmock", "laravel", "api"],
     "license": "MIT",
     "type": "project",
     "require": {

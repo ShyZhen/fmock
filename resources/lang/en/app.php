@@ -11,4 +11,13 @@ return [
     |
     */
     'test'   => 'test',
+    'email_ttl'   => 'Please check your mailbox,and next request time is:',
+    'email_server'   => 'Fmock email server',
+    'fmock_register_service'   => 'Fmock register service',
+    'verify_code'   => 'Verify code is：',
+    'email_error'   => 'If this is not your email, please do not pay attention to it.',
+    'send_email'   => 'Send email',
+    'success'   => 'Success',
+    'try_again'   => 'Please try again',
+
 ];
