@@ -37,7 +37,6 @@ class EmailService extends Service
         });
 
         if(count($this->mailer->failures()) > 0){
-
             return false;
         }
 

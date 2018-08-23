@@ -22,6 +22,7 @@ class RedisService extends Service
 
     /**
      * redis自增
+     *
      * Author huaixiu.zhen@gmail.com
      * http://litblc.com
      * @param $key
