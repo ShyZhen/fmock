@@ -40,28 +40,65 @@ class AuthService extends Service
      */
     public function sendRegisterCode($account)
     {
-        if ($this->redisService->isRedisExists('user:email:'.$account)) {
-            return [
-                'status_code' => 400,
-                'message' => __('app.email_ttl').$this->redisService->getRedisTtl('user:email:'.$account).'s'
-            ];
+        if ($this->redisService->isRedisExists('user:email:' . $account)) {
+            return response()->json(
+                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('user:email:' . $account).'s'],
+                400
+            );
         } else {
             $code = $this->code();
             $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
             $subject = __('app.fmock_register_service');
             $mail = $this->emailService->sendEmail($account, $data, $subject);
             if ($mail) {
-                $this->redisService->setRedis('user:email:'.$account, $code, 'EX', 600);
-                return [
-                    'status_code' => 200,
-                    'message' => __('app.send_email').__('app.success')
-                ];
+                $this->redisService->setRedis('user:email:' . $account, $code, 'EX', 600);
+                return response()->json(
+                    ['message' => __('app.send_email').__('app.success')],
+                    200
+                );
             }
 
-            return [
-                'status_code' => 500,
-                'message' => __('app.try_again')
+            return response()->json(
+                ['message' => __('app.try_again')],
+                500
+            );
+        }
+    }
+
+    /**
+     * 发送改密验证码服务 目前使用email服务
+     *
+     * @Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     * @param $email
+     * @return array|\Illuminate\Http\JsonResponse
+     */
+    public function sendPasswordCode($email)
+    {
+        if ($this->redisService->getRedis('password:email:' . $email)) {
+            return response()->json(
+                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('password:email:' . $email) . 's'],
+                422
+            );
+        } else {
+            $code = $this->code();
+            $this->redisService->setRedis('password:email:' . $email, $code, 'EX', 600);
+            $data = [
+                'data' => __('app.verify_code') . $code . __('app.email_error')
             ];
+            $subject = __('app.fmock_reset_pwd_service');
+            $mail = $this->emailService->sendEmail($email, $data, $subject);
+            if ($mail) {
+                return response()->json(
+                    ['message' => __('app.send_email').__('app.success')],
+                    200
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.try_again')],
+                500
+            );
         }
     }
 
@@ -89,22 +126,22 @@ class AuthService extends Service
                     'uuid' => $uuid
                 ]);
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
-                return [
-                    'status_code' => 201,
-                    'access_token' => $token
-                ];
+                return response()->json(
+                    ['access_token' => $token],
+                    201
+                );
             } else {
-                return [
-                    'status_code' => 401,
-                    'message' => __('app.verify_code') . __('app.error')
-                ];
+                return response()->json(
+                    ['message' => __('app.verify_code') . __('app.error')],
+                    401
+                );
             }
         } else {
 
-            return [
-                'status_code' => 400,
-                'message' => __('app.verify_code') . __('app.nothing_or_expire')
-            ];
+            return response()->json(
+                ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
+                400
+            );
         }
     }
 
@@ -122,30 +159,96 @@ class AuthService extends Service
         $user = $this->userRepository->getFirstUserByEmail($email);
         if ($user && $user->closure == 'none') {
             if ($this->verifyPasswordLimit($email)) {
-                return [
-                    'status_code' => 403,
-                    'message' => '您请求次数过多，请稍后重试'
-                ];
+                return response()->json(
+                    ['message' => __('app.request_too_much')],
+                    403
+                );
             }
             if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
-                return [
-                    'status_code' => 200,
-                    'access_token' => $token
-                ];
+                return response()->json(
+                    ['access_token' => $token],
+                    200
+                );
             } else {
-                return [
-                    'status_code' => 422,
-                    'message' => __('app.password') . __('app.error')
-                ];
+                return response()->json(
+                    ['message' => __('app.password') . __('app.error')],
+                    422
+                );
             }
         } else {
 
-            return [
-                'status_code' => 0,
-                'message' => '用户不存在或者已冻结'
-            ];
+            return response()->json(
+                ['message' => __('app.user_is_closure')],
+                400
+            );
+
         }
+    }
+
+    /**
+     * 改密服务
+     *
+     * @Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     * @param $email
+     * @param $verifyCode
+     * @param $password
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword($email, $verifyCode, $password)
+    {
+        $code = $this->redisService->getRedis('password:email:' . $email);
+        if ($code) {
+            if ($code == $verifyCode) {
+                $user = $this->userRepository->getFirstUserByEmail($email);
+                $user->password = bcrypt($password);
+                $user->save();
+                return response()->json(
+                    ['message' => __('app.change') . __('app.success')],
+                    200
+                );
+            } else {
+                return response()->json(
+                    ['message' => __('app.verify_code') . __('app.error')],
+                    401
+                );
+            }
+        } else {
+
+            return response()->json(
+                ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
+                400
+            );
+        }
+    }
+
+    /**
+     * @Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     */
+    public function myInfo()
+    {
+        return response()->json(
+            ['data' => Auth::user()],
+            200
+        );
+    }
+
+    /**
+     * @Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        Auth::guard('api')->user()->token()->delete();
+
+        return response()->json(
+            ['message' => __('app.logout') . __('app.success')],
+            200
+        );
     }
 
     /**
