@@ -18,6 +18,10 @@ class AuthController extends Controller
 {
     private $authService;
 
+    /**
+     * AuthController constructor.
+     * @param AuthService $authService
+     */
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
@@ -194,5 +198,5 @@ class AuthController extends Controller
     public function myInfo()
     {
         return $this->authService->myInfo();
-}
+    }
 }

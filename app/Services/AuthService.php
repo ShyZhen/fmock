@@ -9,7 +9,7 @@
 
 namespace App\Services;
 
-use App\Repositories\UserRepository;
+use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Support\Facades\Auth;
 
 class AuthService extends Service
@@ -20,6 +20,12 @@ class AuthService extends Service
 
     private $userRepository;
 
+    /**
+     * AuthService constructor.
+     * @param RedisService $redisService
+     * @param EmailService $emailService
+     * @param UserRepository $userRepository
+     */
     public function __construct(
         RedisService $redisService,
         EmailService $emailService,
@@ -43,7 +49,7 @@ class AuthService extends Service
         if ($this->redisService->isRedisExists('user:email:' . $account)) {
             return response()->json(
                 ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('user:email:' . $account).'s'],
-                400
+                422
             );
         } else {
             $code = $this->code();
@@ -140,7 +146,7 @@ class AuthService extends Service
 
             return response()->json(
                 ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
-                400
+                422
             );
         }
     }
@@ -218,7 +224,7 @@ class AuthService extends Service
 
             return response()->json(
                 ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
-                400
+                422
             );
         }
     }

@@ -27,8 +27,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // passport 认证相关路由
-
+        // passport 认证相关路由 替换快捷创建方式不再需要路由
         // Passport::routes();
         // Passport::tokensExpireIn(Carbon::now()->addDays(15));
         // Passport::refreshTokensExpireIn(Carbon::now()->addDays(30));

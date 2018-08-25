@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // 全局语音环境
+        // 设置全局语言环境
         $locale = request()->get('locale') ? request()->get('locale') : 'zh-CN';
         $locale = in_array($locale, [Config::get('app.locale'), Config::get('app.fallback_locale')]) ? $locale : 'zh-CN';
         App::setLocale($locale);
