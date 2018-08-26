@@ -27,6 +27,8 @@ return [
     'user_is_closure'   => 'The user does not exist or is frozen. ',
     'change'   => 'Change ',
     'logout'   => 'Logout ',
+    'no_posts'   => 'There is nothing ',
+    'action_ttl' => 'You request too many times,and next request time is '
 
 
 

@@ -23,9 +23,32 @@ class PostRepository extends Repository
         return 'App\Models\Post';
     }
 
-    public function test()
+    /**
+     * 按时间排序
+     *
+     * @Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     * @return mixed
+     */
+    public function getNewPost()
     {
-        return $this->model->where('uuid', '3333')->get();
+        return $this->model->where('deleted', 'none')
+            ->orderBy('created_at', 'desc')
+            ->paginate(env('PER_PAGE', 10));
+    }
+
+    /**
+     * 按热度排序
+     *
+     * @Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     * @return mixed
+     */
+    public function getFavoritePost()
+    {
+        return $this->model->where('deleted', 'none')
+            ->orderBy('like_num', 'desc')
+            ->paginate(env('PER_PAGE', 10));
     }
 
 }

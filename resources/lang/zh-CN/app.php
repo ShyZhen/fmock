@@ -23,11 +23,13 @@ return [
     'nothing_or_expire'   => '不存在或已过期',
     'error'   => '错误',
     'password'   => '密码',
-    'user_not_exist_or_c'   => '密码',
     'request_too_much'   => '您请求次数过多，请稍后重试',
     'user_is_closure'   => '用户不存在或者已冻结',
     'change'   => '修改',
     'logout'   => '登出',
+    'no_posts'   => '没有相关文章',
+    'action_ttl' => '您的操作太频繁，距离下一次请求时间为'
+
 
 
 ];

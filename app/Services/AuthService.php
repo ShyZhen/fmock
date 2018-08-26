@@ -3,14 +3,15 @@
  * @Author huaixiu.zhen@gmail.com
  * http://litblc.com
  * User: huaixiu.zhen
- * Date: 2018/8/22
+ * Date: Response::HTTP_CREATED8/8/22
  * Time: 20:35
  */
 
 namespace App\Services;
 
-use App\Repositories\Eloquent\UserRepository;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Eloquent\UserRepository;
 
 class AuthService extends Service
 {
@@ -49,7 +50,7 @@ class AuthService extends Service
         if ($this->redisService->isRedisExists('user:email:' . $account)) {
             return response()->json(
                 ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('user:email:' . $account).'s'],
-                422
+                Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
             $code = $this->code();
@@ -60,13 +61,13 @@ class AuthService extends Service
                 $this->redisService->setRedis('user:email:' . $account, $code, 'EX', 600);
                 return response()->json(
                     ['message' => __('app.send_email').__('app.success')],
-                    200
+                    Response::HTTP_OK
                 );
             }
 
             return response()->json(
                 ['message' => __('app.try_again')],
-                500
+                Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -84,7 +85,7 @@ class AuthService extends Service
         if ($this->redisService->getRedis('password:email:' . $email)) {
             return response()->json(
                 ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('password:email:' . $email) . 's'],
-                422
+                Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
             $code = $this->code();
@@ -97,13 +98,13 @@ class AuthService extends Service
             if ($mail) {
                 return response()->json(
                     ['message' => __('app.send_email').__('app.success')],
-                    200
+                    Response::HTTP_OK
                 );
             }
 
             return response()->json(
                 ['message' => __('app.try_again')],
-                500
+                Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }
@@ -134,21 +135,21 @@ class AuthService extends Service
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
                 return response()->json(
                     ['access_token' => $token],
-                    201
+                    Response::HTTP_CREATED
                 );
             } else {
                 return response()->json(
                     ['message' => __('app.verify_code') . __('app.error')],
-                    401
+                    Response::HTTP_UNAUTHORIZED
                 );
             }
-        } else {
-
-            return response()->json(
-                ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
-                422
-            );
         }
+
+        return response()->json(
+            ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
+            Response::HTTP_UNPROCESSABLE_ENTITY
+        );
+
     }
 
     /**
@@ -167,29 +168,28 @@ class AuthService extends Service
             if ($this->verifyPasswordLimit($email)) {
                 return response()->json(
                     ['message' => __('app.request_too_much')],
-                    403
+                    Response::HTTP_FORBIDDEN
                 );
             }
             if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
                 return response()->json(
                     ['access_token' => $token],
-                    200
+                    Response::HTTP_OK
                 );
             } else {
                 return response()->json(
                     ['message' => __('app.password') . __('app.error')],
-                    422
+                    Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
-        } else {
-
-            return response()->json(
-                ['message' => __('app.user_is_closure')],
-                400
-            );
-
         }
+
+        return response()->json(
+            ['message' => __('app.user_is_closure')],
+            Response::HTTP_BAD_REQUEST
+        );
+
     }
 
     /**
@@ -212,21 +212,20 @@ class AuthService extends Service
                 $user->save();
                 return response()->json(
                     ['message' => __('app.change') . __('app.success')],
-                    200
+                    Response::HTTP_OK
                 );
             } else {
                 return response()->json(
                     ['message' => __('app.verify_code') . __('app.error')],
-                    401
+                    Response::HTTP_UNAUTHORIZED
                 );
             }
-        } else {
-
-            return response()->json(
-                ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
-                422
-            );
         }
+
+        return response()->json(
+            ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
+            Response::HTTP_UNPROCESSABLE_ENTITY
+        );
     }
 
     /**
@@ -238,7 +237,7 @@ class AuthService extends Service
     {
         return response()->json(
             ['data' => Auth::user()],
-            200
+            Response::HTTP_OK
         );
     }
 
@@ -253,7 +252,7 @@ class AuthService extends Service
 
         return response()->json(
             ['message' => __('app.logout') . __('app.success')],
-            200
+            Response::HTTP_OK
         );
     }
 

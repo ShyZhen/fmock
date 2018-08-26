@@ -25,6 +25,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware('cors')->group(function() {
     Route::post('password', 'AuthController@password');
 
     Route::get('posts', 'PostController@getAllPosts');
+    Route::get('post/{uuid}', 'PostController@getPostByUuid');
     Route::post('comment', 'CommentController@create');
     Route::get('comment', 'CommentController@comments');
 });
@@ -35,7 +36,6 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['cors', 'auth:api'])->grou
     Route::get('me', 'AuthController@myInfo');
     Route::get('logout', 'AuthController@logout');
 
-    Route::get('post/{uuid}', 'PostController@getPostById');
     Route::post('post', 'PostController@createPost');
     Route::put('post/{uuid}', 'PostController@updatePost');
     Route::delete('post/{uuid}', 'PostController@deletePost');

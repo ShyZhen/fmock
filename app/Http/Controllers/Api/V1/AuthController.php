@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use App\Services\AuthService;
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,7 +45,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
-                400
+                Response::HTTP_BAD_REQUEST
             );
         } else {
             $email = $request->get('email');
@@ -72,7 +73,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
-                400
+                Response::HTTP_BAD_REQUEST
             );
         } else {
 
@@ -108,7 +109,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
-                400
+                Response::HTTP_BAD_REQUEST
             );
         } else {
             $email = $request->get('email');
@@ -136,7 +137,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
-                400
+                Response::HTTP_BAD_REQUEST
             );
         } else {
             $email = $request->get('email');
@@ -164,7 +165,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
-                400
+                Response::HTTP_BAD_REQUEST
             );
         } else {
             $email = $request->get('email');

@@ -33,4 +33,28 @@ class UserRepository extends Repository
     {
         return $this->findBy('email', $email);
     }
+
+    /**
+     * 通过id获取用户信息，供首页文章显示
+     *
+     * @Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     * @param $id
+     * @return mixed
+     */
+    public function getUserInfoById($id)
+    {
+        $user = $this->find($id);
+        if ($user) {
+            $userInfo['username'] = $user->name;
+            $userInfo['avatar'] = $user->avatar;
+            $userInfo['bio'] = $user->bio;
+        } else {
+            $userInfo['username'] = trans('front.user_destory_name');
+            $userInfo['avatar'] = asset('/static/defaultAvatar.jpg');
+            $userInfo['bio'] = '';
+        }
+
+        return $userInfo;
+    }
 }
