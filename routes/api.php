@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 // no access_token
-Route::prefix('V1')->namespace('Api\V1')->middleware('cors')->group(function() {
+Route::prefix('V1')->namespace('Api\V1')->group(function() {
     Route::get('locale', 'IndexController@getLocale');
     Route::post('login', 'AuthController@login');
     Route::post('register-code', 'AuthController@registerCode');
@@ -26,17 +26,21 @@ Route::prefix('V1')->namespace('Api\V1')->middleware('cors')->group(function() {
 
     Route::get('posts', 'PostController@getAllPosts');
     Route::get('post/{uuid}', 'PostController@getPostByUuid');
-    Route::post('comment', 'CommentController@create');
-    Route::get('comment', 'CommentController@comments');
+//    Route::post('comment', 'CommentController@create');
+//    Route::get('comment', 'CommentController@comments');
+
 });
 
 
 // need access_token
-Route::prefix('V1')->namespace('Api\V1')->middleware(['cors', 'auth:api'])->group(function() {
+Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(function() {
     Route::get('me', 'AuthController@myInfo');
     Route::get('logout', 'AuthController@logout');
 
     Route::post('post', 'PostController@createPost');
     Route::put('post/{uuid}', 'PostController@updatePost');
     Route::delete('post/{uuid}', 'PostController@deletePost');
+
+
+    Route::post('file/image', 'FileController@uploadImage');
 });

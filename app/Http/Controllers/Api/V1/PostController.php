@@ -57,6 +57,8 @@ class PostController extends Controller
     }
 
     /**
+     * 创建文章
+     *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
      * @param Request $request
