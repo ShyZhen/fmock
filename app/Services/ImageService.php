@@ -8,44 +8,65 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Response;
-
 class ImageService extends Service
 {
     public  $percent = 1;
 
+    private $maxWidth = 1080;
+
     /**
-     * 等比压缩
+     * 等比压缩并保存
      *
      * @Author huaixiu.zhen
      * http://litblc.com
-     * @param $src
+     * @param $file
      * @param $name
      * @return mixed
      */
-    public function saveImg($src, $name)
+    public function saveImg($file, $name)
     {
-        list($width, $height, $type, $attr) = getimagesize($src);
+        list($width, $height, $type, $attr) = getimagesize($file);
         $imageInfo = [
             'width' => $width,
             'height' => $height,
             'type' => image_type_to_extension($type, false),
             'attr' => $attr
         ];
+        $this->percent = $this->setPercent($this->maxWidth, $imageInfo['width']);
         $create = 'imagecreatefrom' . $imageInfo['type'];
-        $image = $create($src);
-        $new_width = $imageInfo['width'] * $this->percent;
-        $new_height = $imageInfo['height'] * $this->percent;
-        $image_thump = imagecreatetruecolor($new_width,$new_height);
-        imagecopyresampled($image_thump,$image,0,0,0,0,$new_width,$new_height,$imageInfo['width'],$imageInfo['height']);
+        $image = $create($file);
+        $newWidth = $imageInfo['width'] * $this->percent;
+        $newHeight = $imageInfo['height'] * $this->percent;
+        $newThump = imagecreatetruecolor($newWidth, $newHeight);
+        imagecopyresampled($newThump, $image, 0,0,0,0, $newWidth, $newHeight, $imageInfo['width'], $imageInfo['height']);
         imagedestroy($image);
-        $save = "image".$imageInfo['type'];
+        // 同类型压缩 $save = "image" . $imageInfo['type'];
+        $save = "imagejpeg";
 
-        if ($save($image_thump, $name)) {
+        if ($save($newThump, $name)) {
             return true;
         }
 
         return false;
     }
 
+    /**
+     * 设置缩放比例
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @param $maxWidth
+     * @param $width
+     * @return float|int
+     */
+    public function setPercent($maxWidth, $width)
+    {
+        if ($width > $maxWidth) {
+            $percent = $maxWidth / $width;
+        } else {
+            $percent = 1;
+        }
+
+        return $percent;
+    }
 }

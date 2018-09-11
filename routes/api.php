@@ -31,16 +31,17 @@ Route::prefix('V1')->namespace('Api\V1')->group(function() {
 
 });
 
-
 // need access_token
 Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(function() {
     Route::get('me', 'AuthController@myInfo');
+    Route::post('me', 'AuthController@updateMyInfo');
+    Route::post('my-name', 'AuthController@updateMyName');
     Route::get('logout', 'AuthController@logout');
 
     Route::post('post', 'PostController@createPost');
     Route::put('post/{uuid}', 'PostController@updatePost');
     Route::delete('post/{uuid}', 'PostController@deletePost');
 
-
     Route::post('file/image', 'FileController@uploadImage');
+    Route::post('file/avatar', 'FileController@uploadAvatar');
 });

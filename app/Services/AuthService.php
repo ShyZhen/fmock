@@ -229,6 +229,8 @@ class AuthService extends Service
     }
 
     /**
+     * 获取当前登录用户信息
+     *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
@@ -242,6 +244,66 @@ class AuthService extends Service
     }
 
     /**
+     * 修改个人信息 (不包括昵称)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @param array $data
+     * @return mixed
+     */
+    public function updateMyInfo(array $data)
+    {
+        $user = Auth::user();
+        if ($this->userRepository->update($data, $user->id)) {
+            return response()->json(
+                ['data' => $this->userRepository->find($user->id)],
+                Response::HTTP_OK
+            );
+        } else {
+
+            return response()->json(
+                ['message' => __('app.try_again')],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    /**
+     * 修改用户昵称
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @param $name
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateMyName($name)
+    {
+        $user = Auth::user();
+        if ($user->is_rename == 'yes') {
+            $user->name = $name;
+            $user->is_rename = 'none';
+            if ($user->save()) {
+                return response()->json(
+                    ['data' => $user->name],
+                    Response::HTTP_OK
+                );
+            }
+            return response()->json(
+                ['message' => __('app.try_again')],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        } else {
+
+            return response()->json(
+                ['message' => __('app.rename_limit')],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+    }
+
+    /**
+     * 登出
+     *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
      * @return \Illuminate\Http\JsonResponse

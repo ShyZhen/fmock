@@ -28,7 +28,11 @@ return [
     'change'   => 'Change ',
     'logout'   => 'Logout ',
     'no_posts'   => 'There is nothing ',
-    'action_ttl' => 'You request too many times,and next request time is '
+    'action_ttl' => 'You request too many times,and next request time is ',
+    'unknown' => 'Unknown ',
+    'upload_file_valida_fail' => 'File upload failed ',
+    'rename_limit' => 'Sorry, your number of Rename is used up. ',
+    'anonymous' => 'Anonymous ',
 
 
 

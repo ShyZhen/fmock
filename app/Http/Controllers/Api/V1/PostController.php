@@ -69,6 +69,7 @@ class PostController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:64',
             'content' => 'required|max:' . env('CONTENT_NUM'),
+            'anonymous' => 'required|boolean',
         ]);
         if ($validator->fails()) {
             return response()->json(
@@ -79,7 +80,8 @@ class PostController extends Controller
 
             return $this->postService->createPost(
                 $request->get('title'),
-                $request->get('content')
+                $request->get('content'),
+                $request->get('anonymous')
             );
         }
     }

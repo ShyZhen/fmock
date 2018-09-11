@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Services\AuthService;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -65,7 +66,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:16',
+            'name' => 'required|max:16|unique:users,name',
             'verify_code' => 'required|size:6',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|min:6|max:255|confirmed',
@@ -190,7 +191,7 @@ class AuthController extends Controller
     }
 
     /**
-     * 获取个人信息
+     * 获取个人信息(根据is_rename判断是否可以改昵称)
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
@@ -199,5 +200,56 @@ class AuthController extends Controller
     public function myInfo()
     {
         return $this->authService->myInfo();
+    }
+
+    /**
+     * 更新个人信息(不包括昵称)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public function updateMyInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'gender' => 'max:10|in:male,female,secrecy',
+            'birthday' => 'date',
+            'reside_city' => 'max:16',
+            'bio' => 'max:32',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                ['message' => $validator->errors()->first()],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return $this->authService->updateMyInfo($request->all());
+        }
+    }
+
+    /**
+     * 修改用户昵称
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateMyName(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:20|unique:users,name,' . Auth::id() . ',id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                ['message' => $validator->errors()->first()],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            return $this->authService->updateMyName($request->get('name'));
+        }
     }
 }

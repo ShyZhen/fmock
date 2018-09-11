@@ -18,7 +18,7 @@ class CreatePostsTable extends Migration
             $table->increments('id');
             $table->string('uuid', 255)->index();   // 代替id暴露在外
             $table->unsignedInteger('user_id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+//            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');  需要匿名发布
             $table->string('title', 128)->defult('');
             $table->text('content');
             $table->unsignedInteger('like_num')->default(0);

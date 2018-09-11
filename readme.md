@@ -13,6 +13,7 @@ A forums build with laravel.
  - Nodejs
  - ElasticSearch = 6.2.4 && ElasticSearch-analysis-ik (one index,one type)
 
+
 ## Installation
  - `git clone https://github.com/ShyZhen/fmock.git`
  - `copy .env.example .env` and edit .env
@@ -31,6 +32,8 @@ A forums build with laravel.
 - [passwordCode](#password-code) | 发送改密验证码
 - [password](#password) | 修改密码
 - [myInfo](#me) | 我的信息
+- [updateMyInfo](#post-me) | 更新个人信息
+- [updateMyName](#my-name) | 更新个人昵称
 - [logout](#logout) | 登出
 
 
@@ -39,6 +42,9 @@ A forums build with laravel.
 - [createPost](#post-create) | 新建文章
 - [updatePost](#post-update) | 更新指定文章
 - [deletePost](#post-delete) | 删除指定文章
+
+- [uploadImage](#upload-image) | 上传图片
+- [uploadAvatar](#upload-avatar) | 更换用户头像
 
 
 #### register-code
@@ -53,7 +59,7 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `name` | Y | String | N | &lt;16 |  |
+| `name` | Y | String | N | &lt;16 | 用户表唯一 |
 | `email` | Y | String | N | &lt;255 | 用户表唯一 |
 | `verify_code` | Y | Int | N | 6 |  |
 | `password` | Y | String | N | &lt;255 |  |
@@ -90,6 +96,23 @@ A forums build with laravel.
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  |  |  |  |
+
+#### post-me
+- POST `base_url/api/V1/me`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `gender` | N | Enum | Y | &lt;255 | male/female/secrecy |
+| `birthday` | N | Date | Y |  | 形如2018-06-08 |
+| `reside_city` | N | String | Y | &lt;16 |  |
+| `bio` | N | String | Y | &lt;32 |  |
+
+#### my-name
+- POST `base_url/api/V1/my-name`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `name` | Y | String | Y | &lt;20 | 用户表唯一 |
 
 #### logout
 - GET `base_url/api/V1/logout`
@@ -135,6 +158,19 @@ A forums build with laravel.
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  |  |  |  |
 
+#### upload-image
+- POST `base_url/api/V1/file/image`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `image` | Y | File | Y | &lt;5000KB | jpg,jpeg,png,gif |
+
+#### upload-avatar
+- POST `base_url/api/V1/file/avatar`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `avatar` | Y | File | Y | &lt;1000KB | jpg,jpeg,png,gif |
 
 
 ## Security Vulnerabilities

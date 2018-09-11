@@ -95,14 +95,18 @@ class PostService extends Service
         );
     }
 
+
     /**
-     * @Author huaixiu.zhen@gmail.com
+     * 创建文章
+     *
+     * @Author huaixiu.zhen
      * http://litblc.com
      * @param $title
      * @param $content
+     * @param $anonymous
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createPost($title, $content)
+    public function createPost($title, $content, $anonymous)
     {
         $userId = Auth::id();
         if ($this->redisService->isRedisExists('post:user:' . $userId)) {
@@ -115,7 +119,7 @@ class PostService extends Service
             $uuid = $this->uuid('post-');
             $post = $this->postRepository->create([
                 'uuid' => $uuid,
-                'user_id' => $userId,
+                'user_id' => $anonymous ? 0 : $userId,
                 'title' => $title,
                 'content' => $content,
             ]);
