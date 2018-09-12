@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
@@ -27,7 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('reside_city', 32)->default('');         // 居住地
             $table->string('bio', 128)->default('');                // 个人一句话介绍 签名
             $table->enum('closure', ['none', 'yes'])->default('none'); // 用户状态，yes被封，无法登陆
-            $table->enum('is_rename',['yes', 'none'])->default('yes'); // 判断是否可以改名，以后一块钱改一次
+            $table->enum('is_rename', ['yes', 'none'])->default('yes'); // 判断是否可以改名，以后一块钱改一次
             $table->timestamps();
         });
     }

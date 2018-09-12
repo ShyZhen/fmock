@@ -9,10 +9,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Services\FileService;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class FileController extends Controller
@@ -21,6 +21,7 @@ class FileController extends Controller
 
     /**
      * FileController constructor.
+     *
      * @param FileService $fileService
      */
     public function __construct(FileService $fileService)
@@ -29,11 +30,13 @@ class FileController extends Controller
     }
 
     /**
-     * 上传图片
+     * 上传图片.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
     public function uploadImage(Request $request)
@@ -48,17 +51,20 @@ class FileController extends Controller
             );
         } else {
             $file = $request->file('image');
+
             return $this->fileService->uploadImg($file, 'image', 'post-');
         }
     }
 
     /**
      * 上传头像 需要在前端进行处理
-     * 缩小为100*100或其他尺寸后调用该api
+     * 缩小为100*100或其他尺寸后调用该api.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
     public function uploadAvatar(Request $request)
@@ -73,6 +79,7 @@ class FileController extends Controller
             );
         } else {
             $file = $request->file('avatar');
+
             return $this->fileService->uploadAva($file, 'avatar');
         }
     }

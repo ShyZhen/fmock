@@ -5,13 +5,13 @@
  * http://litblc.com
  * User: litblc
  * Date: 2018/08/21
- * Time: 16:50
+ * Time: 16:50.
  */
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable

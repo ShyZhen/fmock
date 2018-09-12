@@ -9,9 +9,9 @@
 
 namespace App\Services;
 
+use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use App\Repositories\Eloquent\UserRepository;
 
 class AuthService extends Service
 {
@@ -23,8 +23,9 @@ class AuthService extends Service
 
     /**
      * AuthService constructor.
-     * @param RedisService $redisService
-     * @param EmailService $emailService
+     *
+     * @param RedisService   $redisService
+     * @param EmailService   $emailService
      * @param UserRepository $userRepository
      */
     public function __construct(
@@ -42,23 +43,26 @@ class AuthService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $account
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function sendRegisterCode($account)
     {
-        if ($this->redisService->isRedisExists('user:email:' . $account)) {
+        if ($this->redisService->isRedisExists('user:email:'.$account)) {
             return response()->json(
-                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('user:email:' . $account).'s'],
+                ['message' => __('app.email_ttl').$this->redisService->getRedisTtl('user:email:'.$account).'s'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
             $code = $this->code();
-            $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
+            $data = ['data' => __('app.verify_code').$code.__('app.email_error')];
             $subject = __('app.fmock_register_service');
             $mail = $this->emailService->sendEmail($account, $data, $subject);
             if ($mail) {
-                $this->redisService->setRedis('user:email:' . $account, $code, 'EX', 600);
+                $this->redisService->setRedis('user:email:'.$account, $code, 'EX', 600);
+
                 return response()->json(
                     ['message' => __('app.send_email').__('app.success')],
                     Response::HTTP_OK
@@ -77,21 +81,23 @@ class AuthService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $email
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function sendPasswordCode($email)
     {
-        if ($this->redisService->getRedis('password:email:' . $email)) {
+        if ($this->redisService->getRedis('password:email:'.$email)) {
             return response()->json(
-                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('password:email:' . $email) . 's'],
+                ['message' => __('app.email_ttl').$this->redisService->getRedisTtl('password:email:'.$email).'s'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
             $code = $this->code();
-            $this->redisService->setRedis('password:email:' . $email, $code, 'EX', 600);
+            $this->redisService->setRedis('password:email:'.$email, $code, 'EX', 600);
             $data = [
-                'data' => __('app.verify_code') . $code . __('app.email_error')
+                'data' => __('app.verify_code').$code.__('app.email_error'),
             ];
             $subject = __('app.fmock_reset_pwd_service');
             $mail = $this->emailService->sendEmail($email, $data, $subject);
@@ -114,10 +120,12 @@ class AuthService extends Service
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $name
      * @param $password
      * @param $email
      * @param $verifyCode
+     *
      * @return array
      */
     public function register($name, $password, $email, $verifyCode)
@@ -127,29 +135,29 @@ class AuthService extends Service
             if ($code == $verifyCode) {
                 $uuid = $this->uuid('user-');
                 $user = $this->userRepository->create([
-                    'name' => $name,
+                    'name'     => $name,
                     'password' => bcrypt($password),
-                    'email' => $email,
-                    'uuid' => $uuid
+                    'email'    => $email,
+                    'uuid'     => $uuid,
                 ]);
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
+
                 return response()->json(
                     ['access_token' => $token],
                     Response::HTTP_CREATED
                 );
             } else {
                 return response()->json(
-                    ['message' => __('app.verify_code') . __('app.error')],
+                    ['message' => __('app.verify_code').__('app.error')],
                     Response::HTTP_UNAUTHORIZED
                 );
             }
         }
 
         return response()->json(
-            ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
+            ['message' => __('app.verify_code').__('app.nothing_or_expire')],
             Response::HTTP_UNPROCESSABLE_ENTITY
         );
-
     }
 
     /**
@@ -157,8 +165,10 @@ class AuthService extends Service
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $email
      * @param $password
+     *
      * @return array
      */
     public function login($email, $password)
@@ -173,13 +183,14 @@ class AuthService extends Service
             }
             if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
+
                 return response()->json(
                     ['access_token' => $token],
                     Response::HTTP_OK
                 );
             } else {
                 return response()->json(
-                    ['message' => __('app.password') . __('app.error')],
+                    ['message' => __('app.password').__('app.error')],
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
@@ -189,7 +200,6 @@ class AuthService extends Service
             ['message' => __('app.user_is_closure')],
             Response::HTTP_BAD_REQUEST
         );
-
     }
 
     /**
@@ -197,42 +207,46 @@ class AuthService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $email
      * @param $verifyCode
      * @param $password
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function changePassword($email, $verifyCode, $password)
     {
-        $code = $this->redisService->getRedis('password:email:' . $email);
+        $code = $this->redisService->getRedis('password:email:'.$email);
         if ($code) {
             if ($code == $verifyCode) {
                 $user = $this->userRepository->getFirstUserByEmail($email);
                 $user->password = bcrypt($password);
                 $user->save();
+
                 return response()->json(
-                    ['message' => __('app.change') . __('app.success')],
+                    ['message' => __('app.change').__('app.success')],
                     Response::HTTP_OK
                 );
             } else {
                 return response()->json(
-                    ['message' => __('app.verify_code') . __('app.error')],
+                    ['message' => __('app.verify_code').__('app.error')],
                     Response::HTTP_UNAUTHORIZED
                 );
             }
         }
 
         return response()->json(
-            ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
+            ['message' => __('app.verify_code').__('app.nothing_or_expire')],
             Response::HTTP_UNPROCESSABLE_ENTITY
         );
     }
 
     /**
-     * 获取当前登录用户信息
+     * 获取当前登录用户信息.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function myInfo()
@@ -244,11 +258,13 @@ class AuthService extends Service
     }
 
     /**
-     * 修改个人信息 (不包括昵称)
+     * 修改个人信息 (不包括昵称).
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $data
+     *
      * @return mixed
      */
     public function updateMyInfo(array $data)
@@ -260,7 +276,6 @@ class AuthService extends Service
                 Response::HTTP_OK
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.try_again')],
                 Response::HTTP_INTERNAL_SERVER_ERROR
@@ -269,11 +284,13 @@ class AuthService extends Service
     }
 
     /**
-     * 修改用户昵称
+     * 修改用户昵称.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $name
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateMyName($name)
@@ -288,12 +305,12 @@ class AuthService extends Service
                     Response::HTTP_OK
                 );
             }
+
             return response()->json(
                 ['message' => __('app.try_again')],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.rename_limit')],
                 Response::HTTP_FORBIDDEN
@@ -302,10 +319,11 @@ class AuthService extends Service
     }
 
     /**
-     * 登出
+     * 登出.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
@@ -313,17 +331,19 @@ class AuthService extends Service
         Auth::guard('api')->user()->token()->delete();
 
         return response()->json(
-            ['message' => __('app.logout') . __('app.success')],
+            ['message' => __('app.logout').__('app.success')],
             Response::HTTP_OK
         );
     }
 
     /**
-     * 密码错误限制
+     * 密码错误限制.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $email
+     *
      * @return bool
      */
     private function verifyPasswordLimit($email)
@@ -335,6 +355,7 @@ class AuthService extends Service
             }
         } else {
             $this->redisService->setRedis('login:times:'.$email, 1, 'EX', 600);
+
             return false;
         }
     }
