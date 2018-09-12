@@ -12,10 +12,11 @@ namespace App\Repositories\Eloquent;
 class PostRepository extends Repository
 {
     /**
-     * 实现抽象函数获取模型
+     * 实现抽象函数获取模型.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return string
      */
     public function model()
@@ -24,10 +25,11 @@ class PostRepository extends Repository
     }
 
     /**
-     * 按时间排序
+     * 按时间排序.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return mixed
      */
     public function getNewPost()
@@ -38,10 +40,11 @@ class PostRepository extends Repository
     }
 
     /**
-     * 按热度排序
+     * 按热度排序.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return mixed
      */
     public function getFavoritePost()
@@ -50,5 +53,4 @@ class PostRepository extends Repository
             ->orderBy('like_num', 'desc')
             ->paginate(env('PER_PAGE', 10));
     }
-
 }

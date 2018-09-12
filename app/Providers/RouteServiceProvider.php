@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -58,7 +58,7 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
-     * 后台管理路由
+     * 后台管理路由.
      *
      * @Author huaixiu.zhen
      * http://litblc.com

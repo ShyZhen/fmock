@@ -9,8 +9,8 @@
 
 namespace App\Repositories\Eloquent;
 
-use Illuminate\Container\Container;
 use App\Repositories\Contracts\RepositoryInterface;
+use Illuminate\Container\Container;
 
 abstract class Repository implements RepositoryInterface
 {
@@ -20,6 +20,7 @@ abstract class Repository implements RepositoryInterface
 
     /**
      * Repository constructor.
+     *
      * @param Container $container
      */
     public function __construct(Container $container)
@@ -29,98 +30,122 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * 抽象函数 动态获取模型
+     * 抽象函数 动态获取模型.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return mixed
      */
-    abstract function model();
+    abstract public function model();
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return mixed
      */
     public function setModel()
     {
         $model = $this->container->make($this->model());
+
         return $this->model = $model;
     }
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $columns
+     *
      * @return mixed
      */
-    public function all($columns = ['*']) {
+    public function all($columns = ['*'])
+    {
         return $this->model->get($columns);
     }
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
-     * @param int $perPage
+     *
+     * @param int   $perPage
      * @param array $columns
+     *
      * @return mixed
      */
-    public function paginate($perPage = 10, $columns = ['*']) {
+    public function paginate($perPage = 10, $columns = ['*'])
+    {
         return $this->model->paginate($perPage, $columns);
     }
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $data
+     *
      * @return mixed
      */
-    public function create(array $data) {
+    public function create(array $data)
+    {
         return $this->model->create($data);
     }
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $data
      * @param $id
      * @param string $attribute
+     *
      * @return mixed
      */
-    public function update(array $data, $id, $attribute = 'id') {
+    public function update(array $data, $id, $attribute = 'id')
+    {
         return $this->model->where($attribute, '=', $id)->update($data);
     }
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $id
+     *
      * @return mixed
      */
-    public function delete($id) {
+    public function delete($id)
+    {
         return $this->model->destroy($id);
     }
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $id
      * @param array $columns
+     *
      * @return mixed
      */
-    public function find($id, $columns = ['*']) {
+    public function find($id, $columns = ['*'])
+    {
         return $this->model->find($id, $columns);
     }
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $attribute
      * @param $value
      * @param array $columns
+     *
      * @return mixed
      */
-    public function findBy($attribute, $value, $columns = ['*']) {
+    public function findBy($attribute, $value, $columns = ['*'])
+    {
         return $this->model->where($attribute, '=', $value)->first($columns);
     }
 }

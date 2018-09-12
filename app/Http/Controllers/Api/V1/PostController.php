@@ -1,6 +1,6 @@
 <?php
 /**
- * 文章控制器
+ * 文章控制器.
  *
  * @Author huaixiu.zhen
  * http://litblc.com
@@ -11,10 +11,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
-use App\Services\PostService;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use App\Services\PostService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -30,25 +30,30 @@ class PostController extends Controller
     }
 
     /**
-     * 首页文章列表
+     * 首页文章列表.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return mixed
      */
     public function getAllPosts(Request $request)
     {
         $sort = $request->get('sort', null);
+
         return $this->postService->getAllPosts($sort);
     }
 
     /**
-     * 文章详情
+     * 文章详情.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $uuid
+     *
      * @return mixed
      */
     public function getPostByUuid($uuid)
@@ -57,18 +62,20 @@ class PostController extends Controller
     }
 
     /**
-     * 创建文章
+     * 创建文章.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function createPost(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required|max:64',
-            'content' => 'required|max:' . env('CONTENT_NUM'),
+            'title'     => 'required|max:64',
+            'content'   => 'required|max:'.env('CONTENT_NUM'),
             'anonymous' => 'required|boolean',
         ]);
         if ($validator->fails()) {
@@ -77,7 +84,6 @@ class PostController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->postService->createPost(
                 $request->get('title'),
                 $request->get('content'),
@@ -87,18 +93,20 @@ class PostController extends Controller
     }
 
     /**
-     * 更新自己的文章
+     * 更新自己的文章.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePost(Request $request, $uuid)
     {
         $validator = Validator::make($request->all(), [
-            'content' => 'required|max:' . env('CONTENT_NUM'),
+            'content' => 'required|max:'.env('CONTENT_NUM'),
         ]);
         if ($validator->fails()) {
             return response()->json(
@@ -114,11 +122,13 @@ class PostController extends Controller
     }
 
     /**
-     * 删除自己的文章
+     * 删除自己的文章.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $uuid
+     *
      * @return mixed
      */
     public function deletePost($uuid)

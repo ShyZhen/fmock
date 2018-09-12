@@ -9,10 +9,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
-use App\Services\AuthService;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use App\Services\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,6 +22,7 @@ class AuthController extends Controller
 
     /**
      * AuthController constructor.
+     *
      * @param AuthService $authService
      */
     public function __construct(AuthService $authService)
@@ -34,7 +35,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function registerCode(Request $request)
@@ -56,20 +59,22 @@ class AuthController extends Controller
     }
 
     /**
-     * 注册
+     * 注册.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:16|unique:users,name',
+            'name'        => 'required|max:16|unique:users,name',
             'verify_code' => 'required|size:6',
-            'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|min:6|max:255|confirmed',
+            'email'       => 'required|email|max:255|unique:users,email',
+            'password'    => 'required|min:6|max:255|confirmed',
         ]);
         if ($validator->fails()) {
             return response()->json(
@@ -77,7 +82,6 @@ class AuthController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->authService->register(
                 $request->get('name'),
                 $request->get('password'),
@@ -94,17 +98,19 @@ class AuthController extends Controller
      * headers => [
      *    'Accept' => 'application/json',
      *    'Authorization' => 'Bearer '.$accessToken,
-     * ]
+     * ].
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array
      */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255',
+            'email'    => 'required|email|max:255',
             'password' => 'required|min:6|max:255',
         ]);
         if ($validator->fails()) {
@@ -125,7 +131,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function passwordCode(Request $request)
@@ -148,19 +156,21 @@ class AuthController extends Controller
     }
 
     /**
-     * 改密
+     * 改密.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function password(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255|exists:users,email',
+            'email'       => 'required|email|max:255|exists:users,email',
             'verify_code' => 'required|size:6',
-            'password' => 'required|min:6|max:255|confirmed',
+            'password'    => 'required|min:6|max:255|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -174,15 +184,15 @@ class AuthController extends Controller
             $password = $request->get('password');
 
             return $this->authService->changePassword($email, $verifyCode, $password);
-
         }
     }
 
     /**
-     * 登出
+     * 登出.
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
@@ -191,10 +201,11 @@ class AuthController extends Controller
     }
 
     /**
-     * 获取个人信息(根据is_rename判断是否可以改昵称)
+     * 获取个人信息(根据is_rename判断是否可以改昵称).
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function myInfo()
@@ -203,20 +214,22 @@ class AuthController extends Controller
     }
 
     /**
-     * 更新个人信息(不包括昵称)
+     * 更新个人信息(不包括昵称).
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
     public function updateMyInfo(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'gender' => 'max:10|in:male,female,secrecy',
-            'birthday' => 'date',
+            'gender'      => 'max:10|in:male,female,secrecy',
+            'birthday'    => 'date',
             'reside_city' => 'max:16',
-            'bio' => 'max:32',
+            'bio'         => 'max:32',
         ]);
 
         if ($validator->fails()) {
@@ -230,17 +243,19 @@ class AuthController extends Controller
     }
 
     /**
-     * 修改用户昵称
+     * 修改用户昵称.
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateMyName(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:20|unique:users,name,' . Auth::id() . ',id',
+            'name' => 'required|max:20|unique:users,name,'.Auth::id().',id',
         ]);
 
         if ($validator->fails()) {
