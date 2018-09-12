@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Laravel\Passport\Events\AccessTokenCreated;
 
 class RevokeOldTokens
@@ -23,7 +21,8 @@ class RevokeOldTokens
     /**
      * Handle the event.
      *
-     * @param  AccessTokenCreated  $event
+     * @param AccessTokenCreated $event
+     *
      * @return void
      */
     public function handle(AccessTokenCreated $event)
@@ -35,7 +34,7 @@ class RevokeOldTokens
                 ['client_id', '=', $event->clientId],
                 ['user_id', '=', $event->userId],
                 ['created_at', '<', Carbon::now()],
-                ['revoked', '=', 0]
+                ['revoked', '=', 0],
             ])->delete();
     }
 }

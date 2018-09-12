@@ -6,7 +6,6 @@
  * Date: 2018/8/21
  * Time: 12:53
  */
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;

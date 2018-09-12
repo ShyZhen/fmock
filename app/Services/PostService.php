@@ -6,13 +6,12 @@
  * Date: Response::HTTP_CREATED8/8/25
  * Time: 23:25
  */
-
 namespace App\Services;
 
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class PostService extends Service
 {
@@ -22,11 +21,10 @@ class PostService extends Service
 
     private $redisService;
 
-
     /**
      * @param PostRepository $postRepository
      * @param UserRepository $userRepository
-     * @param RedisService $redisService
+     * @param RedisService   $redisService
      */
     public function __construct(
         PostRepository $postRepository,
@@ -43,7 +41,9 @@ class PostService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param null $sort
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getAllPosts($sort = null)
@@ -58,6 +58,7 @@ class PostService extends Service
             foreach ($posts as $post) {
                 $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
             }
+
             return response()->json(
                 ['data' => $posts],
                 Response::HTTP_OK
@@ -68,7 +69,6 @@ class PostService extends Service
             ['message' => __('app.no_posts')],
             Response::HTTP_NOT_FOUND
         );
-
     }
 
     /**
@@ -76,7 +76,9 @@ class PostService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getPostByUuid($uuid)
@@ -85,6 +87,7 @@ class PostService extends Service
 
         if ($post) {
             $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
+
             return response()->json(
                 ['data' => $post],
                 Response::HTTP_OK
@@ -97,28 +100,29 @@ class PostService extends Service
         );
     }
 
-
     /**
      * 创建文章
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $title
      * @param $content
      * @param $anonymous
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function createPost($title, $content, $anonymous)
     {
         $userId = Auth::id();
 
-        if ($this->redisService->isRedisExists('post:user:' . $userId)) {
+        if ($this->redisService->isRedisExists('post:user:'.$userId)) {
             return response()->json(
-                ['message' => __('app.action_ttl').$this->redisService->getRedisTtl('post:user:' . $userId) . 's'],
+                ['message' => __('app.action_ttl').$this->redisService->getRedisTtl('post:user:'.$userId).'s'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-            $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
+            $this->redisService->setRedis('post:user:'.$userId, 'create', 'EX', 120);
             $uuid = $this->uuid('post-');
             $post = $this->postRepository->create([
                 'uuid' => $uuid,
@@ -129,6 +133,7 @@ class PostService extends Service
 
             if ($post) {
                 $post->userinfo = $this->userRepository->getUserInfoById($userId);
+
                 return response()->json(
                     ['data' => $post],
                     Response::HTTP_CREATED
@@ -147,8 +152,10 @@ class PostService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $uuid
      * @param $content
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePost($uuid, $content)
@@ -160,11 +167,13 @@ class PostService extends Service
 
             if ($post->save()) {
                 $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
+
                 return response()->json(
                     ['data' => $post],
                     Response::HTTP_CREATED
                 );
             }
+
             return response()->json(
                 ['message' => __('app.try_again')],
                 Response::HTTP_INTERNAL_SERVER_ERROR
@@ -182,7 +191,9 @@ class PostService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $uuid
+     *
      * @return mixed
      */
     public function deletePost($uuid)
@@ -196,6 +207,7 @@ class PostService extends Service
                     Response::HTTP_NO_CONTENT
                 );
             }
+
             return response()->json(
                 ['message' => __('app.try_again')],
                 Response::HTTP_INTERNAL_SERVER_ERROR
@@ -207,5 +219,4 @@ class PostService extends Service
             Response::HTTP_NOT_FOUND
         );
     }
-
 }

@@ -6,7 +6,6 @@
  * Date: 2018/8/25
  * Time: 15:01
  */
-
 namespace App\Repositories\Eloquent;
 
 class PostRepository extends Repository
@@ -16,6 +15,7 @@ class PostRepository extends Repository
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return string
      */
     public function model()
@@ -28,6 +28,7 @@ class PostRepository extends Repository
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return mixed
      */
     public function getNewPost()
@@ -42,6 +43,7 @@ class PostRepository extends Repository
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return mixed
      */
     public function getFavoritePost()
@@ -50,5 +52,4 @@ class PostRepository extends Repository
             ->orderBy('like_num', 'desc')
             ->paginate(env('PER_PAGE', 10));
     }
-
 }

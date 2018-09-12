@@ -8,13 +8,12 @@
  * Date: 2018/8/25
  * Time: 13:43
  */
-
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
-use App\Services\PostService;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use App\Services\PostService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -34,7 +33,9 @@ class PostController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return mixed
      */
     public function getAllPosts(Request $request)
@@ -49,7 +50,9 @@ class PostController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $uuid
+     *
      * @return mixed
      */
     public function getPostByUuid($uuid)
@@ -62,14 +65,16 @@ class PostController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function createPost(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:64',
-            'content' => 'required|max:' . env('CONTENT_NUM'),
+            'content' => 'required|max:'.env('CONTENT_NUM'),
             'anonymous' => 'required|boolean',
         ]);
 
@@ -79,7 +84,6 @@ class PostController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->postService->createPost(
                 $request->get('title'),
                 $request->get('content'),
@@ -93,14 +97,16 @@ class PostController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePost(Request $request, $uuid)
     {
         $validator = Validator::make($request->all(), [
-            'content' => 'required|max:' . env('CONTENT_NUM'),
+            'content' => 'required|max:'.env('CONTENT_NUM'),
         ]);
 
         if ($validator->fails()) {
@@ -109,7 +115,6 @@ class PostController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->postService->updatePost(
                 $uuid,
                 $request->get('content')
@@ -122,7 +127,9 @@ class PostController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $uuid
+     *
      * @return mixed
      */
     public function deletePost($uuid)
