@@ -1,4 +1,19 @@
 <p align="center"><img src="https://www.litblc.com/usr/themes/pinghsu/images/favicon.ico"></p>
+<p align="center">
+	<a href="https://github.styleci.io/repos/145133991">
+        <img src="https://github.styleci.io/repos/145133991/shield" alt="StyleCI">
+    </a>
+    <a href="https://travis-ci.org/ShyZhen/fmock">
+        <img src="https://travis-ci.org/ShyZhen/fmock.svg?branch=master" alt="Build Status">
+    </a>
+    <a href="#">
+        <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="License">
+    </a>
+    <a href="https://github.com/laravel/laravel">
+        <img src="https://img.shields.io/badge/awesome-laravel-ff69b4.svg" alt="License">
+    </a>
+</p>
+
 
 ## About Fmock
 A forums build with laravel.
@@ -95,7 +110,7 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  |  |  |  |
+| 无 |  |  |  | Y |  |
 
 #### post-me
 - POST `base_url/api/V1/me`
@@ -119,7 +134,7 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  |  |  |  |
+| 无 |  |  | Y |  |  |
 
 #### posts
 - GET `base_url/api/V1/posts`
@@ -134,29 +149,31 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  |  |  |  |
+| 无 |  |  | N |  |  |
 
 #### post-create
 - POST `base_url/api/V1/post`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `title` | Y | String | N | &lt;64 |  |
-| `content` | Y | Int | N | &lt;10000 |  |
+| `title` | Y | String | Y | &lt;64 |  |
+| `content` | Y | Int | Y | &lt;10000 |  |
+| `anonymous` | Y | Boolean | Y | 是否匿名发布 |  |
+
 
 #### post-update
 - PUT `base_url/api/V1/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `content` | Y | Int | N | &lt;10000 |  |
+| `content` | Y | Int | Y | &lt;10000 |  |
 
 #### post-delete
 - DELETE `base_url/api/V1/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  |  |  |  |
+| 无 |  |  | Y |  |  |
 
 #### upload-image
 - POST `base_url/api/V1/file/image`

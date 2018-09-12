@@ -50,10 +50,12 @@ class FileService extends Service
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
             $imageName = $this->uuid($prefix) . '.' . $fileExt;                            // 定义唯一文件名
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
+
             if (!file_exists($storagePath)) {
                 mkdir($storagePath, 0666, true);
             }
             $fullName = $storagePath . $imageName;
+
             if ($this->imageService->saveImg($file, $fullName)) {
                 return response()->json(
                     ['data' => url('/storage/' . $tmpPath . $imageName)],
@@ -91,10 +93,12 @@ class FileService extends Service
             $user = $this->userRepository->findBy('id', Auth::id());
             $imageName = $user->uuid . '.' . $fileExt;                                     // 头像名与用户uuid一致
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
+
             if (!file_exists($storagePath)) {
                 mkdir($storagePath, 0666, true);
             }
             $fullName = $storagePath . $imageName;
+
             if ($this->imageService->saveImg($file, $fullName)) {
                 $this->userRepository->update(['avatar' => $tmpPath . $imageName], $user->id);
                 return response()->json(

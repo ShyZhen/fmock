@@ -41,6 +41,7 @@ class FileController extends Controller
         $validator = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpg,jpeg,png,gif|between:1,5000',
         ]);
+
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
@@ -48,6 +49,7 @@ class FileController extends Controller
             );
         } else {
             $file = $request->file('image');
+
             return $this->fileService->uploadImg($file, 'image', 'post-');
         }
     }
@@ -66,6 +68,7 @@ class FileController extends Controller
         $validator = Validator::make($request->all(), [
             'avatar' => 'required|image|mimes:jpg,jpeg,png,gif|between:1,1000',
         ]);
+
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
@@ -73,6 +76,7 @@ class FileController extends Controller
             );
         } else {
             $file = $request->file('avatar');
+
             return $this->fileService->uploadAva($file, 'avatar');
         }
     }

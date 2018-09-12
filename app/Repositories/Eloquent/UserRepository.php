@@ -45,6 +45,7 @@ class UserRepository extends Repository
     public function getUserInfoById($id)
     {
         $user = $this->find($id);
+
         if ($user) {
             $userInfo['username'] = $user->name;
             $userInfo['avatar'] = ($user->avatar ? url($user->avatar) : url('/static/defaultAvatar.jpg'));

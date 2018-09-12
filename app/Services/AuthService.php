@@ -57,6 +57,7 @@ class AuthService extends Service
             $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
             $subject = __('app.fmock_register_service');
             $mail = $this->emailService->sendEmail($account, $data, $subject);
+
             if ($mail) {
                 $this->redisService->setRedis('user:email:' . $account, $code, 'EX', 600);
                 return response()->json(
@@ -95,6 +96,7 @@ class AuthService extends Service
             ];
             $subject = __('app.fmock_reset_pwd_service');
             $mail = $this->emailService->sendEmail($email, $data, $subject);
+
             if ($mail) {
                 return response()->json(
                     ['message' => __('app.send_email').__('app.success')],
@@ -123,6 +125,7 @@ class AuthService extends Service
     public function register($name, $password, $email, $verifyCode)
     {
         $code = $this->redisService->getRedis('user:email:'.$email);
+
         if ($code) {
             if ($code == $verifyCode) {
                 $uuid = $this->uuid('user-');
@@ -149,7 +152,6 @@ class AuthService extends Service
             ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
             Response::HTTP_UNPROCESSABLE_ENTITY
         );
-
     }
 
     /**
@@ -164,6 +166,7 @@ class AuthService extends Service
     public function login($email, $password)
     {
         $user = $this->userRepository->getFirstUserByEmail($email);
+
         if ($user && $user->closure == 'none') {
             if ($this->verifyPasswordLimit($email)) {
                 return response()->json(
@@ -171,6 +174,7 @@ class AuthService extends Service
                     Response::HTTP_FORBIDDEN
                 );
             }
+
             if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
                 return response()->json(
@@ -189,7 +193,6 @@ class AuthService extends Service
             ['message' => __('app.user_is_closure')],
             Response::HTTP_BAD_REQUEST
         );
-
     }
 
     /**
@@ -205,6 +208,7 @@ class AuthService extends Service
     public function changePassword($email, $verifyCode, $password)
     {
         $code = $this->redisService->getRedis('password:email:' . $email);
+
         if ($code) {
             if ($code == $verifyCode) {
                 $user = $this->userRepository->getFirstUserByEmail($email);
@@ -254,6 +258,7 @@ class AuthService extends Service
     public function updateMyInfo(array $data)
     {
         $user = Auth::user();
+
         if ($this->userRepository->update($data, $user->id)) {
             return response()->json(
                 ['data' => $this->userRepository->find($user->id)],
@@ -279,9 +284,11 @@ class AuthService extends Service
     public function updateMyName($name)
     {
         $user = Auth::user();
+
         if ($user->is_rename == 'yes') {
             $user->name = $name;
             $user->is_rename = 'none';
+
             if ($user->save()) {
                 return response()->json(
                     ['data' => $user->name],
@@ -330,11 +337,13 @@ class AuthService extends Service
     {
         if ($this->redisService->isRedisExists('login:times:'.$email)) {
             $this->redisService->redisIncr('login:times:'.$email);
+
             if ($this->redisService->getRedis('login:times:'.$email) >= 10) {
                 return true;
             }
         } else {
             $this->redisService->setRedis('login:times:'.$email, 1, 'EX', 600);
+
             return false;
         }
     }

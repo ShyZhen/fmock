@@ -36,7 +36,7 @@ class EmailService extends Service
             $message->to($toEmail)->subject($subject);
         });
 
-        if(count($this->mailer->failures()) > 0){
+        if (count($this->mailer->failures()) > 0) {
             return false;
         }
 

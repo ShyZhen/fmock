@@ -45,6 +45,7 @@ abstract class Repository implements RepositoryInterface
     public function setModel()
     {
         $model = $this->container->make($this->model());
+
         return $this->model = $model;
     }
 
@@ -54,7 +55,8 @@ abstract class Repository implements RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function all($columns = ['*']) {
+    public function all($columns = ['*'])
+    {
         return $this->model->get($columns);
     }
 
@@ -65,7 +67,8 @@ abstract class Repository implements RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function paginate($perPage = 10, $columns = ['*']) {
+    public function paginate($perPage = 10, $columns = ['*'])
+    {
         return $this->model->paginate($perPage, $columns);
     }
 
@@ -75,7 +78,8 @@ abstract class Repository implements RepositoryInterface
      * @param array $data
      * @return mixed
      */
-    public function create(array $data) {
+    public function create(array $data)
+    {
         return $this->model->create($data);
     }
 
@@ -87,7 +91,8 @@ abstract class Repository implements RepositoryInterface
      * @param string $attribute
      * @return mixed
      */
-    public function update(array $data, $id, $attribute = 'id') {
+    public function update(array $data, $id, $attribute = 'id')
+    {
         return $this->model->where($attribute, '=', $id)->update($data);
     }
 
@@ -97,7 +102,8 @@ abstract class Repository implements RepositoryInterface
      * @param $id
      * @return mixed
      */
-    public function delete($id) {
+    public function delete($id)
+    {
         return $this->model->destroy($id);
     }
 
@@ -108,7 +114,8 @@ abstract class Repository implements RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function find($id, $columns = ['*']) {
+    public function find($id, $columns = ['*'])
+    {
         return $this->model->find($id, $columns);
     }
 
@@ -120,7 +127,8 @@ abstract class Repository implements RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function findBy($attribute, $value, $columns = ['*']) {
+    public function findBy($attribute, $value, $columns = ['*'])
+    {
         return $this->model->where($attribute, '=', $value)->first($columns);
     }
 }

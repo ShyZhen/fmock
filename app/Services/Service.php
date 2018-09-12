@@ -30,6 +30,7 @@ class Service
         $uuid .= substr($chars,12,4) . '-';
         $uuid .= substr($chars,16,4) . '-';
         $uuid .= substr($chars,20,12);
+
         return $prefix . $uuid;
     }
 
@@ -42,6 +43,7 @@ class Service
     protected function code()
     {
         $code = str_pad(mt_rand(0, 999999), 6, "0", STR_PAD_BOTH);
+
         return $code;
     }
 }

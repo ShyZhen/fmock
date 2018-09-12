@@ -53,6 +53,7 @@ class PostService extends Service
         } else {
             $posts = $this->postRepository->getFavoritePost();
         }
+
         if ($posts->count()) {
             foreach ($posts as $post) {
                 $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
@@ -81,6 +82,7 @@ class PostService extends Service
     public function getPostByUuid($uuid)
     {
         $post = $this->postRepository->findBy('uuid', $uuid);
+
         if ($post) {
             $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
             return response()->json(
@@ -109,6 +111,7 @@ class PostService extends Service
     public function createPost($title, $content, $anonymous)
     {
         $userId = Auth::id();
+
         if ($this->redisService->isRedisExists('post:user:' . $userId)) {
             return response()->json(
                 ['message' => __('app.action_ttl').$this->redisService->getRedisTtl('post:user:' . $userId) . 's'],
@@ -151,8 +154,10 @@ class PostService extends Service
     public function updatePost($uuid, $content)
     {
         $post = $this->postRepository->findBy('uuid', $uuid);
+
         if ($post && $post->user_id == Auth::id()) {
             $post->content = $content;
+
             if ($post->save()) {
                 $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
                 return response()->json(
@@ -183,6 +188,7 @@ class PostService extends Service
     public function deletePost($uuid)
     {
         $post = $this->postRepository->findBy('uuid', $uuid);
+
         if ($post && $post->user_id == Auth::id()) {
             if ($post->delete()) {
                 return response()->json(

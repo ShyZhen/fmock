@@ -15,6 +15,10 @@ class RedisService extends Service
 {
     private $redis;
 
+    /**
+     * RedisService constructor.
+     * @param Redis $redis
+     */
     public function __construct(Redis $redis)
     {
         $this->redis = $redis;
@@ -31,6 +35,7 @@ class RedisService extends Service
     public function redisIncr($key)
     {
         $incr = $this->redis->incr($key);
+
         return $incr;
     }
 
@@ -43,6 +48,7 @@ class RedisService extends Service
     public function isRedisExists($key)
     {
         $bool = $this->redis->exists($key);
+
         return $bool;
     }
 
@@ -58,6 +64,7 @@ class RedisService extends Service
     public function setRedis($key, $val, $ex = 'EX', $ttl = 600)
     {
         $bool = $this->redis->set($key, $val, $ex, $ttl);
+
         return $bool;
     }
 
@@ -70,6 +77,7 @@ class RedisService extends Service
     public function getRedis($key)
     {
         $res = $this->redis->get($key);
+
         return $res;
     }
 
@@ -84,6 +92,7 @@ class RedisService extends Service
     public function getRedisTtl($key)
     {
         $ttl = $this->redis->ttl($key);
+
         return $ttl;
     }
 }

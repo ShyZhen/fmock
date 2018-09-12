@@ -9,7 +9,6 @@
 
 namespace App\Repositories\Contracts;
 
-
 interface RepositoryInterface
 {
     /**
@@ -18,7 +17,7 @@ interface RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function all($columns = array('*'));
+    public function all($columns = ['*']);
 
     /**
      * @Author huaixiu.zhen
@@ -27,7 +26,7 @@ interface RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function paginate($perPage = 15, $columns = array('*'));
+    public function paginate($perPage = 15, $columns = ['*']);
 
     /**
      * @Author huaixiu.zhen
@@ -61,7 +60,7 @@ interface RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function find($id, $columns = array('*'));
+    public function find($id, $columns = ['*']);
 
     /**
      * @Author huaixiu.zhen
@@ -71,5 +70,5 @@ interface RepositoryInterface
      * @param array $columns
      * @return mixed
      */
-    public function findBy($field, $value, $columns = array('*'));
+    public function findBy($field, $value, $columns = ['*']);
 }

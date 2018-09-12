@@ -40,6 +40,7 @@ class PostController extends Controller
     public function getAllPosts(Request $request)
     {
         $sort = $request->get('sort', null);
+
         return $this->postService->getAllPosts($sort);
     }
 
@@ -71,6 +72,7 @@ class PostController extends Controller
             'content' => 'required|max:' . env('CONTENT_NUM'),
             'anonymous' => 'required|boolean',
         ]);
+
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
@@ -100,12 +102,14 @@ class PostController extends Controller
         $validator = Validator::make($request->all(), [
             'content' => 'required|max:' . env('CONTENT_NUM'),
         ]);
+
         if ($validator->fails()) {
             return response()->json(
                 ['message' => $validator->errors()->first()],
                 Response::HTTP_BAD_REQUEST
             );
         } else {
+
             return $this->postService->updatePost(
                 $uuid,
                 $request->get('content')
