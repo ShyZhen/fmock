@@ -6,13 +6,12 @@
  * Date: 2018/9/4
  * Time: 16:45
  */
-
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Services\FileService;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class FileController extends Controller
@@ -21,6 +20,7 @@ class FileController extends Controller
 
     /**
      * FileController constructor.
+     *
      * @param FileService $fileService
      */
     public function __construct(FileService $fileService)
@@ -33,7 +33,9 @@ class FileController extends Controller
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
     public function uploadImage(Request $request)
@@ -60,7 +62,9 @@ class FileController extends Controller
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
     public function uploadAvatar(Request $request)

@@ -6,7 +6,6 @@
  * Date: 2018/8/22
  * Time: 20:39
  */
-
 namespace App\Services;
 
 use Illuminate\Contracts\Mail\Mailer;
@@ -25,9 +24,11 @@ class EmailService extends Service
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $toEmail
      * @param $data
      * @param $subject
+     *
      * @return bool
      */
     public function sendEmail($toEmail, $data, $subject)

@@ -6,7 +6,6 @@
  * Date: 2018/8/23
  * Time: 14:17
  */
-
 namespace App\Repositories\Eloquent;
 
 class UserRepository extends Repository
@@ -16,6 +15,7 @@ class UserRepository extends Repository
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return mixed|string
      */
     public function model()
@@ -26,7 +26,9 @@ class UserRepository extends Repository
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $email
+     *
      * @return mixed
      */
     public function getFirstUserByEmail($email)
@@ -39,7 +41,9 @@ class UserRepository extends Repository
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $id
+     *
      * @return mixed
      */
     public function getUserInfoById($id)

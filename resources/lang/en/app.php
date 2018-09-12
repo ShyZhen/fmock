@@ -34,7 +34,4 @@ return [
     'rename_limit' => 'Sorry, your number of Rename is used up. ',
     'anonymous' => 'Anonymous ',
 
-
-
-
 ];

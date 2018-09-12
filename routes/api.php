@@ -12,11 +12,11 @@
 */
 
 Route::get('/', function () {
-    return ('api /');
+    return 'api /';
 });
 
 // no access_token
-Route::prefix('V1')->namespace('Api\V1')->group(function() {
+Route::prefix('V1')->namespace('Api\V1')->group(function () {
     Route::get('locale', 'IndexController@getLocale');
     Route::post('login', 'AuthController@login');
     Route::post('register-code', 'AuthController@registerCode');
@@ -28,11 +28,10 @@ Route::prefix('V1')->namespace('Api\V1')->group(function() {
     Route::get('post/{uuid}', 'PostController@getPostByUuid');
 //    Route::post('comment', 'CommentController@create');
 //    Route::get('comment', 'CommentController@comments');
-
 });
 
 // need access_token
-Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(function() {
+Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(function () {
     Route::get('me', 'AuthController@myInfo');
     Route::post('me', 'AuthController@updateMyInfo');
     Route::post('my-name', 'AuthController@updateMyName');

@@ -6,11 +6,10 @@
  * Date: 2018/8/25
  * Time: 14:51
  */
-
 namespace App\Repositories\Eloquent;
 
-use Illuminate\Container\Container;
 use App\Repositories\Contracts\RepositoryInterface;
+use Illuminate\Container\Container;
 
 abstract class Repository implements RepositoryInterface
 {
@@ -20,6 +19,7 @@ abstract class Repository implements RepositoryInterface
 
     /**
      * Repository constructor.
+     *
      * @param Container $container
      */
     public function __construct(Container $container)
@@ -33,13 +33,15 @@ abstract class Repository implements RepositoryInterface
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return mixed
      */
-    abstract function model();
+    abstract public function model();
 
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return mixed
      */
     public function setModel()
@@ -52,7 +54,9 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $columns
+     *
      * @return mixed
      */
     public function all($columns = ['*'])
@@ -63,8 +67,10 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
-     * @param int $perPage
+     *
+     * @param int   $perPage
      * @param array $columns
+     *
      * @return mixed
      */
     public function paginate($perPage = 10, $columns = ['*'])
@@ -75,7 +81,9 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $data
+     *
      * @return mixed
      */
     public function create(array $data)
@@ -86,9 +94,11 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $data
      * @param $id
      * @param string $attribute
+     *
      * @return mixed
      */
     public function update(array $data, $id, $attribute = 'id')
@@ -99,7 +109,9 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $id
+     *
      * @return mixed
      */
     public function delete($id)
@@ -110,8 +122,10 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $id
      * @param array $columns
+     *
      * @return mixed
      */
     public function find($id, $columns = ['*'])
@@ -122,9 +136,11 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $attribute
      * @param $value
      * @param array $columns
+     *
      * @return mixed
      */
     public function findBy($attribute, $value, $columns = ['*'])

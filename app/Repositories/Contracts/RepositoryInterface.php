@@ -6,7 +6,6 @@
  * Date: 2018/8/25
  * Time: 14:47
  */
-
 namespace App\Repositories\Contracts;
 
 interface RepositoryInterface
@@ -14,7 +13,9 @@ interface RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $columns
+     *
      * @return mixed
      */
     public function all($columns = ['*']);
@@ -22,8 +23,10 @@ interface RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
-     * @param int $perPage
+     *
+     * @param int   $perPage
      * @param array $columns
+     *
      * @return mixed
      */
     public function paginate($perPage = 15, $columns = ['*']);
@@ -31,7 +34,9 @@ interface RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $data
+     *
      * @return mixed
      */
     public function create(array $data);
@@ -39,8 +44,10 @@ interface RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param array $data
      * @param $id
+     *
      * @return mixed
      */
     public function update(array $data, $id);
@@ -48,7 +55,9 @@ interface RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $id
+     *
      * @return mixed
      */
     public function delete($id);
@@ -56,8 +65,10 @@ interface RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $id
      * @param array $columns
+     *
      * @return mixed
      */
     public function find($id, $columns = ['*']);
@@ -65,9 +76,11 @@ interface RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $field
      * @param $value
      * @param array $columns
+     *
      * @return mixed
      */
     public function findBy($field, $value, $columns = ['*']);

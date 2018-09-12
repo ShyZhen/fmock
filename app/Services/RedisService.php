@@ -6,7 +6,6 @@
  * Date: 2018/8/21
  * Time: 16:41
  */
-
 namespace App\Services;
 
 use Illuminate\Contracts\Redis\Factory as Redis;
@@ -17,6 +16,7 @@ class RedisService extends Service
 
     /**
      * RedisService constructor.
+     *
      * @param Redis $redis
      */
     public function __construct(Redis $redis)
@@ -29,7 +29,9 @@ class RedisService extends Service
      *
      * Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param $key
+     *
      * @return mixed
      */
     public function redisIncr($key)
@@ -42,7 +44,9 @@ class RedisService extends Service
     /**
      * Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $key
+     *
      * @return bool
      */
     public function isRedisExists($key)
@@ -55,10 +59,12 @@ class RedisService extends Service
     /**
      * Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param  $key
      * @param  $val
-     * @param  string $ex
-     * @param  int $ttl
+     * @param string $ex
+     * @param int    $ttl
+     *
      * @return string ok
      */
     public function setRedis($key, $val, $ex = 'EX', $ttl = 600)
@@ -71,7 +77,9 @@ class RedisService extends Service
     /**
      * Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $key
+     *
      * @return string or null
      */
     public function getRedis($key)
@@ -86,7 +94,9 @@ class RedisService extends Service
      *
      * Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $key
+     *
      * @return mixed
      */
     public function getRedisTtl($key)

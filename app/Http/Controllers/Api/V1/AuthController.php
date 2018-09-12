@@ -6,13 +6,12 @@
  * Date: 2018/8/22
  * Time: 20:31
  */
-
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
-use App\Services\AuthService;
-use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use App\Services\AuthService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,6 +21,7 @@ class AuthController extends Controller
 
     /**
      * AuthController constructor.
+     *
      * @param AuthService $authService
      */
     public function __construct(AuthService $authService)
@@ -34,7 +34,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function registerCode(Request $request)
@@ -60,7 +62,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function register(Request $request)
@@ -78,7 +82,6 @@ class AuthController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->authService->register(
                 $request->get('name'),
                 $request->get('password'),
@@ -99,7 +102,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array
      */
     public function login(Request $request)
@@ -127,7 +132,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return array|\Illuminate\Http\JsonResponse
      */
     public function passwordCode(Request $request)
@@ -155,7 +162,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function password(Request $request)
@@ -177,7 +186,6 @@ class AuthController extends Controller
             $password = $request->get('password');
 
             return $this->authService->changePassword($email, $verifyCode, $password);
-
         }
     }
 
@@ -186,6 +194,7 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
@@ -198,6 +207,7 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
+     *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function myInfo()
@@ -210,7 +220,9 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse|mixed
      */
     public function updateMyInfo(Request $request)
@@ -228,7 +240,6 @@ class AuthController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->authService->updateMyInfo($request->all());
         }
     }
@@ -238,13 +249,15 @@ class AuthController extends Controller
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateMyName(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:20|unique:users,name,' . Auth::id() . ',id',
+            'name' => 'required|max:20|unique:users,name,'.Auth::id().',id',
         ]);
 
         if ($validator->fails()) {
@@ -253,7 +266,6 @@ class AuthController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->authService->updateMyName($request->get('name'));
         }
     }
