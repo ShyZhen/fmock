@@ -1,4 +1,4 @@
-preset: psr2
+preset: laravel
 
 enabled:
   - concat_without_spaces
