@@ -48,10 +48,18 @@ class PostService extends Service
      */
     public function getAllPosts($sort = null)
     {
-        if ($sort == 'new') {
-            $posts = $this->postRepository->getNewPost();
-        } else {
-            $posts = $this->postRepository->getFavoritePost();
+        switch ($sort) {
+            case 'post-new':
+                $posts = $this->postRepository->getNewPost();
+                break;
+            case 'post-hot':
+                $posts = $this->postRepository->getFavoritePost();
+                break;
+            case 'post-anonymous':
+                $posts = $this->postRepository->getAnonymousPost();
+                break;
+            default:
+                $posts = [];
         }
 
         if ($posts->count()) {

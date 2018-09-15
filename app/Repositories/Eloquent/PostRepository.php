@@ -52,4 +52,12 @@ class PostRepository extends Repository
             ->orderBy('like_num', 'desc')
             ->paginate(env('PER_PAGE', 10));
     }
+
+    public function getAnonymousPost()
+    {
+        return $this->model->where('deleted', 'none')
+            ->where('user_id', 0)
+            ->orderBy('created_at', 'desc')
+            ->paginate(env('PER_PAGE', 10));
+    }
 }
