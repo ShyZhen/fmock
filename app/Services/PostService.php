@@ -66,16 +66,11 @@ class PostService extends Service
             foreach ($posts as $post) {
                 $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
             }
-
-            return response()->json(
-                ['data' => $posts],
-                Response::HTTP_OK
-            );
         }
 
         return response()->json(
-            ['message' => __('app.no_posts')],
-            Response::HTTP_NOT_FOUND
+            ['data' => $posts],
+            Response::HTTP_OK
         );
     }
 

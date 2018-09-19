@@ -51,10 +51,12 @@ class UserRepository extends Repository
         $user = $this->find($id);
 
         if ($user) {
+            $userInfo['uuid'] = $user->uuid;
             $userInfo['username'] = $user->name;
             $userInfo['avatar'] = ($user->avatar ? url($user->avatar) : url('/static/defaultAvatar.jpg'));
             $userInfo['bio'] = $user->bio;
         } else {
+            $userInfo['uuid'] = '';
             $userInfo['username'] = __('app.anonymous');
             $userInfo['avatar'] = url('/static/anonymousAvatar.jpg');
             $userInfo['bio'] = '';

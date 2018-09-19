@@ -36,4 +36,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function myFollowedPosts()
+    {
+        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'post_id');
+    }
 }

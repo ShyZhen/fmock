@@ -47,6 +47,7 @@ A forums build with laravel.
 - [passwordCode](#password-code) | 发送改密验证码
 - [password](#password) | 修改密码
 - [myInfo](#me) | 我的信息
+- [userInfo](#user-info) | 获取指定用户信息
 - [updateMyInfo](#post-me) | 更新个人信息
 - [updateMyName](#my-name) | 更新个人昵称
 - [logout](#logout) | 登出
@@ -54,6 +55,7 @@ A forums build with laravel.
 
 - [getAllPosts](#posts) | 获取首页文章列表
 - [getPostByUuid](#post) | 获取指定文章
+- [getMyFollowedPosts](#follows) | 获取我关注的所有文章
 - [createPost](#post-create) | 新建文章
 - [updatePost](#post-update) | 更新指定文章
 - [deletePost](#post-delete) | 删除指定文章
@@ -112,6 +114,14 @@ A forums build with laravel.
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  |  | Y |  |
 
+#### user-info
+- GET `base_url/api/V1/user/{uuid}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+
 #### post-me
 - POST `base_url/api/V1/me`
 
@@ -150,6 +160,13 @@ A forums build with laravel.
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | N |  |  |
+
+#### follows
+- GET `base_url/api/V1/follows`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
 
 #### post-create
 - POST `base_url/api/V1/post`

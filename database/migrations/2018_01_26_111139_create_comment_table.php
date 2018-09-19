@@ -16,9 +16,9 @@ class CreateCommentTable extends Migration
         // 评论回复表
         Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('image_id')->index();
+            $table->unsignedInteger('post_id')->index();
             $table->unsignedInteger('parent_id')->default(0); // 0代表评论主体，否则代表回复该comment
-            $table->foreign('image_id')->references('id')->on('images')->onDelete('cascade');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->integer('user_id');
             $table->string('content', 256)->default('');
             $table->unsignedInteger('like_num')->default(0);

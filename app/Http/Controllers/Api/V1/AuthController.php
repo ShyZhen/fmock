@@ -269,4 +269,19 @@ class AuthController extends Controller
             return $this->authService->updateMyName($request->get('name'));
         }
     }
+
+    /**
+     * 获取用户信息
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserByUuid($uuid)
+    {
+        return $this->authService->getUserByUuid($uuid);
+    }
 }

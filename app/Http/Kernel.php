@@ -42,6 +42,7 @@ class Kernel extends HttpKernel
             'bindings',
             // 跨域路由中间件
             \Barryvdh\Cors\HandleCors::class,
+//            \App\Http\Middleware\Cors::class,
         ],
     ];
 

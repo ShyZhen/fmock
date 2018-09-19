@@ -34,6 +34,8 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
 Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(function () {
     Route::get('me', 'AuthController@myInfo');
     Route::post('me', 'AuthController@updateMyInfo');
+    Route::get('user/{uuid}', 'AuthController@getUserByUuid');
+
     Route::post('my-name', 'AuthController@updateMyName');
     Route::get('logout', 'AuthController@logout');
 
@@ -43,4 +45,6 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
 
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
+
+    Route::get('follows', 'ActionController@getMyFollowedPosts');
 });

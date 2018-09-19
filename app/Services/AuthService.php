@@ -189,7 +189,7 @@ class AuthService extends Service
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
 
                 return response()->json(
-                    ['access_token' => $token],
+                    ['accessToken' => $token, 'userInfo' => Auth::user()],
                     Response::HTTP_OK
                 );
             } else {
@@ -243,6 +243,34 @@ class AuthService extends Service
         return response()->json(
             ['message' => __('app.verify_code').__('app.nothing_or_expire')],
             Response::HTTP_UNPROCESSABLE_ENTITY
+        );
+    }
+
+    /**
+     * 获取用户信息
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserByUuid($uuid)
+    {
+        $user = $this->userRepository->findBy('uuid', $uuid, ['id', 'email', 'name', 'avatar', 'gender', 'birthday', 'reside_city', 'bio', 'created_at']);
+
+        if ($user) {
+
+            return response()->json(
+                ['data' => $user],
+                Response::HTTP_OK
+            );
+        }
+
+        return response()->json(
+            ['message' => __('app.user_is_closure')],
+            Response::HTTP_NOT_FOUND
         );
     }
 
