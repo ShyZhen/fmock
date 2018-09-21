@@ -60,7 +60,7 @@ class FileService extends Service
             if ($this->imageService->saveImg($file, $fullName)) {
                 return response()->json(
                     ['data' => url('/storage/'.$tmpPath.$imageName)],
-                    Response::HTTP_UNPROCESSABLE_ENTITY
+                    Response::HTTP_CREATED
                 );
             }
 
