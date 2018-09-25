@@ -56,6 +56,7 @@ A forums build with laravel.
 - [getAllPosts](#posts) | 获取首页文章列表
 - [getPostByUuid](#post) | 获取指定文章
 - [getMyFollowedPosts](#follows) | 获取我关注的所有文章
+- [followedPost](#post-follow) | 关注指定文章
 - [createPost](#post-create) | 新建文章
 - [updatePost](#post-update) | 更新指定文章
 - [deletePost](#post-delete) | 删除指定文章
@@ -167,6 +168,13 @@ A forums build with laravel.
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
+
+#### post-follow
+- POST `base_url/api/V1/follow`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `uuid` | Y | String | Y |  | 文章`uuid` |
 
 #### post-create
 - POST `base_url/api/V1/post`

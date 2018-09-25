@@ -53,6 +53,14 @@ class PostRepository extends Repository
             ->paginate(env('PER_PAGE', 10));
     }
 
+    /**
+     * 匿名文章
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @return mixed
+     */
     public function getAnonymousPost()
     {
         return $this->model->where('deleted', 'none')

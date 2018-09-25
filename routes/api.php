@@ -47,4 +47,5 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('file/avatar', 'FileController@uploadAvatar');
 
     Route::get('follows', 'ActionController@getMyFollowedPosts');
+    Route::post('follow', 'ActionController@followedPost');
 });

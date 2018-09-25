@@ -33,5 +33,6 @@ return [
     'upload_file_valida_fail' => '文件上传失败',
     'rename_limit' => '抱歉，您的改名次数用光光了',
     'anonymous' => '匿名用户',
+    'follow' => '关注',
 
 ];

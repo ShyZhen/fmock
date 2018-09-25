@@ -8,6 +8,8 @@
  */
 namespace App\Repositories\Eloquent;
 
+use Illuminate\Support\Facades\Auth;
+
 class UserRepository extends Repository
 {
     /**
@@ -37,6 +39,22 @@ class UserRepository extends Repository
     }
 
     /**
+     * 获取我关注的文章
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @return mixed
+     */
+    public function getMyFollowedPosts()
+    {
+        // return $this->find(Auth::id())->myFollowedPosts();
+        return Auth::user()->myFollowedPosts()
+            ->orderBy('updated_at', 'desc')
+            ->paginate(env('PER_PAGE', 10));
+    }
+
+    /**
      * 通过id获取用户信息，供首页文章显示
      *
      * @Author huaixiu.zhen@gmail.com
@@ -63,5 +81,18 @@ class UserRepository extends Repository
         }
 
         return $userInfo;
+    }
+
+    /**
+     * 同步中间表 更新用户关注文章的数据
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @param $postId
+     * @return mixed
+     */
+    public function followPost($postId)
+    {
+        return Auth::user()->myFollowedPosts()->syncWithoutDetaching($postId);
     }
 }

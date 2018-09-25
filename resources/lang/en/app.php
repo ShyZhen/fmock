@@ -33,5 +33,7 @@ return [
     'upload_file_valida_fail' => 'File upload failed ',
     'rename_limit' => 'Sorry, your number of Rename is used up. ',
     'anonymous' => 'Anonymous ',
+    'follow' => 'Follow ',
+
 
 ];

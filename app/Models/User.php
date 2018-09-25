@@ -44,6 +44,6 @@ class User extends Authenticatable
      */
     public function myFollowedPosts()
     {
-        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'post_id');
+        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'post_id')->withTimestamps();
     }
 }

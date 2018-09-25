@@ -63,12 +63,12 @@ class FileService extends Service
                     Response::HTTP_CREATED
                 );
             }
-
             return response()->json(
                 ['message' => __('app.unknown').__('app.error')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
+
             return response()->json(
                 ['message' => __('app.upload_file_valida_fail')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
@@ -103,19 +103,19 @@ class FileService extends Service
             $fullName = $storagePath.$imageName;
 
             if ($this->imageService->saveImg($file, $fullName)) {
-                $this->userRepository->update(['avatar' => $tmpPath.$imageName], $user->id);
+                $this->userRepository->update(['avatar' => '/storage/'.$tmpPath.$imageName], $user->id);
 
                 return response()->json(
                     ['data' => url('/storage/'.$tmpPath.$imageName)],
                     Response::HTTP_OK
                 );
             }
-
             return response()->json(
                 ['message' => __('app.unknown').__('app.error')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
+
             return response()->json(
                 ['message' => __('app.upload_file_valida_fail')],
                 Response::HTTP_UNPROCESSABLE_ENTITY

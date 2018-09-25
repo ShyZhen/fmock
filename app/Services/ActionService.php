@@ -6,26 +6,32 @@
  */
 namespace App\Services;
 
+use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class ActionService extends Service
 {
     private $userRepository;
 
+    private $postRepository;
+
     /**
-     * AuthService constructor.
-     *
+     * ActionService constructor.
      * @param UserRepository $userRepository
+     * @param PostRepository $postRepository
      */
     public function __construct(
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        PostRepository $postRepository
     ) {
         $this->userRepository = $userRepository;
+        $this->postRepository = $postRepository;
     }
 
     /**
+     * 获取我关注的所有文章
+     *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
@@ -33,7 +39,7 @@ class ActionService extends Service
      */
     public function getMyFollowedPosts()
     {
-        $posts = Auth::user()->myFollowedPosts()->paginate(env('PER_PAGE', 10));
+        $posts = $this->userRepository->getMyFollowedPosts();
 
         if ($posts->count()) {
             foreach ($posts as $post) {
@@ -47,5 +53,32 @@ class ActionService extends Service
         );
     }
 
+    /**
+     * 关注文章操作
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @param $uuid
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function followPost($uuid)
+    {
+        $post = $this->postRepository->findBy('uuid', $uuid);
+
+        if ($post) {
+            $this->userRepository->followPost($post->id);
+
+            return response()->json(
+                ['message' => __('app.follow').__('app.success')],
+                Response::HTTP_OK
+            );
+        } else {
+
+            return response()->json(
+                ['message' => __('app.no_posts')],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+    }
 
 }
