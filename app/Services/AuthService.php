@@ -261,7 +261,6 @@ class AuthService extends Service
         $user = $this->userRepository->findBy('uuid', $uuid, ['id', 'email', 'name', 'avatar', 'gender', 'birthday', 'reside_city', 'bio', 'created_at']);
 
         if ($user) {
-
             return response()->json(
                 ['data' => $user],
                 Response::HTTP_OK

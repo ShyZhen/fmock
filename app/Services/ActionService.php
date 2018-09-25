@@ -18,6 +18,7 @@ class ActionService extends Service
 
     /**
      * ActionService constructor.
+     *
      * @param UserRepository $userRepository
      * @param PostRepository $postRepository
      */
@@ -58,7 +59,9 @@ class ActionService extends Service
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function followPost($uuid)
@@ -73,12 +76,10 @@ class ActionService extends Service
                 Response::HTTP_OK
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.no_posts')],
                 Response::HTTP_NOT_FOUND
             );
         }
     }
-
 }

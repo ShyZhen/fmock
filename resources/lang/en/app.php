@@ -35,5 +35,4 @@ return [
     'anonymous' => 'Anonymous ',
     'follow' => 'Follow ',
 
-
 ];

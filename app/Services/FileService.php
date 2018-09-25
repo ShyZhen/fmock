@@ -63,12 +63,12 @@ class FileService extends Service
                     Response::HTTP_CREATED
                 );
             }
+
             return response()->json(
                 ['message' => __('app.unknown').__('app.error')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.upload_file_valida_fail')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
@@ -110,12 +110,12 @@ class FileService extends Service
                     Response::HTTP_OK
                 );
             }
+
             return response()->json(
                 ['message' => __('app.unknown').__('app.error')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.upload_file_valida_fail')],
                 Response::HTTP_UNPROCESSABLE_ENTITY

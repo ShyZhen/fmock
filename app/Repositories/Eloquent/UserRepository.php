@@ -88,7 +88,9 @@ class UserRepository extends Repository
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $postId
+     *
      * @return mixed
      */
     public function followPost($postId)
