@@ -3,7 +3,6 @@
  * @Author huaixiu.zhen
  * http://litblc.com
  * User: z00455118
-
  */
 namespace App\Repositories\Eloquent;
 

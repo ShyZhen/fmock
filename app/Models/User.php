@@ -40,6 +40,7 @@ class User extends Authenticatable
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function myFollowedPosts()

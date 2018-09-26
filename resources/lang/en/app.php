@@ -38,5 +38,4 @@ return [
     'like' => 'Like ',
     'dislike' => 'Dislike ',
 
-
 ];

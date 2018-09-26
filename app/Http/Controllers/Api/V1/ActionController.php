@@ -7,7 +7,6 @@
  * User: z00455118
  * Date: 2018/9/19
  */
-
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
@@ -22,6 +21,7 @@ class ActionController extends Controller
 
     /**
      * ActionController constructor.
+     *
      * @param ActionService $actionService
      */
     public function __construct(ActionService $actionService)
@@ -47,13 +47,15 @@ class ActionController extends Controller
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function followedPost(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'uuid' => 'required'
+           'uuid' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -62,7 +64,6 @@ class ActionController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->actionService->followPost($request->get('uuid'));
         }
     }
