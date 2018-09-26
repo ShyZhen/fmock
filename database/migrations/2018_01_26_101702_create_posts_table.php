@@ -21,6 +21,7 @@ class CreatePostsTable extends Migration
 //            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');  需要匿名发布
             $table->string('title', 128)->defult('');
             $table->text('content');
+            $table->unsignedInteger('follow_num')->default(0);
             $table->unsignedInteger('like_num')->default(0);
             $table->unsignedInteger('dislike_num')->default(0);
             $table->enum('deleted', ['yes', 'none'])->default('none');

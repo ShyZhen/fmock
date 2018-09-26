@@ -95,4 +95,20 @@ class UserRepository extends Repository
     {
         return Auth::user()->myFollowedPosts()->syncWithoutDetaching($postId);
     }
+
+    /**
+     * 取消关注
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $postId
+     *
+     * @return mixed
+     */
+    public function unFollow($postId)
+    {
+        return Auth::user()->myFollowedPosts()->detach($postId);
+    }
+
 }

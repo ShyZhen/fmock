@@ -50,19 +50,23 @@ A forums build with laravel.
 - [userInfo](#user-info) | 获取指定用户信息
 - [updateMyInfo](#post-me) | 更新个人信息
 - [updateMyName](#my-name) | 更新个人昵称
+- [uploadImage](#upload-image) | 上传图片
+- [uploadAvatar](#upload-avatar) | 更换用户头像
 - [logout](#logout) | 登出
-
 
 - [getAllPosts](#posts) | 获取首页文章列表
 - [getPostByUuid](#post) | 获取指定文章
+- [createPost](#create-post) | 新建文章
+- [updatePost](#update-post) | 更新指定文章
+- [deletePost](#delete-post) | 删除指定文章
+
 - [getMyFollowedPosts](#follows) | 获取我关注的所有文章
 - [followedPost](#post-follow) | 关注指定文章
-- [createPost](#post-create) | 新建文章
-- [updatePost](#post-update) | 更新指定文章
-- [deletePost](#post-delete) | 删除指定文章
+- [unFollow](#delete-follow) | 取消关注文章
+- [likePost](#like-post) | 赞/取消赞
+- [dislikePost](#dislike-post) | 踩/取消踩
+- [statusPost](#status-post) | 查看赞/踩状态
 
-- [uploadImage](#upload-image) | 上传图片
-- [uploadAvatar](#upload-avatar) | 更换用户头像
 
 
 #### register-code
@@ -122,7 +126,6 @@ A forums build with laravel.
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
-
 #### post-me
 - POST `base_url/api/V1/me`
 
@@ -139,6 +142,20 @@ A forums build with laravel.
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `name` | Y | String | Y | &lt;20 | 用户表唯一 |
+
+#### upload-image
+- POST `base_url/api/V1/file/image`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `image` | Y | File | Y | &lt;5000KB | jpg,jpeg,png,gif |
+
+#### upload-avatar
+- POST `base_url/api/V1/file/avatar`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `avatar` | Y | File | Y | &lt;1000KB | jpg,jpeg,png,gif |
 
 #### logout
 - GET `base_url/api/V1/logout`
@@ -162,21 +179,7 @@ A forums build with laravel.
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | N |  |  |
 
-#### follows
-- GET `base_url/api/V1/follows`
-
-参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
-
-#### post-follow
-- POST `base_url/api/V1/follow`
-
-参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| `uuid` | Y | String | Y |  | 文章`uuid` |
-
-#### post-create
+#### create-post
 - POST `base_url/api/V1/post`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
@@ -185,34 +188,61 @@ A forums build with laravel.
 | `content` | Y | Int | Y | &lt;10000 |  |
 | `anonymous` | Y | Boolean | Y | 是否匿名发布 |  |
 
-
-#### post-update
+#### update-post
 - PUT `base_url/api/V1/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `content` | Y | Int | Y | &lt;10000 |  |
 
-#### post-delete
+#### delete-post
 - DELETE `base_url/api/V1/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
-#### upload-image
-- POST `base_url/api/V1/file/image`
+#### follows
+- GET `base_url/api/V1/follow/posts`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `image` | Y | File | Y | &lt;5000KB | jpg,jpeg,png,gif |
+| 无 |  |  | Y |  |  |
 
-#### upload-avatar
-- POST `base_url/api/V1/file/avatar`
+#### post-follow
+- POST `base_url/api/V1/follow/post`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `avatar` | Y | File | Y | &lt;1000KB | jpg,jpeg,png,gif |
+| `uuid` | Y | String | Y |  | 文章`uuid` |.
+
+#### delete-follow
+- DELETE `base_url/api/V1/follow/post/{uuid}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+#### like-post
+- GET `base_url/api/V1/like/post/{uuid}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+#### dislike-post
+- GET `base_url/api/V1/dislike/post/{uuid}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+#### status-post
+- GET `base_url/api/V1/status/post/{id}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
 
 
 ## Security Vulnerabilities

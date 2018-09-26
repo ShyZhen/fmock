@@ -46,4 +46,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'post_id')->withTimestamps();
     }
+
+    /**
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function myLikePosts()
+    {
+        return $this->belongsToMany('App\Models\Post', 'users_posts_like', 'user_id', 'post_id')->withTimestamps();
+    }
 }

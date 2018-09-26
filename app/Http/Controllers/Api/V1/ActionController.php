@@ -66,4 +66,65 @@ class ActionController extends Controller
             return $this->actionService->followPost($request->get('uuid'));
         }
     }
+
+    /**
+     * 取消关注
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unFollow($uuid)
+    {
+        return $this->actionService->unFollow($uuid);
+    }
+
+    /**
+     * 赞、取消赞
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likePost($uuid)
+    {
+        return $this->actionService->likeAction($uuid, 'like');
+    }
+
+    /**
+     * 踩、取消踩
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dislikePost($uuid)
+    {
+        return $this->actionService->likeAction($uuid, 'dislike');
+    }
+
+    /**
+     * 查询该文章是否存在 赞、踩
+     * 所有 对内查询 可以使用ID，其他一律使用uuid
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $postId
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusPost($postId)
+    {
+        return $this->actionService->likeStatus($postId);
+    }
 }

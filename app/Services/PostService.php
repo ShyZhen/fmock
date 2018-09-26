@@ -65,6 +65,7 @@ class PostService extends Service
         if ($posts->count()) {
             foreach ($posts as $post) {
                 $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
+                $post->content = str_limit($post->content, 400, '...');
             }
         }
 

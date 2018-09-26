@@ -46,6 +46,11 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
 
-    Route::get('follows', 'ActionController@getMyFollowedPosts');
-    Route::post('follow', 'ActionController@followedPost');
+    Route::get('follow/posts', 'ActionController@getMyFollowedPosts');
+    Route::post('follow/post', 'ActionController@followedPost');
+    Route::delete('follow/post/{uuid}', 'ActionController@unFollow');
+
+    Route::get('like/post/{uuid}', 'ActionController@likePost');
+    Route::get('dislike/post/{uuid}', 'ActionController@dislikePost');
+    Route::get('/status/post/{id}', 'ActionController@statusPost');
 });

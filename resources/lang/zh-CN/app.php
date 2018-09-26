@@ -34,5 +34,8 @@ return [
     'rename_limit' => '抱歉，您的改名次数用光光了',
     'anonymous' => '匿名用户',
     'follow' => '关注',
+    'cancel' => '取消',
+    'like' => '点赞',
+    'dislike' => '踩',
 
 ];
