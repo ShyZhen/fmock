@@ -112,5 +112,4 @@ class UserRepository extends Repository
     {
         return Auth::user()->myFollowedPosts()->detach($postId);
     }
-
 }

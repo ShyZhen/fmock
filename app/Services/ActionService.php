@@ -22,8 +22,8 @@ class ActionService extends Service
     /**
      * ActionService constructor.
      *
-     * @param UserRepository $userRepository
-     * @param PostRepository $postRepository
+     * @param UserRepository           $userRepository
+     * @param PostRepository           $postRepository
      * @param UsersPostsLikeRepository $usersPostsLikeRepository
      */
     public function __construct(
@@ -109,7 +109,6 @@ class ActionService extends Service
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post) {
-
             if ($this->userRepository->unFollow($post->id)) {
                 $post->follow_num -= 1;
                 $post->save();
@@ -192,6 +191,4 @@ class ActionService extends Service
             Response::HTTP_OK
         );
     }
-
-
 }

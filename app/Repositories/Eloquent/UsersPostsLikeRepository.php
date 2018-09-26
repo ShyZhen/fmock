@@ -3,7 +3,6 @@
  * @Author huaixiu.zhen
  * http://litblc.com
  * User: z00455118
-
  */
 namespace App\Repositories\Eloquent;
 
@@ -40,7 +39,7 @@ class UsersPostsLikeRepository extends Repository
         return $this->model->where([
             'user_id' => Auth::id(),
             'post_id' => $postId,
-            'action' => $type
+            'action' => $type,
         ])->first();
     }
 
@@ -49,7 +48,9 @@ class UsersPostsLikeRepository extends Repository
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $pivotId
+     *
      * @return mixed
      */
     public function deleteAction($pivotId)
@@ -73,7 +74,7 @@ class UsersPostsLikeRepository extends Repository
         return $this->create([
             'user_id' => Auth::id(),
             'post_id' => $postId,
-            'action' => $type
+            'action' => $type,
         ]);
     }
 }
