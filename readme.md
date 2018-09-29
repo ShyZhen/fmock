@@ -169,7 +169,7 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `sort` | N | String | N |  | 可选`sort/new` |
+| `sort` | N | String | N |  | 可选`post-new/post-hot/post-anonymous` |
 | `page` | N | Int | N |  | 分页 |
 
 #### post

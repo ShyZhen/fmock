@@ -48,39 +48,9 @@ class UserRepository extends Repository
      */
     public function getMyFollowedPosts()
     {
-        // return $this->find(Auth::id())->myFollowedPosts();
         return Auth::user()->myFollowedPosts()
             ->orderBy('updated_at', 'desc')
             ->paginate(env('PER_PAGE', 10));
-    }
-
-    /**
-     * 通过id获取用户信息，供首页文章显示
-     *
-     * @Author huaixiu.zhen@gmail.com
-     * http://litblc.com
-     *
-     * @param $id
-     *
-     * @return mixed
-     */
-    public function getUserInfoById($id)
-    {
-        $user = $this->find($id);
-
-        if ($user) {
-            $userInfo['uuid'] = $user->uuid;
-            $userInfo['username'] = $user->name;
-            $userInfo['avatar'] = ($user->avatar ? url($user->avatar) : url('/static/defaultAvatar.jpg'));
-            $userInfo['bio'] = $user->bio;
-        } else {
-            $userInfo['uuid'] = '';
-            $userInfo['username'] = __('app.anonymous');
-            $userInfo['avatar'] = url('/static/anonymousAvatar.jpg');
-            $userInfo['bio'] = '';
-        }
-
-        return $userInfo;
     }
 
     /**

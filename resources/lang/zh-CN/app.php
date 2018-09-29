@@ -37,5 +37,6 @@ return [
     'cancel' => '取消',
     'like' => '点赞',
     'dislike' => '踩',
+    'default_bio' => '黑夜给了我黑色的眼睛，我却用它寻找光明'
 
 ];

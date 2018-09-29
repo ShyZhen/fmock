@@ -9,7 +9,6 @@
 namespace App\Services;
 
 use App\Repositories\Eloquent\PostRepository;
-use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,22 +16,17 @@ class PostService extends Service
 {
     private $postRepository;
 
-    private $userRepository;
-
     private $redisService;
 
     /**
      * @param PostRepository $postRepository
-     * @param UserRepository $userRepository
      * @param RedisService   $redisService
      */
     public function __construct(
         PostRepository $postRepository,
-        UserRepository $userRepository,
         RedisService $redisService
     ) {
         $this->postRepository = $postRepository;
-        $this->userRepository = $userRepository;
         $this->redisService = $redisService;
     }
 
@@ -64,7 +58,7 @@ class PostService extends Service
 
         if ($posts->count()) {
             foreach ($posts as $post) {
-                $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
+                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
                 $post->content = str_limit($post->content, 400, '...');
             }
         }
@@ -90,7 +84,7 @@ class PostService extends Service
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post) {
-            $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
+            $post->userInfo = $this->postRepository->handleUserInfo($post->user);
 
             return response()->json(
                 ['data' => $post],
@@ -136,7 +130,7 @@ class PostService extends Service
             ]);
 
             if ($post) {
-                $post->userinfo = $this->userRepository->getUserInfoById($userId);
+                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
 
                 return response()->json(
                     ['data' => $post],
@@ -170,7 +164,7 @@ class PostService extends Service
             $post->content = $content;
 
             if ($post->save()) {
-                $post->userinfo = $this->userRepository->getUserInfoById($post->user_id);
+                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
 
                 return response()->json(
                     ['data' => $post],
