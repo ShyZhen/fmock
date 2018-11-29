@@ -86,6 +86,7 @@ class PostService extends Service
         if ($post) {
             if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
                 $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+
                 return response()->json(
                     ['data' => $post],
                     Response::HTTP_OK
