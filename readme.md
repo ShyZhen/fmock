@@ -177,7 +177,7 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | N |  |  |
+| 无 |  |  | Y |  |  |
 
 #### create-post
 - POST `base_url/api/V1/post`
@@ -238,7 +238,7 @@ A forums build with laravel.
 | 无 |  |  | Y |  |  |
 
 #### status-post
-- GET `base_url/api/V1/status/post/{id}`
+- GET `base_url/api/V1/status/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|

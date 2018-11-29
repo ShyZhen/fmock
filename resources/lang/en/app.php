@@ -37,7 +37,7 @@ return [
     'cancel' => 'Cancel ',
     'like' => 'Like ',
     'dislike' => 'Dislike ',
-    'default_bio' => 'An eye in dark, a heart in bright. '
+    'default_bio' => 'An eye in dark, a heart in bright. ',
 
 
 ];

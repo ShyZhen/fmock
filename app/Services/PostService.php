@@ -84,12 +84,13 @@ class PostService extends Service
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post) {
-            $post->userInfo = $this->postRepository->handleUserInfo($post->user);
-
-            return response()->json(
-                ['data' => $post],
-                Response::HTTP_OK
-            );
+            if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
+                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+                return response()->json(
+                    ['data' => $post],
+                    Response::HTTP_OK
+                );
+            }
         }
 
         return response()->json(
@@ -185,7 +186,7 @@ class PostService extends Service
     }
 
     /**
-     * 删除自己的文章服务
+     * 软删除自己的文章服务
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
@@ -199,7 +200,8 @@ class PostService extends Service
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post && $post->user_id == Auth::id()) {
-            if ($post->delete()) {
+            $post->deleted = 'yes';
+            if ($post->save()) {
                 return response()->json(
                     null,
                     Response::HTTP_NO_CONTENT

@@ -139,8 +139,6 @@ class AuthController extends Controller
      */
     public function passwordCode(Request $request)
     {
-        // $preg_tel = '/^1[3|4|5|8|7][0-9]\d{8}$/';
-        // $preg_email = '/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/';
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|max:255|exists:users,email',
         ]);

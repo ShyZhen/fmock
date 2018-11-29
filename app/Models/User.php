@@ -38,6 +38,8 @@ class User extends Authenticatable
     ];
 
     /**
+     * 获取我关注的文章 按关注时间排序
+     *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
@@ -45,7 +47,10 @@ class User extends Authenticatable
      */
     public function myFollowedPosts()
     {
-        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'post_id')->withTimestamps();
+        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'post_id')
+            ->where('deleted', 'none')
+            ->orderByDesc('pivot_updated_at')
+            ->withTimestamps();
     }
 
     /**

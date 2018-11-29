@@ -74,7 +74,9 @@ class PostRepository extends Repository
      *
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
      * @param $user
+     *
      * @return mixed
      */
     public function handleUserInfo($user)

@@ -49,7 +49,6 @@ class UserRepository extends Repository
     public function getMyFollowedPosts()
     {
         return Auth::user()->myFollowedPosts()
-            ->orderBy('updated_at', 'desc')
             ->paginate(env('PER_PAGE', 10));
     }
 
