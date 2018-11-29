@@ -39,5 +39,4 @@ return [
     'dislike' => 'Dislike ',
     'default_bio' => 'An eye in dark, a heart in bright. ',
 
-
 ];
