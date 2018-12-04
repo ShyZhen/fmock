@@ -38,5 +38,7 @@ return [
     'like' => 'Like ',
     'dislike' => 'Dislike ',
     'default_bio' => 'An eye in dark, a heart in bright. ',
+    'no_comments' => 'There is nothing ',
+    'comment_has_deleted' => 'The comment has been deleted. ',
 
 ];

@@ -53,13 +53,13 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('follow/post', 'ActionController@followedPost');
     Route::delete('follow/post/{uuid}', 'ActionController@unFollow');
 
-    // 赞、取消赞
+    // 赞、取消赞，踩、取消踩
     Route::get('like/post/{uuid}', 'ActionController@likePost');
     Route::get('dislike/post/{uuid}', 'ActionController@dislikePost');
     Route::get('status/post/{uuid}', 'ActionController@statusPost');
 
     // 评论
-    Route::get('comment/{postUuid}', 'CommentController@getCommentByPostUuid');
+    Route::get('comment/{postUuid}/{type?}', 'CommentController@getCommentByPostUuid');
     Route::post('comment', 'CommentController@createComment');
     Route::delete('comment/{uuid}', 'CommentController@deleteComment');
 });

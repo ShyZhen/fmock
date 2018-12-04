@@ -50,7 +50,8 @@ class ActionService extends Service
 
         if ($posts->count()) {
             foreach ($posts as $post) {
-                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                unset($post->user);
             }
         }
 
