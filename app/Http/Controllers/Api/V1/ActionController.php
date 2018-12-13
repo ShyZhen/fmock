@@ -114,18 +114,18 @@ class ActionController extends Controller
     }
 
     /**
-     * 查询该文章是否存在 赞、踩
+     * 查询 当前用户 对该文章是否存在 赞、踩
      * 所有 对内查询 可以使用ID，其他一律使用uuid
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $postId
+     * @param $uuid
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function statusPost($postId)
+    public function statusPost($uuid)
     {
-        return $this->actionService->likeStatus($postId);
+        return $this->actionService->likeStatus($uuid);
     }
 }

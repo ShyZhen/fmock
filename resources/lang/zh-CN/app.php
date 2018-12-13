@@ -12,9 +12,9 @@ return [
     */
     'test' => '测试',
     'email_ttl' => '请检查您的邮箱，距离下一次请求时间为',
-    'email_server' => 'F墨客邮箱服务',
-    'fmock_register_service' => 'F墨客注册服务',
-    'fmock_reset_pwd_service' => 'F墨客改密服务',
+    'email_server' => 'FMock邮箱服务',
+    'fmock_register_service' => 'FMock注册服务',
+    'fmock_reset_pwd_service' => 'FMock改密服务',
     'verify_code' => '验证码',
     'email_error' => '如果这不是您的邮件，请不必理会',
     'send_email' => '邮件发送',
@@ -37,6 +37,8 @@ return [
     'cancel' => '取消',
     'like' => '点赞',
     'dislike' => '踩',
-    'default_bio' => '黑夜给了我黑色的眼睛，我却用它寻找光明'
+    'default_bio' => '黑夜给了我黑色的眼睛，我却用它寻找光明',
+    'no_comments' => '没有相关评论',
+    'comment_has_deleted' => '该评论已被删除',
 
 ];

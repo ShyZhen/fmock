@@ -50,7 +50,8 @@ class ActionService extends Service
 
         if ($posts->count()) {
             foreach ($posts as $post) {
-                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                unset($post->user);
             }
         }
 
@@ -61,7 +62,7 @@ class ActionService extends Service
     }
 
     /**
-     * 关注文章操作
+     * 关注文章操作 并更新post follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -95,7 +96,7 @@ class ActionService extends Service
     }
 
     /**
-     * 取消关注
+     * 取消关注 并更新post follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -177,18 +178,27 @@ class ActionService extends Service
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $postId
+     * @param $uuid
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function likeStatus($postId)
+    public function likeStatus($uuid)
     {
-        $like = $this->usersPostsLikeRepository->hasAction($postId, 'like');
-        $dislike = $this->usersPostsLikeRepository->hasAction($postId, 'dislike');
+        $post = $this->postRepository->findBy('uuid', $uuid, ['id']);
+        $postId = $post ? $post->id : 0;
+        if ($postId) {
+            $like = $this->usersPostsLikeRepository->hasAction($postId, 'like');
+            $dislike = $this->usersPostsLikeRepository->hasAction($postId, 'dislike');
 
-        return response()->json(
-            ['data' => ['like' => $like ? true : false, 'dislike' => $dislike ? true : false]],
-            Response::HTTP_OK
-        );
+            return response()->json(
+                ['data' => ['like' => $like ? true : false, 'dislike' => $dislike ? true : false]],
+                Response::HTTP_OK
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.no_posts')],
+                Response::HTTP_NOT_FOUND
+            );
+        }
     }
 }

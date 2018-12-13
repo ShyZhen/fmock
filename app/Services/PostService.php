@@ -58,7 +58,8 @@ class PostService extends Service
 
         if ($posts->count()) {
             foreach ($posts as $post) {
-                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                unset($post->user);
                 $post->content = str_limit($post->content, 400, '...');
             }
         }
@@ -84,12 +85,15 @@ class PostService extends Service
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post) {
-            $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+            if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
+                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                unset($post->user);
 
-            return response()->json(
-                ['data' => $post],
-                Response::HTTP_OK
-            );
+                return response()->json(
+                    ['data' => $post],
+                    Response::HTTP_OK
+                );
+            }
         }
 
         return response()->json(
@@ -130,7 +134,8 @@ class PostService extends Service
             ]);
 
             if ($post) {
-                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                unset($post->user);
 
                 return response()->json(
                     ['data' => $post],
@@ -164,7 +169,8 @@ class PostService extends Service
             $post->content = $content;
 
             if ($post->save()) {
-                $post->userInfo = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                unset($post->user);
 
                 return response()->json(
                     ['data' => $post],
@@ -185,7 +191,7 @@ class PostService extends Service
     }
 
     /**
-     * 删除自己的文章服务
+     * 软删除自己的文章服务
      *
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
@@ -199,7 +205,8 @@ class PostService extends Service
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post && $post->user_id == Auth::id()) {
-            if ($post->delete()) {
+            $post->deleted = 'yes';
+            if ($post->save()) {
                 return response()->json(
                     null,
                     Response::HTTP_NO_CONTENT

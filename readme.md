@@ -67,6 +67,10 @@ A forums build with laravel.
 - [dislikePost](#dislike-post) | 踩/取消踩
 - [statusPost](#status-post) | 查看赞/踩状态
 
+- [getCommentByPostUuid](#post-comment) | 获取文章评论
+- [createComment](#create-post-comment) | 创建评论、回复
+- [deleteComment](#delete-post-comment) | 删除自己的评论、回复
+
 
 
 #### register-code
@@ -177,7 +181,7 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | N |  |  |
+| 无 |  |  | Y |  |  |
 
 #### create-post
 - POST `base_url/api/V1/post`
@@ -186,7 +190,7 @@ A forums build with laravel.
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `title` | Y | String | Y | &lt;64 |  |
 | `content` | Y | Int | Y | &lt;10000 |  |
-| `anonymous` | Y | Boolean | Y | 是否匿名发布 |  |
+| `anonymous` | Y | Boolean | Y |  | 是否匿名发布 |
 
 #### update-post
 - PUT `base_url/api/V1/post/{uuid}`
@@ -238,11 +242,34 @@ A forums build with laravel.
 | 无 |  |  | Y |  |  |
 
 #### status-post
-- GET `base_url/api/V1/status/post/{id}`
+- GET `base_url/api/V1/status/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
+
+#### post-comment
+- GET `base_url/api/V1/comment/{postUuid}/{type?}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  | `{type}`可选new/hot,默认new |
+
+#### create-post-comment
+- POST `base_url/api/V1/comment`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `post_uuid` | Y | String | Y |  |  |
+| `parent_id` | Y | Int | Y |  |  |
+| `content` | Y | String | Y | &lt;500 |  |
+
+#### delete-post-comment
+- DELETE `base_url/api/V1/comment/{id}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  | 删除评论传递的是评论ID，评论表没有uuid |
 
 
 ## Security Vulnerabilities

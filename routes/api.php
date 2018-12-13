@@ -12,11 +12,12 @@
 */
 
 Route::get('/', function () {
-    return 'api /';
+    return 'FMock Api /';
 });
 
 // no access_token
 Route::prefix('V1')->namespace('Api\V1')->group(function () {
+    // 用户登录注册
     Route::get('locale', 'IndexController@getLocale');
     Route::post('login', 'AuthController@login');
     Route::post('register-code', 'AuthController@registerCode');
@@ -24,33 +25,41 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
     Route::post('password-code', 'AuthController@passwordCode');
     Route::post('password', 'AuthController@password');
 
+    // 首页文章列表
     Route::get('posts', 'PostController@getAllPosts');
-    Route::get('post/{uuid}', 'PostController@getPostByUuid');
-//    Route::post('comment', 'CommentController@create');
-//    Route::get('comment', 'CommentController@comments');
 });
 
 // need access_token
 Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(function () {
+    // 用户信息
     Route::get('me', 'AuthController@myInfo');
     Route::post('me', 'AuthController@updateMyInfo');
     Route::get('user/{uuid}', 'AuthController@getUserByUuid');
-
     Route::post('my-name', 'AuthController@updateMyName');
     Route::get('logout', 'AuthController@logout');
 
+    // 文章
+    Route::get('post/{uuid}', 'PostController@getPostByUuid');
     Route::post('post', 'PostController@createPost');
     Route::put('post/{uuid}', 'PostController@updatePost');
     Route::delete('post/{uuid}', 'PostController@deletePost');
 
+    // 上传文件
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
 
+    // 关注
     Route::get('follow/posts', 'ActionController@getMyFollowedPosts');
     Route::post('follow/post', 'ActionController@followedPost');
     Route::delete('follow/post/{uuid}', 'ActionController@unFollow');
 
+    // 赞、取消赞，踩、取消踩
     Route::get('like/post/{uuid}', 'ActionController@likePost');
     Route::get('dislike/post/{uuid}', 'ActionController@dislikePost');
-    Route::get('/status/post/{id}', 'ActionController@statusPost');
+    Route::get('status/post/{uuid}', 'ActionController@statusPost');
+
+    // 评论
+    Route::get('comment/{postUuid}/{type?}', 'CommentController@getCommentByPostUuid');
+    Route::post('comment', 'CommentController@createComment');
+    Route::delete('comment/{uuid}', 'CommentController@deleteComment');
 });

@@ -23,6 +23,37 @@ class Post extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\Models\User', 'user_id', 'id')->select(['id', 'uuid', 'name', 'avatar', 'bio']);
+        return $this->belongsTo('App\Models\User', 'user_id', 'id')
+            ->select(['id', 'uuid', 'name', 'avatar', 'bio']);
+    }
+
+    /**
+     * 最新评论 (已废弃，使用Comment模型获取数据)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function newComments()
+    {
+        return $this->hasMany('App\Models\Comment', 'post_id', 'id')
+            ->where('deleted', 'none')
+            ->orderByDesc('created_at');
+    }
+
+    /**
+     * 最热评论 (已废弃，使用Comment模型获取数据)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function hotComments()
+    {
+        return $this->hasMany('App\Models\Comment', 'post_id', 'id')
+            ->where('deleted', 'none')
+            ->orderByDesc('like_num');
     }
 }

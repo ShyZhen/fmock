@@ -22,6 +22,7 @@ class CreatePostsTable extends Migration
             $table->string('title', 128)->defult('');
             $table->text('content');
             $table->unsignedInteger('follow_num')->default(0);
+            $table->unsignedInteger('comment_num')->default(0);
             $table->unsignedInteger('like_num')->default(0);
             $table->unsignedInteger('dislike_num')->default(0);
             $table->enum('deleted', ['yes', 'none'])->default('none');
