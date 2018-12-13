@@ -24,9 +24,9 @@ class CommentService extends Service
     /**
      * CommentService constructor.
      *
-     * @param PostRepository $postRepository
+     * @param PostRepository    $postRepository
      * @param CommentRepository $commentRepository
-     * @param RedisService $redisService
+     * @param RedisService      $redisService
      */
     public function __construct(
         PostRepository $postRepository,
@@ -94,6 +94,7 @@ class CommentService extends Service
                 Response::HTTP_OK
             );
         }
+
         return response()->json(
             ['message' => __('app.no_posts')],
             Response::HTTP_NOT_FOUND
@@ -155,6 +156,7 @@ class CommentService extends Service
                     Response::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
+
             return response()->json(
                 ['message' => __('app.no_posts')],
                 Response::HTTP_NOT_FOUND
