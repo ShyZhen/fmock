@@ -8,10 +8,10 @@
  */
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Services\FileService;
 use Illuminate\Http\Request;
+use App\Services\FileService;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class FileController extends Controller

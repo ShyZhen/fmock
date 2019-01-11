@@ -8,9 +8,9 @@
  */
 namespace App\Services;
 
-use App\Repositories\Eloquent\PostRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Eloquent\PostRepository;
 
 class PostService extends Service
 {
@@ -36,16 +36,13 @@ class PostService extends Service
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
      *
-     * @param null $sort
+     * @param $sort [post-new|post-hot|post-anonymous]
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllPosts($sort = null)
+    public function getAllPosts($sort)
     {
         switch ($sort) {
-            case 'post-new':
-                $posts = $this->postRepository->getNewPost();
-                break;
             case 'post-hot':
                 $posts = $this->postRepository->getFavoritePost();
                 break;
@@ -53,7 +50,8 @@ class PostService extends Service
                 $posts = $this->postRepository->getAnonymousPost();
                 break;
             default:
-                $posts = [];
+                $posts = $this->postRepository->getNewPost();
+                break;
         }
 
         if ($posts->count()) {
@@ -118,13 +116,13 @@ class PostService extends Service
     {
         $userId = Auth::id();
 
-        if ($this->redisService->isRedisExists('post:user:'.$userId)) {
+        if ($this->redisService->isRedisExists('post:user:' . $userId)) {
             return response()->json(
-                ['message' => __('app.action_ttl').$this->redisService->getRedisTtl('post:user:'.$userId).'s'],
+                ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl('post:user:' . $userId) . 's'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-            $this->redisService->setRedis('post:user:'.$userId, 'create', 'EX', 120);
+            $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
             $uuid = $this->uuid('post-');
             $post = $this->postRepository->create([
                 'uuid' => $uuid,

@@ -6,10 +6,10 @@
  */
 namespace App\Services;
 
+use Illuminate\Http\Response;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\UsersPostsLikeRepository;
-use Illuminate\Http\Response;
 
 class ActionService extends Service
 {
@@ -84,7 +84,7 @@ class ActionService extends Service
             }
 
             return response()->json(
-                ['message' => __('app.follow').__('app.success')],
+                ['message' => __('app.follow') . __('app.success')],
                 Response::HTTP_OK
             );
         } else {
@@ -116,7 +116,7 @@ class ActionService extends Service
             }
 
             return response()->json(
-                ['message' => __('app.cancel').__('app.follow').__('app.success')],
+                ['message' => __('app.cancel') . __('app.follow') . __('app.success')],
                 Response::HTTP_OK
             );
         } else {
@@ -140,7 +140,7 @@ class ActionService extends Service
      */
     public function likeAction($uuid, $type)
     {
-        $field = $type.'_num';
+        $field = $type . '_num';
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post) {
@@ -151,7 +151,7 @@ class ActionService extends Service
                 $this->usersPostsLikeRepository->deleteAction($pivot->id);
                 $post->$field -= 1;
                 $post->save();
-                $message = __('app.cancel').__('app.success');
+                $message = __('app.cancel') . __('app.success');
             } else {
                 // 生成
                 $this->usersPostsLikeRepository->makeAction($post->id, $type);

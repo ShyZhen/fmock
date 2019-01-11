@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -23,6 +23,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         'Laravel\Passport\Events\RefreshTokenCreated' => [
             'App\Listeners\PruneOldTokens',
+        ],
+
+        // 测试事件
+        'App\Events\Test' => [
+            'App\Listeners\TestListener',
         ],
     ];
 
