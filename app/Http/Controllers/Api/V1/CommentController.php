@@ -61,7 +61,7 @@ class CommentController extends Controller
         $validator = Validator::make($request->all(), [
             'post_uuid' => 'required',
             'parent_id' => 'required',       // 父级评论id
-            'content' => 'required|max:500'
+            'content' => 'required|max:500',
         ]);
 
         if ($validator->fails()) {
@@ -70,7 +70,6 @@ class CommentController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->commentService->createComment(
                 $request->get('post_uuid'),
                 $request->get('parent_id'),
