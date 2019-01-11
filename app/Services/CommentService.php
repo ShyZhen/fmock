@@ -8,10 +8,10 @@
  */
 namespace App\Services;
 
-use App\Repositories\Eloquent\CommentRepository;
-use App\Repositories\Eloquent\PostRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Eloquent\PostRepository;
+use App\Repositories\Eloquent\CommentRepository;
 
 class CommentService extends Service
 {
@@ -117,9 +117,9 @@ class CommentService extends Service
     {
         $userId = Auth::id();
 
-        if ($this->redisService->isRedisExists('comment:user:'.$userId)) {
+        if ($this->redisService->isRedisExists('comment:user:' . $userId)) {
             return response()->json(
-                ['message' => __('app.action_ttl').$this->redisService->getRedisTtl('comment:user:'.$userId).'s'],
+                ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl('comment:user:' . $userId) . 's'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
@@ -137,7 +137,7 @@ class CommentService extends Service
 
                 if ($comment) {
                     // 写入限制 1分钟一次
-                    $this->redisService->setRedis('comment:user:'.$userId, 'create', 'EX', 60);
+                    $this->redisService->setRedis('comment:user:' . $userId, 'create', 'EX', 60);
                     $comment->user_info = $this->postRepository->handleUserInfo($comment->user);
                     unset($comment->user);
 

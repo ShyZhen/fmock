@@ -8,9 +8,9 @@
  */
 namespace App\Services;
 
-use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Eloquent\UserRepository;
 
 class FileService extends Service
 {
@@ -47,25 +47,25 @@ class FileService extends Service
     {
         if ($file->isValid()) {
             $fileExt = 'jpg';                                                              // $fileExt = $file->extension();
-            $tmpPath = $savePath.'/'.date('Y-m-d').'/';
-            $filePath = '/app/public/'.$tmpPath;                                         // 定义文件的存储路径
-            $imageName = $this->uuid($prefix).'.'.$fileExt;                            // 定义唯一文件名
+            $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
+            $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
+            $imageName = $this->uuid($prefix) . '.' . $fileExt;                            // 定义唯一文件名
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
             if (!file_exists($storagePath)) {
                 mkdir($storagePath, 0666, true);
             }
-            $fullName = $storagePath.$imageName;
+            $fullName = $storagePath . $imageName;
 
             if ($this->imageService->saveImg($file, $fullName)) {
                 return response()->json(
-                    ['data' => url('/storage/'.$tmpPath.$imageName)],
+                    ['data' => url('/storage/' . $tmpPath . $imageName)],
                     Response::HTTP_CREATED
                 );
             }
 
             return response()->json(
-                ['message' => __('app.unknown').__('app.error')],
+                ['message' => __('app.unknown') . __('app.error')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
@@ -91,28 +91,28 @@ class FileService extends Service
     {
         if ($file->isValid()) {
             $fileExt = 'jpg';                                                              // $fileExt = $file->extension();
-            $tmpPath = $savePath.'/'.date('Y-m-d').'/';
-            $filePath = '/app/public/'.$tmpPath;                                         // 定义文件的存储路径
+            $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
+            $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
             $user = $this->userRepository->findBy('id', Auth::id());
-            $imageName = $user->uuid.'.'.$fileExt;                                     // 头像名与用户uuid一致
+            $imageName = $user->uuid . '.' . $fileExt;                                     // 头像名与用户uuid一致
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
             if (!file_exists($storagePath)) {
                 mkdir($storagePath, 0666, true);
             }
-            $fullName = $storagePath.$imageName;
+            $fullName = $storagePath . $imageName;
 
             if ($this->imageService->saveImg($file, $fullName)) {
-                $this->userRepository->update(['avatar' => '/storage/'.$tmpPath.$imageName], $user->id);
+                $this->userRepository->update(['avatar' => '/storage/' . $tmpPath . $imageName], $user->id);
 
                 return response()->json(
-                    ['data' => url('/storage/'.$tmpPath.$imageName)],
+                    ['data' => url('/storage/' . $tmpPath . $imageName)],
                     Response::HTTP_OK
                 );
             }
 
             return response()->json(
-                ['message' => __('app.unknown').__('app.error')],
+                ['message' => __('app.unknown') . __('app.error')],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {

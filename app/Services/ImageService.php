@@ -34,7 +34,7 @@ class ImageService extends Service
             'attr' => $attr,
         ];
         $this->percent = $this->setPercent($this->maxWidth, $imageInfo['width']);
-        $create = 'imagecreatefrom'.$imageInfo['type'];
+        $create = 'imagecreatefrom' . $imageInfo['type'];
         $image = $create($file);
         $newWidth = $imageInfo['width'] * $this->percent;
         $newHeight = $imageInfo['height'] * $this->percent;
