@@ -8,10 +8,10 @@
  */
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Services\AuthService;
 use Illuminate\Http\Request;
+use App\Services\AuthService;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -255,7 +255,7 @@ class AuthController extends Controller
     public function updateMyName(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:20|unique:users,name,'.Auth::id().',id',
+            'name' => 'required|max:20|unique:users,name,' . Auth::id() . ',id',
         ]);
 
         if ($validator->fails()) {

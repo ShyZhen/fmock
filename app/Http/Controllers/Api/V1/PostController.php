@@ -10,10 +10,10 @@
  */
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use App\Services\PostService;
 use Illuminate\Http\Request;
+use App\Services\PostService;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -74,7 +74,7 @@ class PostController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:64',
-            'content' => 'required|max:'.env('CONTENT_NUM'),
+            'content' => 'required|max:' . env('CONTENT_NUM'),
             'anonymous' => 'required|boolean',
         ]);
 
@@ -106,7 +106,7 @@ class PostController extends Controller
     public function updatePost(Request $request, $uuid)
     {
         $validator = Validator::make($request->all(), [
-            'content' => 'required|max:'.env('CONTENT_NUM'),
+            'content' => 'required|max:' . env('CONTENT_NUM'),
         ]);
 
         if ($validator->fails()) {

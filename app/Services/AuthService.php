@@ -8,9 +8,9 @@
  */
 namespace App\Services;
 
-use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Eloquent\UserRepository;
 
 class AuthService extends Service
 {
@@ -49,22 +49,22 @@ class AuthService extends Service
      */
     public function sendRegisterCode($account)
     {
-        if ($this->redisService->isRedisExists('user:email:'.$account)) {
+        if ($this->redisService->isRedisExists('user:email:' . $account)) {
             return response()->json(
-                ['message' => __('app.email_ttl').$this->redisService->getRedisTtl('user:email:'.$account).'s'],
+                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('user:email:' . $account) . 's'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
             $code = $this->code();
-            $data = ['data' => __('app.verify_code').$code.__('app.email_error')];
+            $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
             $subject = __('app.fmock_register_service');
             $mail = $this->emailService->sendEmail($account, $data, $subject);
 
             if ($mail) {
-                $this->redisService->setRedis('user:email:'.$account, $code, 'EX', 600);
+                $this->redisService->setRedis('user:email:' . $account, $code, 'EX', 600);
 
                 return response()->json(
-                    ['message' => __('app.send_email').__('app.success')],
+                    ['message' => __('app.send_email') . __('app.success')],
                     Response::HTTP_OK
                 );
             }
@@ -88,23 +88,23 @@ class AuthService extends Service
      */
     public function sendPasswordCode($email)
     {
-        if ($this->redisService->getRedis('password:email:'.$email)) {
+        if ($this->redisService->getRedis('password:email:' . $email)) {
             return response()->json(
-                ['message' => __('app.email_ttl').$this->redisService->getRedisTtl('password:email:'.$email).'s'],
+                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('password:email:' . $email) . 's'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
             $code = $this->code();
-            $this->redisService->setRedis('password:email:'.$email, $code, 'EX', 600);
+            $this->redisService->setRedis('password:email:' . $email, $code, 'EX', 600);
             $data = [
-                'data' => __('app.verify_code').$code.__('app.email_error'),
+                'data' => __('app.verify_code') . $code . __('app.email_error'),
             ];
             $subject = __('app.fmock_reset_pwd_service');
             $mail = $this->emailService->sendEmail($email, $data, $subject);
 
             if ($mail) {
                 return response()->json(
-                    ['message' => __('app.send_email').__('app.success')],
+                    ['message' => __('app.send_email') . __('app.success')],
                     Response::HTTP_OK
                 );
             }
@@ -131,7 +131,7 @@ class AuthService extends Service
      */
     public function register($name, $password, $email, $verifyCode)
     {
-        $code = $this->redisService->getRedis('user:email:'.$email);
+        $code = $this->redisService->getRedis('user:email:' . $email);
 
         if ($code) {
             if ($code == $verifyCode) {
@@ -150,14 +150,14 @@ class AuthService extends Service
                 );
             } else {
                 return response()->json(
-                    ['message' => __('app.verify_code').__('app.error')],
+                    ['message' => __('app.verify_code') . __('app.error')],
                     Response::HTTP_UNAUTHORIZED
                 );
             }
         }
 
         return response()->json(
-            ['message' => __('app.verify_code').__('app.nothing_or_expire')],
+            ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
             Response::HTTP_UNPROCESSABLE_ENTITY
         );
     }
@@ -194,7 +194,7 @@ class AuthService extends Service
                 );
             } else {
                 return response()->json(
-                    ['message' => __('app.password').__('app.error')],
+                    ['message' => __('app.password') . __('app.error')],
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
@@ -220,7 +220,7 @@ class AuthService extends Service
      */
     public function changePassword($email, $verifyCode, $password)
     {
-        $code = $this->redisService->getRedis('password:email:'.$email);
+        $code = $this->redisService->getRedis('password:email:' . $email);
 
         if ($code) {
             if ($code == $verifyCode) {
@@ -229,19 +229,19 @@ class AuthService extends Service
                 $user->save();
 
                 return response()->json(
-                    ['message' => __('app.change').__('app.success')],
+                    ['message' => __('app.change') . __('app.success')],
                     Response::HTTP_OK
                 );
             } else {
                 return response()->json(
-                    ['message' => __('app.verify_code').__('app.error')],
+                    ['message' => __('app.verify_code') . __('app.error')],
                     Response::HTTP_UNAUTHORIZED
                 );
             }
         }
 
         return response()->json(
-            ['message' => __('app.verify_code').__('app.nothing_or_expire')],
+            ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
             Response::HTTP_UNPROCESSABLE_ENTITY
         );
     }
@@ -366,7 +366,7 @@ class AuthService extends Service
         Auth::guard('api')->user()->token()->delete();
 
         return response()->json(
-            ['message' => __('app.logout').__('app.success')],
+            ['message' => __('app.logout') . __('app.success')],
             Response::HTTP_OK
         );
     }
@@ -383,14 +383,14 @@ class AuthService extends Service
      */
     private function verifyPasswordLimit($email)
     {
-        if ($this->redisService->isRedisExists('login:times:'.$email)) {
-            $this->redisService->redisIncr('login:times:'.$email);
+        if ($this->redisService->isRedisExists('login:times:' . $email)) {
+            $this->redisService->redisIncr('login:times:' . $email);
 
-            if ($this->redisService->getRedis('login:times:'.$email) >= 10) {
+            if ($this->redisService->getRedis('login:times:' . $email) >= 10) {
                 return true;
             }
         } else {
-            $this->redisService->setRedis('login:times:'.$email, 1, 'EX', 600);
+            $this->redisService->setRedis('login:times:' . $email, 1, 'EX', 600);
 
             return false;
         }
