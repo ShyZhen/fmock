@@ -24,6 +24,11 @@ class EventServiceProvider extends ServiceProvider
         'Laravel\Passport\Events\RefreshTokenCreated' => [
             'App\Listeners\PruneOldTokens',
         ],
+
+        // 测试事件
+        'App\Events\Test' => [
+            'App\Listeners\TestListener',
+        ],
     ];
 
     /**

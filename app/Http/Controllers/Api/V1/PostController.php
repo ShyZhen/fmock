@@ -40,7 +40,7 @@ class PostController extends Controller
      */
     public function getAllPosts(Request $request)
     {
-        $sort = $request->get('sort', null);
+        $sort = $request->get('sort', 'post-new');
 
         return $this->postService->getAllPosts($sort);
     }

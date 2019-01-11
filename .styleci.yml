@@ -1,15 +1,15 @@
 preset: psr2
 
 enabled:
-  - concat_without_spaces
+  - concat_with_spaces
   - ereg_to_preg
-  - extra_empty_lines
+  - no_extra_consecutive_blank_lines
   - short_array_syntax
   - method_separation
   - multiline_array_trailing_comma
   - no_empty_lines_after_phpdocs
   - operators_spaces
-  - ordered_use
+  - length_ordered_imports
   - phpdoc_align
   - phpdoc_indent
   - phpdoc_inline_tag
@@ -23,18 +23,18 @@ enabled:
   - phpdoc_type_to_var
   - phpdoc_types
   - phpdoc_var_without_name
-  - return
+  - blank_line_before_return
   - self_accessor
-  - short_bool_cast
+  - no_short_bool_cast
   - single_quote
-  - spaces_after_semicolon
-  - spaces_cast
-  - standardize_not_equal
+  - space_after_semicolon
+  - cast_spaces
+  - standardize_not_equals
   - ternary_spaces
   - trim_array_spaces
   - unalign_double_arrow
   - unalign_equals
   - unary_operators_spaces
   - unneeded_control_parentheses
-  - unused_use
-  - whitespacy_lines
+  - no_unused_imports
+  - no_whitespace_in_blank_line

@@ -36,16 +36,13 @@ class PostService extends Service
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
      *
-     * @param null $sort
+     * @param $sort [post-new|post-hot|post-anonymous]
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllPosts($sort = null)
+    public function getAllPosts($sort)
     {
         switch ($sort) {
-            case 'post-new':
-                $posts = $this->postRepository->getNewPost();
-                break;
             case 'post-hot':
                 $posts = $this->postRepository->getFavoritePost();
                 break;
@@ -53,7 +50,8 @@ class PostService extends Service
                 $posts = $this->postRepository->getAnonymousPost();
                 break;
             default:
-                $posts = [];
+                $posts = $this->postRepository->getNewPost();
+                break;
         }
 
         if ($posts->count()) {

@@ -37,6 +37,7 @@ A forums build with laravel.
  - `php artisan storage:link`
  - `php artisan migrate`
  - `php artisan passport:install`
+ - `php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`
 
 
 ## API Index
