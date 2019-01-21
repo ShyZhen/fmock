@@ -8,7 +8,7 @@ namespace App\Repositories\Eloquent;
 
 use Illuminate\Support\Facades\Auth;
 
-class UsersPostsLikeRepository extends Repository
+class PostsCommentsLikeRepository extends Repository
 {
     /**
      * 实现抽象函数获取模型
@@ -20,7 +20,7 @@ class UsersPostsLikeRepository extends Repository
      */
     public function model()
     {
-        return 'App\Models\UsersPostsLike';
+        return 'App\Models\PostsCommentsLike';
     }
 
     /**
@@ -31,15 +31,17 @@ class UsersPostsLikeRepository extends Repository
      *
      * @param $postId
      * @param $type
+     * @param $resource
      *
      * @return mixed
      */
-    public function hasAction($postId, $type)
+    public function hasAction($postId, $type, $resource)
     {
         return $this->model->where([
             'user_id' => Auth::id(),
-            'post_id' => $postId,
+            'resource_id' => $postId,
             'action' => $type,
+            'type' => $resource,
         ])->first();
     }
 
@@ -66,15 +68,17 @@ class UsersPostsLikeRepository extends Repository
      *
      * @param $postId
      * @param $type
+     * @param $resource
      *
      * @return mixed
      */
-    public function makeAction($postId, $type)
+    public function makeAction($postId, $type, $resource)
     {
         return $this->create([
             'user_id' => Auth::id(),
-            'post_id' => $postId,
+            'resource_id' => $postId,
             'action' => $type,
+            'type' => $resource,
         ]);
     }
 }

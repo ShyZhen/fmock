@@ -84,7 +84,7 @@ class ActionController extends Controller
     }
 
     /**
-     * 赞、取消赞
+     * 赞、取消赞(文章)
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -95,11 +95,11 @@ class ActionController extends Controller
      */
     public function likePost($uuid)
     {
-        return $this->actionService->likeAction($uuid, 'like');
+        return $this->actionService->userAction($uuid, 'like', 'post');
     }
 
     /**
-     * 踩、取消踩
+     * 踩、取消踩(文章)
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -110,7 +110,7 @@ class ActionController extends Controller
      */
     public function dislikePost($uuid)
     {
-        return $this->actionService->likeAction($uuid, 'dislike');
+        return $this->actionService->userAction($uuid, 'dislike', 'post');
     }
 
     /**
@@ -126,6 +126,51 @@ class ActionController extends Controller
      */
     public function statusPost($uuid)
     {
-        return $this->actionService->likeStatus($uuid);
+        return $this->actionService->status($uuid, 'post');
+    }
+
+    /**
+     * 赞、取消赞(评论)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likeComment($id)
+    {
+        return $this->actionService->userAction($id, 'like', 'comment');
+    }
+
+    /**
+     * 踩、取消踩(评论)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dislikeComment($id)
+    {
+        return $this->actionService->userAction($id, 'dislike', 'comment');
+    }
+
+    /**
+     * 查询 当前用户 对该评论是否存在 赞、踩
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusComment($id)
+    {
+        return $this->actionService->status($id, 'comment');
     }
 }

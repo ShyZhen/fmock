@@ -122,7 +122,6 @@ class PostService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-            $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
             $uuid = $this->uuid('post-');
             $post = $this->postRepository->create([
                 'uuid' => $uuid,
@@ -132,6 +131,8 @@ class PostService extends Service
             ]);
 
             if ($post) {
+                // 写入限制 2分钟一次
+                $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
 
