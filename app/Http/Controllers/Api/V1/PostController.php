@@ -136,4 +136,19 @@ class PostController extends Controller
     {
         return $this->postService->deletePost($uuid);
     }
+
+    /**
+     * 获取某个用户的所有文章列表
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $userUuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function userPost($userUuid)
+    {
+        return $this->postService->getUserPosts($userUuid);
+    }
 }

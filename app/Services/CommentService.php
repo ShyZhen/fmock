@@ -11,6 +11,7 @@ namespace App\Services;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
+use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\CommentRepository;
 
 class CommentService extends Service
@@ -21,21 +22,65 @@ class CommentService extends Service
 
     private $redisService;
 
+    private $userRepository;
+
     /**
      * CommentService constructor.
      *
      * @param PostRepository    $postRepository
      * @param CommentRepository $commentRepository
      * @param RedisService      $redisService
+     * @param UserRepository      $userRepository
      */
     public function __construct(
         PostRepository $postRepository,
         CommentRepository $commentRepository,
-        RedisService $redisService
+        RedisService $redisService,
+        UserRepository $userRepository
     ) {
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
         $this->redisService = $redisService;
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * 处理评论信息
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param object $comments
+     *
+     * @return object
+     */
+    private function handleComments($comments)
+    {
+        foreach ($comments as $comment) {
+            $comment->user_info = $this->postRepository->handleUserInfo($comment->user);
+            unset($comment->user);
+
+            // 处理已经删除的评论
+            if ($comment->deleted == 'yes') {
+                $comment->content = __('app.comment_has_deleted');
+            }
+
+            // 处理父级评论
+            $comment->parent_info = '';
+            if ($comment->parent_id) {
+                $comment->parent_info = $this->commentRepository->getParentComment($comment->parent_id);
+
+                // 处理父级预加载用户信息
+                $comment->parent_info->user_info = $this->postRepository->handleUserInfo($comment->parent_info->user);
+                unset($comment->parent_info->user);
+
+                // 处理父级已经删除的评论
+                if ($comment->parent_info->deleted == 'yes') {
+                    $comment->parent_info->content = __('app.comment_has_deleted');
+                }
+            }
+        }
+        return $comments;
     }
 
     /**
@@ -63,30 +108,7 @@ class CommentService extends Service
 
             // 处理预加载的用户信息
             if ($comments->count()) {
-                foreach ($comments as $comment) {
-                    $comment->user_info = $this->postRepository->handleUserInfo($comment->user);
-                    unset($comment->user);
-
-                    // 处理已经删除的评论
-                    if ($comment->deleted == 'yes') {
-                        $comment->content = __('app.comment_has_deleted');
-                    }
-
-                    // 处理父级评论
-                    $comment->parent_info = '';
-                    if ($comment->parent_id) {
-                        $comment->parent_info = $this->commentRepository->getParentComment($comment->parent_id);
-
-                        // 处理父级预加载用户信息
-                        $comment->parent_info->user_info = $this->postRepository->handleUserInfo($comment->parent_info->user);
-                        unset($comment->parent_info->user);
-
-                        // 处理父级已经删除的评论
-                        if ($comment->parent_info->deleted == 'yes') {
-                            $comment->parent_info->content = __('app.comment_has_deleted');
-                        }
-                    }
-                }
+                $comments = $this->handleComments($comments);
             }
 
             return response()->json(
@@ -195,6 +217,41 @@ class CommentService extends Service
 
         return response()->json(
             ['message' => __('app.no_comments')],
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+    /**
+     * 获取某个用户全部热评
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $userUuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserComments($userUuid)
+    {
+        $user = $this->userRepository->findBy('uuid', $userUuid);
+        if ($user) {
+
+            // 获取评论集合
+            $comments = $this->commentRepository->getCommentsByUserId($user->id);
+
+            // 处理预加载的用户信息
+            if ($comments->count()) {
+                $comments = $this->handleComments($comments);
+            }
+
+            return response()->json(
+                ['data' => $comments],
+                Response::HTTP_OK
+            );
+        }
+
+        return response()->json(
+            ['message' => __('app.user_is_closure')],
             Response::HTTP_NOT_FOUND
         );
     }

@@ -15,7 +15,7 @@
 </p>
 
 
-## About Fmock
+## About FMock
 A forums build with laravel.
 
 我也不知道要做成一个什么东西。
@@ -75,6 +75,9 @@ A forums build with laravel.
 - [likeComment](#like-comment) | 赞/取消赞（评论）
 - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
 - [statusComment](#status-comment) | 查看赞/踩状态（评论）
+
+- [userComment](#user-comments) | 某用户发布的所有评论(包括自己)
+- [userPost](#user-posts) | 某用户发布的所有文章(包括自己)
 
 
 
@@ -298,12 +301,26 @@ A forums build with laravel.
 | 无 |  |  | Y |  |  |
 
 
+#### user-comments
+- GET `base_url/api/V1/user/comments/{userUuid}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+#### user-posts
+- GET `base_url/api/V1/user/posts/{userUuid}`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Fmock, please send an e-mail to huaixiu.zhen via [huaixiu.zhen@gmail.com](mailto:huaixiu.zhen@gmail.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within FMock, please send an e-mail to huaixiu.zhen via [huaixiu.zhen@gmail.com](mailto:huaixiu.zhen@gmail.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
-The Fmock is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The FMock is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
