@@ -386,7 +386,7 @@ class AuthService extends Service
         if ($this->redisService->isRedisExists('login:times:' . $email)) {
             $this->redisService->redisIncr('login:times:' . $email);
 
-            if ($this->redisService->getRedis('login:times:' . $email) >= 10) {
+            if ($this->redisService->getRedis('login:times:' . $email) >= 5) {
                 return true;
             }
         } else {

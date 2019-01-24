@@ -80,4 +80,24 @@ class CommentRepository extends Repository
 
         return $parentComment;
     }
+
+    /**
+     * 获取某个用户发布过的热评
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $userId
+     *
+     * @return mixed
+     */
+    public function getCommentsByUserId($userId)
+    {
+        $comments = $this->model::with('user')
+            ->where(['user_id' => $userId])
+            ->orderByDesc('created_at')
+            ->paginate(env('PER_PAGE', 10));
+
+        return $comments;
+    }
 }

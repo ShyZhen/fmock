@@ -92,4 +92,19 @@ class CommentController extends Controller
     {
         return $this->commentService->deleteComment($id);
     }
+
+    /**
+     * 获取某个用户全部热评
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $userUuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function userComment($userUuid)
+    {
+        return $this->commentService->getUserComments($userUuid);
+    }
 }

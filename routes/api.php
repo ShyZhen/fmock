@@ -38,7 +38,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('my-name', 'AuthController@updateMyName');
     Route::get('logout', 'AuthController@logout');
 
-    // 文章
+    // 用户对文章操作
     Route::get('post/{uuid}', 'PostController@getPostByUuid');
     Route::post('post', 'PostController@createPost');
     Route::put('post/{uuid}', 'PostController@updatePost');
@@ -67,4 +67,11 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::get('like/comment/{id}', 'ActionController@likeComment');
     Route::get('dislike/comment/{id}', 'ActionController@dislikeComment');
     Route::get('status/comment/{id}', 'ActionController@statusComment');
+
+    // 个人中心 动态
+//    Route::get('my/likes', 'ActionController@myLike');                         // 我赞过的所有文章、评论
+//    Route::get('my/dislikes', 'ActionController@myDislike');                   // 我踩过的所有文章、评论
+    Route::get('user/comments/{userUuid}', 'CommentController@userComment');  // 某用户发布的所有评论(包括自己)
+    Route::get('user/posts/{userUuid}', 'PostController@userPost');           // 某用户发布的所有文章(包括自己)
+
 });

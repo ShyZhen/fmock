@@ -11,6 +11,7 @@ namespace App\Services;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
+use App\Repositories\Eloquent\UserRepository;
 
 class PostService extends Service
 {
@@ -18,16 +19,21 @@ class PostService extends Service
 
     private $redisService;
 
+    private $userRepository;
+
     /**
      * @param PostRepository $postRepository
      * @param RedisService   $redisService
+     * @param UserRepository   $userRepository
      */
     public function __construct(
         PostRepository $postRepository,
-        RedisService $redisService
+        RedisService $redisService,
+        UserRepository $userRepository
     ) {
         $this->postRepository = $postRepository;
         $this->redisService = $redisService;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -47,7 +53,7 @@ class PostService extends Service
                 $posts = $this->postRepository->getFavoritePost();
                 break;
             case 'post-anonymous':
-                $posts = $this->postRepository->getAnonymousPost();
+                $posts = $this->postRepository->getPostsByUserId(0);
                 break;
             default:
                 $posts = $this->postRepository->getNewPost();
@@ -122,7 +128,6 @@ class PostService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-            $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
             $uuid = $this->uuid('post-');
             $post = $this->postRepository->create([
                 'uuid' => $uuid,
@@ -132,6 +137,8 @@ class PostService extends Service
             ]);
 
             if ($post) {
+                // 写入限制 2分钟一次
+                $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
 
@@ -219,6 +226,44 @@ class PostService extends Service
 
         return response()->json(
             ['message' => __('app.no_posts')],
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+    /**
+     * 获取某个用户的所有文章列表
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $userUuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserPosts($userUuid)
+    {
+        $user = $this->userRepository->findBy('uuid', $userUuid);
+        if ($user) {
+
+            // 获取评论集合
+            $posts = $this->postRepository->getPostsByUserId($user->id);
+
+            if ($posts->count()) {
+                foreach ($posts as $post) {
+                    $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                    unset($post->user);
+                    $post->content = str_limit($post->content, 400, '...');
+                }
+            }
+
+            return response()->json(
+                ['data' => $posts],
+                Response::HTTP_OK
+            );
+        }
+
+        return response()->json(
+            ['message' => __('app.user_is_closure')],
             Response::HTTP_NOT_FOUND
         );
     }

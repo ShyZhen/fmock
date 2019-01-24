@@ -34,7 +34,7 @@ class PostRepository extends Repository
     public function getNewPost()
     {
         return $this->model::with('user')->where('deleted', 'none')
-            ->orderBy('created_at', 'desc')
+            ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));
     }
 
@@ -49,12 +49,12 @@ class PostRepository extends Repository
     public function getFavoritePost()
     {
         return $this->model::with('user')->where('deleted', 'none')
-            ->orderBy('like_num', 'desc')
+            ->orderByDesc('like_num')
             ->paginate(env('PER_PAGE', 10));
     }
 
     /**
-     * 匿名文章
+     * 匿名文章(弃用，使用 getPostsByUserId 方法)
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -65,7 +65,7 @@ class PostRepository extends Repository
     {
         return $this->model::with('user')->where('deleted', 'none')
             ->where('user_id', 0)
-            ->orderBy('created_at', 'desc')
+            ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));
     }
 
@@ -94,5 +94,23 @@ class PostRepository extends Repository
         }
 
         return $userInfo;
+    }
+
+    /**
+     * 获取某个用户的所有文章列表
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $userId
+     *
+     * @return mixed
+     */
+    public function getPostsByUserId($userId)
+    {
+        return $this->model::with('user')->where('deleted', 'none')
+            ->where('user_id', $userId)
+            ->orderByDesc('created_at')
+            ->paginate(env('PER_PAGE', 10));
     }
 }

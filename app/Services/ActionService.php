@@ -9,7 +9,8 @@ namespace App\Services;
 use Illuminate\Http\Response;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
-use App\Repositories\Eloquent\UsersPostsLikeRepository;
+use App\Repositories\Eloquent\CommentRepository;
+use App\Repositories\Eloquent\PostsCommentsLikeRepository;
 
 class ActionService extends Service
 {
@@ -17,23 +18,28 @@ class ActionService extends Service
 
     private $postRepository;
 
-    private $usersPostsLikeRepository;
+    private $commentRepository;
+
+    private $postsCommentsLikeRepository;
 
     /**
      * ActionService constructor.
      *
-     * @param UserRepository           $userRepository
-     * @param PostRepository           $postRepository
-     * @param UsersPostsLikeRepository $usersPostsLikeRepository
+     * @param UserRepository $userRepository
+     * @param PostRepository $postRepository
+     * @param CommentRepository $commentRepository
+     * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(
         UserRepository $userRepository,
         PostRepository $postRepository,
-        UsersPostsLikeRepository $usersPostsLikeRepository
+        CommentRepository $commentRepository,
+        PostsCommentsLikeRepository $postsCommentsLikeRepository
     ) {
         $this->userRepository = $userRepository;
         $this->postRepository = $postRepository;
-        $this->usersPostsLikeRepository = $usersPostsLikeRepository;
+        $this->commentRepository = $commentRepository;
+        $this->postsCommentsLikeRepository = $postsCommentsLikeRepository;
     }
 
     /**
@@ -128,35 +134,42 @@ class ActionService extends Service
     }
 
     /**
-     * 赞、取消赞、踩、取消踩
+     * 对 文章/评论 进行 赞、取消赞、踩、取消踩
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $uuid
+     * @param $resourceId
      * @param $type
+     * @param $resourceType
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function likeAction($uuid, $type)
+    public function userAction($resourceId, $type, $resourceType)
     {
+        $resource = '';
         $field = $type . '_num';
-        $post = $this->postRepository->findBy('uuid', $uuid);
 
-        if ($post) {
-            $pivot = $this->usersPostsLikeRepository->hasAction($post->id, $type);
+        if ($resourceType === 'post') {
+            $resource = $this->postRepository->findBy('uuid', $resourceId);
+        } elseif ($resourceType === 'comment') {
+            $resource = $this->commentRepository->find($resourceId);
+        }
+
+        if ($resource) {
+            $pivot = $this->postsCommentsLikeRepository->hasAction($resource->id, $type, $resourceType);
 
             if ($pivot) {
                 // 取消
-                $this->usersPostsLikeRepository->deleteAction($pivot->id);
-                $post->$field -= 1;
-                $post->save();
+                $this->postsCommentsLikeRepository->deleteAction($pivot->id);
+                $resource->$field -= 1;
+                $resource->save();
                 $message = __('app.cancel') . __('app.success');
             } else {
                 // 生成
-                $this->usersPostsLikeRepository->makeAction($post->id, $type);
-                $post->$field += 1;
-                $post->save();
+                $this->postsCommentsLikeRepository->makeAction($resource->id, $type, $resourceType);
+                $resource->$field += 1;
+                $resource->save();
                 $message = __('app.success');
             }
 
@@ -166,29 +179,36 @@ class ActionService extends Service
             );
         } else {
             return response()->json(
-                ['message' => __('app.no_posts')],
+                ['message' => __('app.no_' . $resourceType . 's')],
                 Response::HTTP_NOT_FOUND
             );
         }
     }
 
     /**
-     * 查询该文章是否存在 赞、踩
+     * 查询该 文章/评论 是否存在 赞、踩
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $uuid
+     * @param $resourceId
+     * @param $resourceType
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function likeStatus($uuid)
+    public function status($resourceId, $resourceType)
     {
-        $post = $this->postRepository->findBy('uuid', $uuid, ['id']);
-        $postId = $post ? $post->id : 0;
-        if ($postId) {
-            $like = $this->usersPostsLikeRepository->hasAction($postId, 'like');
-            $dislike = $this->usersPostsLikeRepository->hasAction($postId, 'dislike');
+        $resource = '';
+        if ($resourceType === 'post') {
+            $resource = $this->postRepository->findBy('uuid', $resourceId, ['id']);
+        } elseif ($resourceType === 'comment') {
+            $resource = $this->commentRepository->find($resourceId, ['id']);
+        }
+
+        $resId = $resource ? $resource->id : 0;
+        if ($resId) {
+            $like = $this->postsCommentsLikeRepository->hasAction($resId, 'like', $resourceType);
+            $dislike = $this->postsCommentsLikeRepository->hasAction($resId, 'dislike', $resourceType);
 
             return response()->json(
                 ['data' => ['like' => $like ? true : false, 'dislike' => $dislike ? true : false]],
@@ -196,7 +216,7 @@ class ActionService extends Service
             );
         } else {
             return response()->json(
-                ['message' => __('app.no_posts')],
+                ['message' => __('app.no_' . $resourceType . 's')],
                 Response::HTTP_NOT_FOUND
             );
         }
