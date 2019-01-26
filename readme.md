@@ -35,6 +35,7 @@ A forums build with laravel.
  - `composer install`
  - `php artisan key:generate`
  - `php artisan storage:link`
+ - `chmod -R 766 storage/` and `chmod -R 766 bootstrap/cache/`
  - `php artisan migrate`
  - `php artisan passport:install`
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
