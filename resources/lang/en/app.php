@@ -11,13 +11,14 @@ return [
     |
     */
     'test' => 'test',
-    'email_ttl' => 'Please check your mailbox,and next request time is ',
+    'account_ttl' => 'Please check your mailbox or mobile,and next request time is ',
     'email_server' => 'Fmock email server ',
     'fmock_register_service' => 'Fmock register service ',
     'fmock_reset_pwd_service' => 'Fmock reset password service',
     'verify_code' => 'Verify code is ',
     'email_error' => 'If this is not your email, please do not pay attention to it. ',
     'send_email' => 'Send email ',
+    'send_mobile' => 'Send mobile ',
     'success' => 'Success ',
     'try_again' => 'Net error. Please try again ',
     'nothing_or_expire' => 'Nothing or expire ',
@@ -40,5 +41,6 @@ return [
     'default_bio' => 'An eye in dark, a heart in bright. ',
     'no_comments' => 'There is nothing ',
     'comment_has_deleted' => 'The comment has been deleted. ',
+    'account_validate_fail' => 'The account illegal. ',
 
 ];

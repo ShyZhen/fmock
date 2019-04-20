@@ -1,17 +1,19 @@
 {
-    "name": "shyZhen/fmock",
+    "name": "shy-zhen/fmock",
     "description": "a blog build whit laravel.",
     "keywords": ["blog", "fmock", "laravel", "api"],
     "license": "MIT",
     "type": "project",
     "require": {
         "php": ">=7.0.0",
+        "alibabacloud/client": "^1.3",
         "barryvdh/laravel-cors": "^0.11.0",
         "fideloper/proxy": "~3.3",
         "laravel/framework": "5.5.*",
         "laravel/passport": "~4.0",
         "laravel/tinker": "~1.0",
-        "predis/predis": "^1.1"
+        "predis/predis": "^1.1",
+        "ramsey/uuid": "^3.8"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
@@ -53,7 +55,7 @@
         ]
     },
     "config": {
-        "preferred-install": "dist",
+        "preferred-install": "auto",
         "sort-packages": true,
         "optimize-autoloader": true
     }

@@ -32,28 +32,41 @@ class AuthController extends Controller
     /**
      * 发送注册验证码
      *
-     * @Author huaixiu.zhen@gmail.com
+     * @Author huaixiu.zhen
      * http://litblc.com
      *
      * @param Request $request
      *
-     * @return array|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \AlibabaCloud\Client\Exception\ClientException
      */
     public function registerCode(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255|unique:users,email',
-        ]);
+        $account = $request->get('account');
 
-        if ($validator->fails()) {
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+            $validator = Validator::make($request->all(), [
+                'account' => 'max:255|unique:users,' . $type,
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    ['message' => $validator->errors()->first()],
+                    Response::HTTP_BAD_REQUEST
+                );
+            } else {
+
+                return $this->authService->sendRegisterCode($account, $type);
+            }
+        } else {
+
             return response()->json(
-                ['message' => $validator->errors()->first()],
+                ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
             );
-        } else {
-            $email = $request->get('email');
-
-            return $this->authService->sendRegisterCode($email);
         }
     }
 
@@ -69,24 +82,38 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:16|unique:users,name',
-            'verify_code' => 'required|size:6',
-            'email' => 'required|email|max:255|unique:users,email',
-            'password' => 'required|min:6|max:255|confirmed',
-        ]);
+        $account = $request->get('account');
 
-        if ($validator->fails()) {
-            return response()->json(
-                ['message' => $validator->errors()->first()],
-                Response::HTTP_BAD_REQUEST
-            );
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|max:16|unique:users,name',
+                'verify_code' => 'required|size:6',
+                'account' => 'max:255|unique:users,' . $type,
+                'password' => 'required|min:6|max:255|confirmed',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    ['message' => $validator->errors()->first()],
+                    Response::HTTP_BAD_REQUEST
+                );
+            } else {
+                return $this->authService->register(
+                    $request->get('name'),
+                    $request->get('password'),
+                    $account,
+                    $request->get('verify_code'),
+                    $type
+                );
+            }
         } else {
-            return $this->authService->register(
-                $request->get('name'),
-                $request->get('password'),
-                $request->get('email'),
-                $request->get('verify_code')
+
+            return response()->json(
+                ['message' => __('app.account_validate_fail')],
+                Response::HTTP_BAD_REQUEST
             );
         }
     }
@@ -109,49 +136,75 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255',
-            'password' => 'required|min:6|max:255',
-        ]);
+        $account = $request->get('account');
 
-        if ($validator->fails()) {
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+            $validator = Validator::make($request->all(), [
+                'account' => 'max:255',
+                'password' => 'required|min:6|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    ['message' => $validator->errors()->first()],
+                    Response::HTTP_BAD_REQUEST
+                );
+            } else {
+                $password = $request->get('password');
+
+                return $this->authService->login($account, $password, $type);
+            }
+        } else {
+
             return response()->json(
-                ['message' => $validator->errors()->first()],
+                ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
             );
-        } else {
-            $email = $request->get('email');
-            $password = $request->get('password');
-
-            return $this->authService->login($email, $password);
         }
     }
 
     /**
      * 改密验证码
      *
-     * @Author huaixiu.zhen@gmail.com
+     * @Author huaixiu.zhen
      * http://litblc.com
      *
      * @param Request $request
      *
-     * @return array|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \AlibabaCloud\Client\Exception\ClientException
      */
     public function passwordCode(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255|exists:users,email',
-        ]);
+        $account = $request->get('account');
 
-        if ($validator->fails()) {
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+            $validator = Validator::make($request->all(), [
+                'account' => 'max:255|exists:users,' . $type,
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    ['message' => $validator->errors()->first()],
+                    Response::HTTP_BAD_REQUEST
+                );
+            } else {
+
+                return $this->authService->sendPasswordCode($account, $type);
+            }
+
+        } else {
+
             return response()->json(
-                ['message' => $validator->errors()->first()],
+                ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
             );
-        } else {
-            $email = $request->get('email');
-
-            return $this->authService->sendPasswordCode($email);
         }
     }
 
@@ -167,23 +220,36 @@ class AuthController extends Controller
      */
     public function password(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|max:255|exists:users,email',
-            'verify_code' => 'required|size:6',
-            'password' => 'required|min:6|max:255|confirmed',
-        ]);
+        $account = $request->get('account');
 
-        if ($validator->fails()) {
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+            $validator = Validator::make($request->all(), [
+                'account' => 'max:255|exists:users,' . $type,
+                'verify_code' => 'required|size:6',
+                'password' => 'required|min:6|max:255|confirmed',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(
+                    ['message' => $validator->errors()->first()],
+                    Response::HTTP_BAD_REQUEST
+                );
+            } else {
+                $verifyCode = $request->get('verify_code');
+                $password = $request->get('password');
+
+                return $this->authService->changePassword($account, $verifyCode, $password, $type);
+            }
+
+        } else {
+
             return response()->json(
-                ['message' => $validator->errors()->first()],
+                ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
             );
-        } else {
-            $email = $request->get('email');
-            $verifyCode = $request->get('verify_code');
-            $password = $request->get('password');
-
-            return $this->authService->changePassword($email, $verifyCode, $password);
         }
     }
 
@@ -282,4 +348,36 @@ class AuthController extends Controller
     {
         return $this->authService->getUserByUuid($uuid);
     }
+
+    /**
+     * 判断当前账号状态，是否存在和冻结
+     * 用于输入框缺失焦点时触发
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAccountStatus(Request $request)
+    {
+        $account = $request->get('account');
+
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+
+            return $this->authService->getAccountStatus($account, $type);
+
+        } else {
+
+            return response()->json(
+                ['message' => __('app.account_validate_fail')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
 }

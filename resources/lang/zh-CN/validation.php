@@ -137,6 +137,7 @@ return [
     'attributes' => [
         'name' => '名称',
         'username' => '用户名',
+        'account' => '账号',
         'email' => '邮箱',
         'first_name' => '名',
         'last_name' => '姓',
