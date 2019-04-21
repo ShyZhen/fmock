@@ -10,6 +10,8 @@
  */
 namespace App\Services;
 
+use Illuminate\Http\Request;
+
 class Service
 {
     /**
@@ -46,5 +48,19 @@ class Service
         $code = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_BOTH);
 
         return $code;
+    }
+
+    /**
+     * 获取客户端真实IP
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @return null|string
+     */
+    protected function getClientIp()
+    {
+        Request::setTrustedProxies([getenv('SERVER_ADDR')]);
+        return Request()->getClientIp();
     }
 }

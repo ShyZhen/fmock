@@ -10,6 +10,7 @@ namespace App\Services;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Services\BaseService\RegexService;
 use App\Repositories\Eloquent\UserRepository;
 
 class AuthService extends Service
@@ -37,36 +38,74 @@ class AuthService extends Service
         $this->userRepository = $userRepository;
     }
 
+
     /**
-     * 发送注册码服务 目前使用email服务
+     * 发送注册码服务 支持email和短信服务
      *
-     * @Author huaixiu.zhen@gmail.com
+     * @Author huaixiu.zhen
      * http://litblc.com
      *
      * @param $account
+     * @param $type
      *
-     * @return array|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \AlibabaCloud\Client\Exception\ClientException
      */
-    public function sendRegisterCode($account)
+    public function sendRegisterCode($account, $type)
     {
-        if ($this->redisService->isRedisExists('user:email:' . $account)) {
+        // 同一IP写入限制，防止用户通过大量账号强行注入
+        if ($this->verifyIpLimit('register')) {
             return response()->json(
-                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('user:email:' . $account) . 's'],
+                ['message' => __('app.request_too_much')],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        // 正常逻辑
+        if ($this->redisService->isRedisExists('user:register:account:' . $account)) {
+            return response()->json(
+                ['message' => __('app.account_ttl') . $this->redisService->getRedisTtl('user:register:account:' . $account) . 's'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
+            // 生成验证码
             $code = $this->code();
-            $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
-            $subject = __('app.fmock_register_service');
-            $mail = $this->emailService->sendEmail($account, $data, $subject);
 
-            if ($mail) {
-                $this->redisService->setRedis('user:email:' . $account, $code, 'EX', 600);
+            switch ($type) {
 
-                return response()->json(
-                    ['message' => __('app.send_email') . __('app.success')],
-                    Response::HTTP_OK
-                );
+                // 邮箱
+                case 'email' :
+                    $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
+                    $subject = __('app.fmock_register_service');
+                    $res = $this->emailService->sendEmail($account, $data, $subject);
+                    if ($res) {
+                        $this->redisService->setRedis('user:register:account:' . $account, $code, 'EX', 600);
+
+                        return response()->json(
+                            ['message' => __('app.send_email') . __('app.success')],
+                            Response::HTTP_OK
+                        );
+                    }
+                    break;
+
+                // 手机短信
+                case 'mobile':
+                    $data = ['code' => $code];
+                    $res = SmsService::sendSms($account, json_encode($data), 'FMock');
+                    if (is_array($res) && $res['Code'] === 'OK') {
+                        $this->redisService->setRedis('user:register:account:' . $account, $code, 'EX', 600);
+
+                        return response()->json(
+                            ['message' => __('app.send_mobile') . __('app.success')],
+                            Response::HTTP_OK
+                        );
+                    } else {
+                        return response()->json(
+                            ['message' => is_array($res) ? $res['Message'] : $res],
+                            Response::HTTP_INTERNAL_SERVER_ERROR
+                        );
+                    }
+                    break;
             }
 
             return response()->json(
@@ -77,36 +116,71 @@ class AuthService extends Service
     }
 
     /**
-     * 发送改密验证码服务 目前使用email服务
+     * 发送改密验证码服务 支持email和短信服务
      *
-     * @Author huaixiu.zhen@gmail.com
+     * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $email
+     * @param $account
+     * @param $type
      *
-     * @return array|\Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \AlibabaCloud\Client\Exception\ClientException
      */
-    public function sendPasswordCode($email)
+    public function sendPasswordCode($account, $type)
     {
-        if ($this->redisService->getRedis('password:email:' . $email)) {
+        // 同一IP写入限制，防止用户通过大量账号强行注入
+        if ($this->verifyIpLimit('password-code')) {
             return response()->json(
-                ['message' => __('app.email_ttl') . $this->redisService->getRedisTtl('password:email:' . $email) . 's'],
+                ['message' => __('app.request_too_much')],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        if ($this->redisService->isRedisExists('user:password:account:' . $account)) {
+            return response()->json(
+                ['message' => __('app.account_ttl') . $this->redisService->getRedisTtl('user:password:account:' . $account) . 's'],
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
             $code = $this->code();
-            $this->redisService->setRedis('password:email:' . $email, $code, 'EX', 600);
-            $data = [
-                'data' => __('app.verify_code') . $code . __('app.email_error'),
-            ];
-            $subject = __('app.fmock_reset_pwd_service');
-            $mail = $this->emailService->sendEmail($email, $data, $subject);
 
-            if ($mail) {
-                return response()->json(
-                    ['message' => __('app.send_email') . __('app.success')],
-                    Response::HTTP_OK
-                );
+            switch ($type) {
+
+                // email
+                case 'email' :
+                    $data = ['data' => __('app.verify_code') . $code . __('app.email_error'),];
+                    $subject = __('app.fmock_reset_pwd_service');
+                    $res = $this->emailService->sendEmail($account, $data, $subject);
+
+                    if ($res) {
+                        $this->redisService->setRedis('user:password:account:' . $account, $code, 'EX', 600);
+
+                        return response()->json(
+                            ['message' => __('app.send_email') . __('app.success')],
+                            Response::HTTP_OK
+                        );
+                    }
+                    break;
+
+                // mobile
+                case 'mobile' :
+                    $data = ['code' => $code];
+                    $res = SmsService::sendSms($account, json_encode($data), 'FMock');
+                    if (is_array($res) && $res['Code'] === 'OK') {
+                        $this->redisService->setRedis('user:password:account:' . $account, $code, 'EX', 600);
+
+                        return response()->json(
+                            ['message' => __('app.send_mobile') . __('app.success')],
+                            Response::HTTP_OK
+                        );
+                    } else {
+                        return response()->json(
+                            ['message' => is_array($res) ? $res['Message'] : $res],
+                            Response::HTTP_INTERNAL_SERVER_ERROR
+                        );
+                    }
+                    break;
             }
 
             return response()->json(
@@ -124,14 +198,15 @@ class AuthService extends Service
      *
      * @param $name
      * @param $password
-     * @param $email
+     * @param $account
      * @param $verifyCode
+     * @param $type
      *
      * @return array
      */
-    public function register($name, $password, $email, $verifyCode)
+    public function register($name, $password, $account, $verifyCode, $type)
     {
-        $code = $this->redisService->getRedis('user:email:' . $email);
+        $code = $this->redisService->getRedis('user:register:account:' . $account);
 
         if ($code) {
             if ($code == $verifyCode) {
@@ -139,7 +214,7 @@ class AuthService extends Service
                 $user = $this->userRepository->create([
                     'name' => $name,
                     'password' => bcrypt($password),
-                    'email' => $email,
+                    $type => $account,
                     'uuid' => $uuid,
                 ]);
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
@@ -168,24 +243,34 @@ class AuthService extends Service
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $email
+     * @param $account
      * @param $password
+     * @param $type
      *
      * @return array
      */
-    public function login($email, $password)
+    public function login($account, $password, $type)
     {
-        $user = $this->userRepository->getFirstUserByEmail($email);
+        // 同一IP写入限制，防止用户通过大量账号强行注入
+        if ($this->verifyIpLimit('login')) {
+            return response()->json(
+                ['message' => __('app.request_too_much')],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        $getFirstUserFunc = 'getFirstUserBy' . ucfirst($type);
+        $user = $this->userRepository->$getFirstUserFunc($account);
 
         if ($user && $user->closure == 'none') {
-            if ($this->verifyPasswordLimit($email)) {
+            if ($this->verifyPasswordLimit($account)) {
                 return response()->json(
                     ['message' => __('app.request_too_much')],
                     Response::HTTP_FORBIDDEN
                 );
             }
 
-            if (Auth::attempt(['email' => $email, 'password' => $password])) {
+            if (Auth::attempt([$type => $account, 'password' => $password])) {
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
 
                 return response()->json(
@@ -212,19 +297,29 @@ class AuthService extends Service
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
      *
-     * @param $email
+     * @param $account
      * @param $verifyCode
      * @param $password
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function changePassword($email, $verifyCode, $password)
+    public function changePassword($account, $verifyCode, $password, $type)
     {
-        $code = $this->redisService->getRedis('password:email:' . $email);
+        // 同一IP写入限制，防止用户通过大量账号强行注入
+        if ($this->verifyIpLimit('password-change')) {
+            return response()->json(
+                ['message' => __('app.request_too_much')],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        $code = $this->redisService->getRedis('user:password:account:' . $account);
 
         if ($code) {
             if ($code == $verifyCode) {
-                $user = $this->userRepository->getFirstUserByEmail($email);
+                $getFirstUserFunc = 'getFirstUserBy' . ucfirst($type);
+                $user = $this->userRepository->$getFirstUserFunc($account);
                 $user->password = bcrypt($password);
                 $user->save();
 
@@ -346,6 +441,8 @@ class AuthService extends Service
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         } else {
+
+            // TODO 增加扫码改名逻辑
             return response()->json(
                 ['message' => __('app.rename_limit')],
                 Response::HTTP_FORBIDDEN
@@ -372,27 +469,122 @@ class AuthService extends Service
     }
 
     /**
+     * 判断当前账号状态，是否存在和冻结
+     * 用于输入框缺失焦点时触发
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $account
+     * @param $type
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAccountStatus($account, $type)
+    {
+        // 同一IP写入限制，防止用户通过大量账号强行注入
+        if ($this->verifyIpLimit('account-status')) {
+            return response()->json(
+                ['message' => __('app.request_too_much')],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        $getFirstUserFunc = 'getFirstUserBy' . ucfirst($type);
+        $user = $this->userRepository->$getFirstUserFunc($account);
+
+        if ($user && $user->closure == 'none') {
+            return response()->json(
+                null,
+                Response::HTTP_NO_CONTENT
+            );
+        }
+
+        return response()->json(
+            ['message' => __('app.user_is_closure')],
+            Response::HTTP_BAD_REQUEST
+        );
+    }
+
+    /**
+     * 正则判断是email还是mobile
+     * 返回字段与数据库一致
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $account
+     * @return string 'email'/'mobile'
+     */
+    public function regexAccountType($account)
+    {
+        $type = '';
+
+        if (RegexService::test('email', $account)) {
+            $type = 'email';
+        }
+
+        if (RegexService::test('mobile', $account)) {
+            $type = 'mobile';
+        }
+
+        return $type;
+    }
+
+    /**
      * 密码错误限制
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $email
+     * @param $account
      *
      * @return bool
      */
-    private function verifyPasswordLimit($email)
+    private function verifyPasswordLimit($account)
     {
-        if ($this->redisService->isRedisExists('login:times:' . $email)) {
-            $this->redisService->redisIncr('login:times:' . $email);
+        if ($this->redisService->isRedisExists('login:times:' . $account)) {
+            $this->redisService->redisIncr('login:times:' . $account);
 
-            if ($this->redisService->getRedis('login:times:' . $email) >= 5) {
+            if ($this->redisService->getRedis('login:times:' . $account) > 5) {
                 return true;
             }
+            return false;
+
         } else {
-            $this->redisService->setRedis('login:times:' . $email, 1, 'EX', 600);
+            $this->redisService->setRedis('login:times:' . $account, 1, 'EX', 600);
 
             return false;
         }
     }
+
+    /**
+     * ip操作限制，最多60分钟内请求5次
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $action // 区分动作
+     *
+     * @return bool
+     */
+    private function verifyIpLimit($action)
+    {
+        $clientIp = $this->getClientIp();
+
+        if ($this->redisService->isRedisExists('ip:'. $action .':times:' . $clientIp)) {
+            $this->redisService->redisIncr('ip:'. $action .':times:' . $clientIp);
+
+            if ($this->redisService->getRedis('ip:'. $action .':times:' . $clientIp) > 5) {
+                return true;
+            }
+            return false;
+
+        } else {
+            $this->redisService->setRedis('ip:'. $action .':times:' . $clientIp, 1, 'EX', 3600);
+
+            return false;
+        }
+    }
+
 }

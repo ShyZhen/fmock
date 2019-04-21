@@ -19,6 +19,7 @@ Route::get('/', function () {
 Route::prefix('V1')->namespace('Api\V1')->group(function () {
     // 用户登录注册
     Route::get('locale', 'IndexController@getLocale');
+    Route::post('user-check', 'AuthController@getAccountStatus');
     Route::post('login', 'AuthController@login');
     Route::post('register-code', 'AuthController@registerCode');
     Route::post('register', 'AuthController@register');

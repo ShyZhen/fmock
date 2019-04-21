@@ -35,6 +35,7 @@ A forums build with laravel.
  - `composer install`
  - `php artisan key:generate`
  - `php artisan storage:link`
+ - `chmod -R 766 storage/` and `chmod -R 766 bootstrap/cache/`
  - `php artisan migrate`
  - `php artisan passport:install`
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
@@ -44,6 +45,7 @@ A forums build with laravel.
 
 - [registerCode](#register-code) | 发送注册验证码
 - [register](#register) | 用户注册
+- [getAccountStatus](#user-check) | 检查用户状态
 - [login](#login) | 用户登录
 - [passwordCode](#password-code) | 发送改密验证码
 - [password](#password) | 修改密码
@@ -86,7 +88,7 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `email` | Y | String | N | &lt;255 | 用户表唯一 |
+| `account` | Y | String | N | &lt;255 | 邮箱或者手机，用户表唯一 |
 
 #### register
 - POST `base_url/api/V1/register`
@@ -94,17 +96,24 @@ A forums build with laravel.
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `name` | Y | String | N | &lt;16 | 用户表唯一 |
-| `email` | Y | String | N | &lt;255 | 用户表唯一 |
+| `account` | Y | String | N | &lt;255 | 用户表唯一 |
 | `verify_code` | Y | Int | N | 6 |  |
 | `password` | Y | String | N | &lt;255 |  |
 | `password_confirmation` | Y | String | N | &lt;255 |  |
+
+#### user-check
+- POST `base_url/api/V1/user-check`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `account` | Y | String | N | &lt;255 | 必须存在于用户表 |
 
 #### login
 - POST `base_url/api/V1/login`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `email` | Y | String | N | &lt;255 |  |
+| `account` | Y | String | N | &lt;255 |  |
 | `password` | Y | String | N | &gt;6 |  |
 
 #### password-code
@@ -112,14 +121,14 @@ A forums build with laravel.
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `email` | Y | String | N | &lt;255 | 存在于用户表 |
+| `account` | Y | String | N | &lt;255 | 必须存在于用户表 |
 
 #### password
 - POST `base_url/api/V1/password`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `email` | Y | String | N | &lt;255 | 存在于用户表 |
+| `account` | Y | String | N | &lt;255 | 必须存在于用户表 |
 | `verify_code` | Y | Int | N | 6 |  |
 | `password` | Y | String | N | &lt;255 |  |
 | `password_confirmation` | Y | String | N | &lt;255 |  |

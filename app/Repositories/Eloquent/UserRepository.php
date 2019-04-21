@@ -39,6 +39,19 @@ class UserRepository extends Repository
     }
 
     /**
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $mobile
+     *
+     * @return mixed
+     */
+    public function getFirstUserByMobile($mobile)
+    {
+        return $this->findBy('mobile', $mobile);
+    }
+
+    /**
      * 获取我关注的文章
      *
      * @Author huaixiu.zhen
