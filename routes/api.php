@@ -74,5 +74,4 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
 //    Route::get('my/dislikes', 'ActionController@myDislike');                   // 我踩过的所有文章、评论
     Route::get('user/comments/{userUuid}', 'CommentController@userComment');  // 某用户发布的所有评论(包括自己)
     Route::get('user/posts/{userUuid}', 'PostController@userPost');           // 某用户发布的所有文章(包括自己)
-
 });

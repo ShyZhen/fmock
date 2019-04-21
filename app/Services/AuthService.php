@@ -38,7 +38,6 @@ class AuthService extends Service
         $this->userRepository = $userRepository;
     }
 
-
     /**
      * 发送注册码服务 支持email和短信服务
      *
@@ -48,8 +47,9 @@ class AuthService extends Service
      * @param $account
      * @param $type
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendRegisterCode($account, $type)
     {
@@ -74,7 +74,7 @@ class AuthService extends Service
             switch ($type) {
 
                 // 邮箱
-                case 'email' :
+                case 'email':
                     $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
                     $subject = __('app.fmock_register_service');
                     $res = $this->emailService->sendEmail($account, $data, $subject);
@@ -124,8 +124,9 @@ class AuthService extends Service
      * @param $account
      * @param $type
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendPasswordCode($account, $type)
     {
@@ -148,7 +149,7 @@ class AuthService extends Service
             switch ($type) {
 
                 // email
-                case 'email' :
+                case 'email':
                     $data = ['data' => __('app.verify_code') . $code . __('app.email_error'),];
                     $subject = __('app.fmock_reset_pwd_service');
                     $res = $this->emailService->sendEmail($account, $data, $subject);
@@ -164,7 +165,7 @@ class AuthService extends Service
                     break;
 
                 // mobile
-                case 'mobile' :
+                case 'mobile':
                     $data = ['code' => $code];
                     $res = SmsService::sendSms($account, json_encode($data), 'FMock');
                     if (is_array($res) && $res['Code'] === 'OK') {
@@ -514,6 +515,7 @@ class AuthService extends Service
      * http://litblc.com
      *
      * @param $account
+     *
      * @return string 'email'/'mobile'
      */
     public function regexAccountType($account)
@@ -549,8 +551,8 @@ class AuthService extends Service
             if ($this->redisService->getRedis('login:times:' . $account) > 5) {
                 return true;
             }
-            return false;
 
+            return false;
         } else {
             $this->redisService->setRedis('login:times:' . $account, 1, 'EX', 600);
 
@@ -572,19 +574,18 @@ class AuthService extends Service
     {
         $clientIp = $this->getClientIp();
 
-        if ($this->redisService->isRedisExists('ip:'. $action .':times:' . $clientIp)) {
-            $this->redisService->redisIncr('ip:'. $action .':times:' . $clientIp);
+        if ($this->redisService->isRedisExists('ip:' . $action . ':times:' . $clientIp)) {
+            $this->redisService->redisIncr('ip:' . $action . ':times:' . $clientIp);
 
-            if ($this->redisService->getRedis('ip:'. $action .':times:' . $clientIp) > 5) {
+            if ($this->redisService->getRedis('ip:' . $action . ':times:' . $clientIp) > 5) {
                 return true;
             }
-            return false;
 
+            return false;
         } else {
-            $this->redisService->setRedis('ip:'. $action .':times:' . $clientIp, 1, 'EX', 3600);
+            $this->redisService->setRedis('ip:' . $action . ':times:' . $clientIp, 1, 'EX', 3600);
 
             return false;
         }
     }
-
 }
