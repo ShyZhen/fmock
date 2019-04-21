@@ -25,9 +25,9 @@ class ActionService extends Service
     /**
      * ActionService constructor.
      *
-     * @param UserRepository $userRepository
-     * @param PostRepository $postRepository
-     * @param CommentRepository $commentRepository
+     * @param UserRepository              $userRepository
+     * @param PostRepository              $postRepository
+     * @param CommentRepository           $commentRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(

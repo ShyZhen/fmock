@@ -24,7 +24,7 @@ class PostService extends Service
     /**
      * @param PostRepository $postRepository
      * @param RedisService   $redisService
-     * @param UserRepository   $userRepository
+     * @param UserRepository $userRepository
      */
     public function __construct(
         PostRepository $postRepository,

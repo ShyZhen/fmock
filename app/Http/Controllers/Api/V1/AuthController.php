@@ -37,8 +37,9 @@ class AuthController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function registerCode(Request $request)
     {
@@ -58,11 +59,9 @@ class AuthController extends Controller
                     Response::HTTP_BAD_REQUEST
                 );
             } else {
-
                 return $this->authService->sendRegisterCode($account, $type);
             }
         } else {
-
             return response()->json(
                 ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
@@ -110,7 +109,6 @@ class AuthController extends Controller
                 );
             }
         } else {
-
             return response()->json(
                 ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
@@ -158,7 +156,6 @@ class AuthController extends Controller
                 return $this->authService->login($account, $password, $type);
             }
         } else {
-
             return response()->json(
                 ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
@@ -174,8 +171,9 @@ class AuthController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function passwordCode(Request $request)
     {
@@ -195,12 +193,9 @@ class AuthController extends Controller
                     Response::HTTP_BAD_REQUEST
                 );
             } else {
-
                 return $this->authService->sendPasswordCode($account, $type);
             }
-
         } else {
-
             return response()->json(
                 ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
@@ -243,9 +238,7 @@ class AuthController extends Controller
 
                 return $this->authService->changePassword($account, $verifyCode, $password, $type);
             }
-
         } else {
-
             return response()->json(
                 ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
@@ -368,16 +361,12 @@ class AuthController extends Controller
         $type = $this->authService->regexAccountType($account);
 
         if ($type) {
-
             return $this->authService->getAccountStatus($account, $type);
-
         } else {
-
             return response()->json(
                 ['message' => __('app.account_validate_fail')],
                 Response::HTTP_BAD_REQUEST
             );
         }
     }
-
 }

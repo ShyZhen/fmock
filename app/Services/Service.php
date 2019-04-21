@@ -61,6 +61,7 @@ class Service
     protected function getClientIp()
     {
         Request::setTrustedProxies([getenv('SERVER_ADDR')]);
+
         return Request()->getClientIp();
     }
 }
