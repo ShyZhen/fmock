@@ -15,7 +15,6 @@ use App\Services\OAuthService\GithubService;
 
 class OAuthController extends Controller
 {
-
     /**
      * 前端重定向地址
      *
@@ -59,6 +58,7 @@ class OAuthController extends Controller
                 $request->get('code')
             );
         }
+
         return view('oauth.github', ['response' => $response]);
     }
 }

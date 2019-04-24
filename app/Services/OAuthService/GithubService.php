@@ -6,7 +6,6 @@
  * Date: 2019/4/23
  * Time: 19:48
  */
-
 namespace App\Services\OAuthService;
 
 use App\Models\User;
@@ -16,7 +15,6 @@ use Illuminate\Http\Response;
 
 class GithubService extends Service
 {
-
     /**
      * 前端重定向地址
      *
@@ -67,8 +65,8 @@ class GithubService extends Service
             'form_params' => [
                 'client_id' => env('GithubClientID'),
                 'client_secret' => env('GithubClientSecret'),
-                'code' => $code
-            ]
+                'code' => $code,
+            ],
         ];
         $client = new Client();
         $response = $client->post($accessTokenUri, $data);
@@ -102,7 +100,7 @@ class GithubService extends Service
                 // 根据GitHub创建用户
                 $uuid = self::uuid('user-');
                 $user = User::create([
-                    'name' => self::uuid('github-'.$githubUserInfo->name),
+                    'name' => self::uuid('github-' . $githubUserInfo->name),
                     'password' => bcrypt(''),
                     'uuid' => $uuid,
                     'github_id' => $githubUserInfo->id,
@@ -117,7 +115,6 @@ class GithubService extends Service
 //                Response::HTTP_OK
             );
         } else {
-
             return json_encode(
                 ['message' => __('app.token_error')]
 //                Response::HTTP_INTERNAL_SERVER_ERROR
@@ -140,12 +137,13 @@ class GithubService extends Service
         $userUri = 'https://api.github.com/user';
         $data = [
             'headers' => [
-                'Authorization' =>  'Bearer ' . $accessToken
+                'Authorization' => 'Bearer ' . $accessToken,
             ],
         ];
 
         $client = new Client();
         $response = $client->get($userUri, $data);
+
         return json_decode($response->getBody()->getContents());
     }
 }
