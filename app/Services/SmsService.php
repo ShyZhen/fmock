@@ -16,20 +16,20 @@ use AlibabaCloud\Client\Exception\ServerException;
 
 class SmsService extends Service
 {
-
     /**
      * 发送短信
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param string $phoneNumber
-     * @param string-json $param    "{'code':'56444522'}"
-     * @param string $signName
-     * @param string $templateCode
+     * @param string      $phoneNumber
+     * @param string-json $param        "{'code':'56444522'}"
+     * @param string      $signName
+     * @param string      $templateCode
+     *
+     * @throws ClientException
      *
      * @return array
-     * @throws ClientException
      */
     public static function sendSms($phoneNumber, $param, $signName = 'FMock', $templateCode = 'SMS_163621417')
     {
@@ -55,13 +55,10 @@ class SmsService extends Service
                 ->request();
 
             return $result->toArray();
-
         } catch (ClientException $e) {
             return $e->getErrorMessage() . PHP_EOL;
         } catch (ServerException $e) {
             return $e->getErrorMessage() . PHP_EOL;
         }
     }
-
-
 }

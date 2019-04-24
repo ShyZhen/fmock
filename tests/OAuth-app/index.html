@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>前后端分离OAuth认证方案</title>
+    <script crossorigin="anonymous" integrity="sha384-WGhEWG1n4j4SSTvTWxHLVbwDs5irzinCJT89aUzyS2H/wY2d2eZrUWSsNyCucTYy" src="https://lib.baomitu.com/jquery/3.4.0/jquery.js"></script>
+</head>
+<body>
+
+<div>
+    选择登录方式：
+    <img src="./github.png" id="github-oauth" style="height: 50px" alt="">
+</div>
+
+<script>
+    $('#github-oauth').click(function () {
+        $.ajax({
+            type: 'GET',
+            url: 'http://192.168.204.112:82/api/V1/oauth/github/login',
+            success: function (res) {
+                if (res) {
+                    window.open(res.redirectUrl, '', 'height=500, width=500, toolbar=no, menubar=no, resizable=no,location=no, status=no');
+                    window.addEventListener('message', function (e) {
+                        let res = JSON.parse(e.data);
+                        if (res.access_token) {
+                            console.log('登录成功:' + res.access_token, '绑定状态：' + res.binding_status)
+                        }
+                    }, false)
+                }
+            },
+            error: function (res) {
+                console.log(res)
+            }
+        });
+    })
+</script>
+</body>
+</html>

@@ -42,5 +42,6 @@ return [
     'no_comments' => '没有相关评论',
     'comment_has_deleted' => '该评论已被删除',
     'account_validate_fail' => '账号验证失败',
+    'token_error' => 'Token获取失败',
 
 ];

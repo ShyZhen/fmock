@@ -24,7 +24,7 @@ class RegexService extends Service
      */
     public static $rules = [
         'email' => '/^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/',
-        'mobile' => '/^1(?:3|4|5|6|7|8|9)\d{9}$/'
+        'mobile' => '/^1(?:3|4|5|6|7|8|9)\d{9}$/',
     ];
 
     /**
@@ -46,6 +46,6 @@ class RegexService extends Service
 
         $rule = self::$rules[$regexRule];
 
-        return (bool)preg_match($rule, $value);
+        return (bool) preg_match($rule, $value);
     }
 }

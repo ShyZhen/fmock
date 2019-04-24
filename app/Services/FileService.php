@@ -49,7 +49,7 @@ class FileService extends Service
             $fileExt = 'jpg';                                                              // $fileExt = $file->extension();
             $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
-            $imageName = $this->uuid($prefix) . '.' . $fileExt;                            // 定义唯一文件名
+            $imageName = self::uuid($prefix) . '.' . $fileExt;                            // 定义唯一文件名
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
             if (!file_exists($storagePath)) {
