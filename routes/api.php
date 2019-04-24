@@ -26,6 +26,10 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
     Route::post('password-code', 'AuthController@passwordCode');
     Route::post('password', 'AuthController@password');
 
+    // OAuth 第三方登录与绑定
+    Route::get('oauth/github/login', 'OAuthController@githubLogin');
+    Route::get('oauth/github/callback', 'OAuthController@githubCallback');
+
     // 首页文章列表
     Route::get('posts', 'PostController@getAllPosts');
 });

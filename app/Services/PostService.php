@@ -128,7 +128,7 @@ class PostService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-            $uuid = $this->uuid('post-');
+            $uuid = self::uuid('post-');
             $post = $this->postRepository->create([
                 'uuid' => $uuid,
                 'user_id' => $anonymous ? 0 : $userId,

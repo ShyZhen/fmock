@@ -69,7 +69,7 @@ class AuthService extends Service
             );
         } else {
             // 生成验证码
-            $code = $this->code();
+            $code = self::code();
 
             switch ($type) {
 
@@ -144,7 +144,7 @@ class AuthService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-            $code = $this->code();
+            $code = self::code();
 
             switch ($type) {
 
@@ -211,7 +211,7 @@ class AuthService extends Service
 
         if ($code) {
             if ($code == $verifyCode) {
-                $uuid = $this->uuid('user-');
+                $uuid = self::uuid('user-');
                 $user = $this->userRepository->create([
                     'name' => $name,
                     'password' => bcrypt($password),
@@ -572,7 +572,7 @@ class AuthService extends Service
      */
     private function verifyIpLimit($action)
     {
-        $clientIp = $this->getClientIp();
+        $clientIp = self::getClientIp();
 
         if ($this->redisService->isRedisExists('ip:' . $action . ':times:' . $clientIp)) {
             $this->redisService->redisIncr('ip:' . $action . ':times:' . $clientIp);

@@ -42,5 +42,6 @@ return [
     'no_comments' => 'There is nothing ',
     'comment_has_deleted' => 'The comment has been deleted. ',
     'account_validate_fail' => 'The account illegal. ',
+    'token_error' => 'Token Error. ',
 
 ];

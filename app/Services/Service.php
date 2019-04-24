@@ -24,7 +24,7 @@ class Service
      *
      * @return string
      */
-    protected function uuid($prefix = '')
+    protected static function uuid($prefix = '')
     {
         $chars = md5(uniqid(mt_rand(), true));
         $uuid = substr($chars, 0, 8) . '-';
@@ -43,7 +43,7 @@ class Service
      *
      * @return string
      */
-    protected function code()
+    protected static function code()
     {
         $code = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_BOTH);
 
@@ -58,7 +58,7 @@ class Service
      *
      * @return null|string
      */
-    protected function getClientIp()
+    protected static function getClientIp()
     {
         Request::setTrustedProxies([getenv('SERVER_ADDR')]);
 
