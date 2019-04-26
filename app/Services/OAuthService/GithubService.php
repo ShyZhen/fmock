@@ -15,6 +15,19 @@ use Illuminate\Http\Response;
 
 class GithubService extends Service
 {
+    private static $config;
+
+    /**
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     */
+    private static function initConfig()
+    {
+        if (!self::$config) {
+            self::$config = config('oauth.github');
+        }
+    }
+
     /**
      * 前端重定向地址
      *
@@ -25,20 +38,21 @@ class GithubService extends Service
      */
     public static function githubLogin()
     {
-        $clientId = env('GithubClientID');
-        if (!$clientId) {
+        self::initConfig();
+
+        if (!self::$config['client_id']) {
             return response()->json(
                 ['message' => 'Github ClientID is Null!'],
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
-
-        $baseUri = 'https://github.com/login/oauth/authorize';
-        $redirectUri = 'http://192.168.204.112:82/api/V1/oauth/github/callback';
         $state = self::uuid('code-');
-        $authorizeUri = $baseUri . '?client_id=' . $clientId . '&redirect_uri=' . $redirectUri . '&state=' . $state . '&scope=user';
+        $authorizeUri = self::$config['base_url'] .
+            '?client_id=' . self::$config['client_id'] .
+            '&redirect_uri=' . self::$config['call_back'] .
+            '&state=' . $state .
+            '&scope=' . self::$config['scope'];
 
-        // 前端重定向地址
         return response()->json(
             ['redirectUrl' => $authorizeUri],
             Response::HTTP_OK
@@ -60,16 +74,17 @@ class GithubService extends Service
      */
     public static function githubCallback($code)
     {
-        $accessTokenUri = 'https://github.com/login/oauth/access_token';
+        self::initConfig();
+
         $data = [
             'form_params' => [
-                'client_id' => env('GithubClientID'),
-                'client_secret' => env('GithubClientSecret'),
+                'client_id' => self::$config['client_id'],
+                'client_secret' => self::$config['client_secret'],
                 'code' => $code,
             ],
         ];
         $client = new Client();
-        $response = $client->post($accessTokenUri, $data);
+        $response = $client->post(self::$config['access_token_url'], $data);
         $temp = $response->getBody()->getContents();
         parse_str($temp, $result);
 
@@ -134,7 +149,8 @@ class GithubService extends Service
      */
     private static function getGithubUserInfo($accessToken)
     {
-        $userUri = 'https://api.github.com/user';
+        self::initConfig();
+
         $data = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $accessToken,
@@ -142,7 +158,7 @@ class GithubService extends Service
         ];
 
         $client = new Client();
-        $response = $client->get($userUri, $data);
+        $response = $client->get(self::$config['user_info_url'], $data);
 
         return json_decode($response->getBody()->getContents());
     }
