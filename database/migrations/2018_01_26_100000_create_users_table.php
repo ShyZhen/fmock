@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('mobile', 64)->default('')->index();              // 登录手机
             $table->string('password', 255);
             $table->rememberToken();
-            $table->string('name', 32)->unique();               // 显示的用户昵称,第一次可改
+            $table->string('name', 64)->unique();               // 显示的用户昵称,第一次可改
             $table->string('avatar', 255)->default('');         // 没设置既使用默认头像
             $table->enum('gender', ['Male', 'Famale', 'secrecy'])->default('secrecy');
             $table->date('birthday')->default('1970-01-01');

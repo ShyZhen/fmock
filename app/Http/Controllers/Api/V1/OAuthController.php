@@ -59,6 +59,7 @@ class OAuthController extends Controller
             );
         }
 
-        return view('oauth.github', ['response' => $response]);
+        // 判断如果是PC端直接redirect，或者走另一个通信地址postMessageUrl
+        return view('oauth.github', ['response' => $response, 'postMessageUrl' => env('CLIENT_URL')]);
     }
 }

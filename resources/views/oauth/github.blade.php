@@ -12,7 +12,7 @@
 <script>
 
     window.onload = function () {
-        window.opener.postMessage('{!! $response !!}', '{{ env('APP_URL') }}');
+        window.opener.postMessage('{!! $response !!}', '{{ $postMessageUrl }}');
         window.close();
     }
 </script>

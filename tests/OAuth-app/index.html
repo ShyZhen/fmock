@@ -19,7 +19,8 @@
             url: 'http://192.168.204.112:82/api/V1/oauth/github/login',
             success: function (res) {
                 if (res) {
-                    window.open(res.redirectUrl, '', 'height=500, width=500, toolbar=no, menubar=no, resizable=no,location=no, status=no');
+                    // window.open(res.redirectUrl, '', 'height=500, width=500, toolbar=no, menubar=no, resizable=no,location=no, status=no');
+                    window.open(res.redirectUrl);
                     window.addEventListener('message', function (e) {
                         let res = JSON.parse(e.data);
                         if (res.access_token) {
