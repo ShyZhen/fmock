@@ -16,7 +16,7 @@
     $('#github-oauth').click(function () {
         $.ajax({
             type: 'GET',
-            url: 'http://192.168.204.112:82/api/V1/oauth/github/login',
+            url: 'http://api.fmock.com/api/V1/oauth/github/login',
             success: function (res) {
                 if (res) {
                     // window.open(res.redirectUrl, '', 'height=500, width=500, toolbar=no, menubar=no, resizable=no,location=no, status=no');
