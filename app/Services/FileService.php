@@ -139,4 +139,9 @@ class FileService extends Service
 
         return $res;
     }
+
+    public function uploadAvaToQiniu($file, $savePath)
+    {
+
+    }
 }

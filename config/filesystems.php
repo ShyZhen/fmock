@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env('FILESYSTEM_DRIVER', 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -61,6 +61,12 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
+        ],
+        'qiniu' => [
+            'serverUploadUrl' => 'http(s)://up-z2.qiniup.com',
+            'clientUploadUrl' => 'http(s)://upload-z2.qiniup.com',
+            'AccessKey' => env('AccessKey', ''),
+            'SecretKey' => env('SecretKey', ''),
         ],
 
     ],
