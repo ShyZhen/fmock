@@ -62,13 +62,13 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
         ],
-        'qiniu' => [
-            'serverUploadUrl' => 'http(s)://up-z2.qiniup.com',
-            'clientUploadUrl' => 'http(s)://upload-z2.qiniup.com',
-            'AccessKey' => env('AccessKey', ''),
-            'SecretKey' => env('SecretKey', ''),
-        ],
+    ],
 
+    'qiniu' => [
+        'serverUploadUrl' => 'http(s)://up-z2.qiniup.com',
+        'clientUploadUrl' => 'http(s)://upload-z2.qiniup.com',
+        'AccessKey' => env('AccessKey', ''),
+        'SecretKey' => env('SecretKey', ''),
     ],
 
 ];

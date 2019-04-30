@@ -18,7 +18,9 @@
 ## About FMock
 A forums build with laravel.
 
-我也不知道要做成一个什么东西。
+~~我也不知道要做成一个什么东西。~~
+
+FMock墨客社区。
 
 
 ## Environment
@@ -32,6 +34,7 @@ A forums build with laravel.
 ## Installation
  - `git clone https://github.com/ShyZhen/fmock.git`
  - `copy .env.example .env` and edit .env
+ > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
  - `composer install`
  - `php artisan key:generate`
  - `php artisan storage:link`
