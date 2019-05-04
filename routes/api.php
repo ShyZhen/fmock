@@ -19,7 +19,6 @@ Route::get('/', function () {
 Route::prefix('V1')->namespace('Api\V1')->group(function () {
     // 用户登录注册
     Route::get('locale', 'IndexController@getLocale');
-    Route::post('user-check', 'AuthController@getAccountStatus');
     Route::post('login', 'AuthController@login');
     Route::post('register-code', 'AuthController@registerCode');
     Route::post('register', 'AuthController@register');
@@ -42,6 +41,8 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::get('user/{uuid}', 'AuthController@getUserByUuid');
     Route::post('my-name', 'AuthController@updateMyName');
     Route::get('logout', 'AuthController@logout');
+    Route::post('user-check', 'AuthController@getAccountStatus');
+
 
     // 用户对文章操作
     Route::get('post/{uuid}', 'PostController@getPostByUuid');
@@ -76,6 +77,6 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     // 个人中心 动态
 //    Route::get('my/likes', 'ActionController@myLike');                         // 我赞过的所有文章、评论
 //    Route::get('my/dislikes', 'ActionController@myDislike');                   // 我踩过的所有文章、评论
-    Route::get('user/comments/{userUuid}', 'CommentController@userComment');  // 某用户发布的所有评论(包括自己)
-    Route::get('user/posts/{userUuid}', 'PostController@userPost');           // 某用户发布的所有文章(包括自己)
+    Route::get('user/comments/{userUuid}', 'CommentController@userComment');     // 某用户发布的所有评论(包括自己)
+    Route::get('user/posts/{userUuid}', 'PostController@userPost');              // 某用户发布的所有文章(包括自己)
 });

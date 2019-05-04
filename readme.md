@@ -44,6 +44,16 @@ FMock墨客社区。
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
 
 
+## API Info
+
+ - 支持邮箱、手机号sms（阿里短信服务）验证码发送，以及完善的正则匹配
+ - 支持邮箱、手机号（中国）登录注册
+ - 多重验证，包括IP限制，账号尝试失败限制，有效避免爆破
+ - 完全前后端分离模式，token鉴权，多端分开部署
+ - 共用一套API接口代码，便于维护
+ - 代码分层架构，controller service repo model 便于扩展
+ - 支持GitHub第三方登录（后续会支持微信登录）
+
 ## API Index
 
 - [registerCode](#register-code) | 发送注册验证码
