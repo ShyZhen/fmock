@@ -6,8 +6,9 @@
  * Date: 2018/8/21
  * Time: 16:41
  */
-namespace App\Services;
+namespace App\Services\BaseService;
 
+use App\Services\Service;
 use Illuminate\Contracts\Redis\Factory as Redis;
 
 class RedisService extends Service

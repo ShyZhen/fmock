@@ -69,6 +69,7 @@ return [
         'clientUploadUrl' => 'http(s)://upload-z2.qiniup.com',
         'AccessKey' => env('AccessKey', ''),
         'SecretKey' => env('SecretKey', ''),
+        'bucket' => env('Bucket', ''),
     ],
 
 ];

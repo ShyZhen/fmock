@@ -10,6 +10,7 @@ namespace App\Services;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Services\BaseService\RedisService;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
 

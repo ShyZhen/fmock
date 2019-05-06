@@ -8,8 +8,9 @@
  * Date: 2019/4/19
  * Time: 20:39
  */
-namespace App\Services;
+namespace App\Services\BaseService;
 
+use App\Services\Service;
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Exception\ClientException;
 use AlibabaCloud\Client\Exception\ServerException;
@@ -31,8 +32,11 @@ class SmsService extends Service
      *
      * @return array
      */
-    public static function sendSms($phoneNumber, $param, $signName = 'FMock', $templateCode = 'SMS_163621417')
+    public static function sendSms($phoneNumber, $param, $signName = '', $templateCode = '')
     {
+        $signName = $signName ?: env('SignName');
+        $templateCode = $templateCode ?: env('TemplateCode');
+
         AlibabaCloud::accessKeyClient(env('AccessKeyID'), env('AccessKeySecret'))
             ->regionId('cn-shenzhen')
             ->asDefaultClient();

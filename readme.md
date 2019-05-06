@@ -63,6 +63,8 @@ FMock墨客社区。
 - [passwordCode](#password-code) | 发送改密验证码
 - [password](#password) | 修改密码
 - [myInfo](#me) | 我的信息
+- [githubLogin](#github-login) | 获取GitHub登录url
+
 - [userInfo](#user-info) | 获取指定用户信息
 - [updateMyInfo](#post-me) | 更新个人信息
 - [updateMyName](#my-name) | 更新个人昵称
@@ -97,14 +99,21 @@ FMock墨客社区。
 
 
 #### register-code
-- POST `base_url/api/V1/register-code`
+- POST `server_url/V1/register-code`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `account` | Y | String | N | &lt;255 | 邮箱或者手机，用户表唯一 |
 
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 400、403、422、500
+ {"message" : <"message">}
+
 #### register
-- POST `base_url/api/V1/register`
+- POST `server_url/V1/register`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -114,30 +123,58 @@ FMock墨客社区。
 | `password` | Y | String | N | &lt;255 |  |
 | `password_confirmation` | Y | String | N | &lt;255 |  |
 
+ - 返回值
+ > HTTP/1.1 201 OK
+ {"access_token" : <"token">}
+ 
+ > HTTP/1.1 400、401、422
+ {"message" : <"message">}
+
 #### user-check
-- POST `base_url/api/V1/user-check`
+- POST `server_url/V1/user-check`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `account` | Y | String | N | &lt;255 | 必须存在于用户表 |
 
+ - 返回值
+ > HTTP/1.1 204 OK
+ {null}
+ 
+ > HTTP/1.1 400、403
+ {"message" : <"message">}
+
 #### login
-- POST `base_url/api/V1/login`
+- POST `server_url/V1/login`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `account` | Y | String | N | &lt;255 |  |
 | `password` | Y | String | N | &gt;6 |  |
 
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"access_token" : <"token">}
+ 
+ > HTTP/1.1 400、403、422
+ {"message" : <"message">}
+
 #### password-code
-- POST `base_url/api/V1/password-code`
+- POST `server_url/V1/password-code`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `account` | Y | String | N | &lt;255 | 必须存在于用户表 |
 
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 400、403、422、500
+ {"message" : <"message">}
+
 #### password
-- POST `base_url/api/V1/password`
+- POST `server_url/V1/password`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -146,22 +183,54 @@ FMock墨客社区。
 | `password` | Y | String | N | &lt;255 |  |
 | `password_confirmation` | Y | String | N | &lt;255 |  |
 
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 400、401、403、422
+ {"message" : <"message">}
+
 #### me
-- GET `base_url/api/V1/me`
+- GET `server_url/V1/me`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  |  | Y |  |
 
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"data">}
+ 
+ > HTTP/1.1 401
+ {"message" : <"message">}
+
+#### github-login
+- GET `server_url/V1/oauth/github/login`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  |  | Y |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"redirectUrl" : <"redirectUrl">}
+ 
+ > HTTP/1.1 500
+ {"message" : <"message">}
+ 
+ 
+
+
+
 #### user-info
-- GET `base_url/api/V1/user/{uuid}`
+- GET `server_url/V1/user/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### post-me
-- POST `base_url/api/V1/me`
+- POST `server_url/V1/me`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -171,35 +240,35 @@ FMock墨客社区。
 | `bio` | N | String | Y | &lt;32 |  |
 
 #### my-name
-- POST `base_url/api/V1/my-name`
+- POST `server_url/V1/my-name`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `name` | Y | String | Y | &lt;20 | 用户表唯一 |
 
 #### upload-image
-- POST `base_url/api/V1/file/image`
+- POST `server_url/V1/file/image`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `image` | Y | File | Y | &lt;5000KB | jpg,jpeg,png,gif |
 
 #### upload-avatar
-- POST `base_url/api/V1/file/avatar`
+- POST `server_url/V1/file/avatar`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `avatar` | Y | File | Y | &lt;1000KB | jpg,jpeg,png,gif |
 
 #### logout
-- GET `base_url/api/V1/logout`
+- GET `server_url/V1/logout`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### posts
-- GET `base_url/api/V1/posts`
+- GET `server_url/V1/posts`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -207,14 +276,14 @@ FMock墨客社区。
 | `page` | N | Int | N |  | 分页 |
 
 #### post
-- GET `base_url/api/V1/post/{uuid}`
+- GET `server_url/V1/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### create-post
-- POST `base_url/api/V1/post`
+- POST `server_url/V1/post`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -223,70 +292,70 @@ FMock墨客社区。
 | `anonymous` | Y | Boolean | Y |  | 是否匿名发布 |
 
 #### update-post
-- PUT `base_url/api/V1/post/{uuid}`
+- PUT `server_url/V1/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `content` | Y | Int | Y | &lt;10000 |  |
 
 #### delete-post
-- DELETE `base_url/api/V1/post/{uuid}`
+- DELETE `server_url/V1/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### follows
-- GET `base_url/api/V1/follow/posts`
+- GET `server_url/V1/follow/posts`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### post-follow
-- POST `base_url/api/V1/follow/post`
+- POST `server_url/V1/follow/post`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `uuid` | Y | String | Y |  | 文章`uuid` |.
 
 #### delete-follow
-- DELETE `base_url/api/V1/follow/post/{uuid}`
+- DELETE `server_url/V1/follow/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### like-post
-- GET `base_url/api/V1/like/post/{uuid}`
+- GET `server_url/V1/like/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### dislike-post
-- GET `base_url/api/V1/dislike/post/{uuid}`
+- GET `server_url/V1/dislike/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### status-post
-- GET `base_url/api/V1/status/post/{uuid}`
+- GET `server_url/V1/status/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### post-comment
-- GET `base_url/api/V1/comment/{postUuid}/{type?}`
+- GET `server_url/V1/comment/{postUuid}/{type?}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  | `{type}`可选new/hot,默认new |
 
 #### create-post-comment
-- POST `base_url/api/V1/comment`
+- POST `server_url/V1/comment`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -295,28 +364,28 @@ FMock墨客社区。
 | `content` | Y | String | Y | &lt;500 |  |
 
 #### delete-post-comment
-- DELETE `base_url/api/V1/comment/{id}`
+- DELETE `server_url/V1/comment/{id}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  | 删除评论传递的是评论ID，评论表没有uuid |
 
 #### like-comment
-- GET `base_url/api/V1/like/comment/{id}`
+- GET `server_url/V1/like/comment/{id}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### dislike-comment
-- GET `base_url/api/V1/dislike/comment/{id}`
+- GET `server_url/V1/dislike/comment/{id}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### status-comment
-- GET `base_url/api/V1/status/comment/{id}`
+- GET `server_url/V1/status/comment/{id}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -324,14 +393,14 @@ FMock墨客社区。
 
 
 #### user-comments
-- GET `base_url/api/V1/user/comments/{userUuid}`
+- GET `server_url/V1/user/comments/{userUuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
 #### user-posts
-- GET `base_url/api/V1/user/posts/{userUuid}`
+- GET `server_url/V1/user/posts/{userUuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
