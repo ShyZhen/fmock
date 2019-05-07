@@ -65,11 +65,10 @@ return [
     ],
 
     'qiniu' => [
-        'serverUploadUrl' => 'http(s)://up-z2.qiniup.com',
-        'clientUploadUrl' => 'http(s)://upload-z2.qiniup.com',
-        'AccessKey' => env('AccessKey', ''),
-        'SecretKey' => env('SecretKey', ''),
+        'accessKey' => env('AccessKey', ''),
+        'secretKey' => env('SecretKey', ''),
         'bucket' => env('Bucket', ''),
+        'cdnUrl' => env('CdnUrl', ''),
     ],
 
 ];

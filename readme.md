@@ -35,6 +35,7 @@ FMock墨客社区。
  - `git clone https://github.com/ShyZhen/fmock.git`
  - `copy .env.example .env` and edit .env
  > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
+ 如果想上传文件到七牛，需要开启`.env`中的`QiniuService=true`,并配置好七牛的各项参数。
  - `composer install`
  - `php artisan key:generate`
  - `php artisan storage:link`
@@ -53,6 +54,7 @@ FMock墨客社区。
  - 共用一套API接口代码，便于维护
  - 代码分层架构，controller service repo model 便于扩展
  - 支持GitHub第三方登录（后续会支持微信登录）
+ - 支持切换上传图片到七牛云与本地存储，使用七牛融合CDN进行静态资源加速
 
 ## API Index
 

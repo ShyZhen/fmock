@@ -36,7 +36,9 @@ class FileController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse|mixed
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
      */
     public function uploadImage(Request $request)
     {
@@ -52,20 +54,31 @@ class FileController extends Controller
         } else {
             $file = $request->file('image');
 
-            return $this->fileService->uploadImg($file, 'image', 'post-');
+            if (env('QiniuService')) {
+
+                // 上传图片到七牛
+                $res =  $this->fileService->uploadImgToQiniu($file, 'image', 'post-');
+            } else {
+                // 上传图片到本地
+                $res = $this->fileService->uploadImg($file, 'image', 'post-');
+            }
+
+            return $res;
         }
     }
 
     /**
      * 上传头像 需要在前端进行处理
-     * 缩小为100*100或其他尺寸后调用该api
+     * 压缩并resize后调用该api
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse|mixed
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
      */
     public function uploadAvatar(Request $request)
     {
@@ -81,7 +94,16 @@ class FileController extends Controller
         } else {
             $file = $request->file('avatar');
 
-            return $this->fileService->uploadAva($file, 'avatar');
+            if (env('QiniuService')) {
+
+                // 上传图片到七牛
+                $res =  $this->fileService->uploadAvaToQiniu($file, 'avatar');
+            } else {
+                // 上传图片到本地
+                $res = $this->fileService->uploadAva($file, 'avatar');
+            }
+
+            return $res;
         }
     }
 }

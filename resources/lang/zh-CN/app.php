@@ -32,6 +32,7 @@ return [
     'action_ttl' => '您的操作太频繁，距离下一次请求时间为',
     'unknown' => '未知',
     'upload_file_valida_fail' => '文件上传失败',
+    'upload_file_qiniu_fail' => '七牛服务上传失败',
     'rename_limit' => '抱歉，您的改名次数用光光了',
     'anonymous' => '匿名用户',
     'follow' => '关注',

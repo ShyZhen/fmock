@@ -29,7 +29,7 @@ class QiniuService extends Service
     {
         if (!$this->auth) {
             $this->config = config('filesystems.qiniu');
-            $this->auth = new Auth($this->config['AccessKey'], $this->config['SecretKey']);
+            $this->auth = new Auth($this->config['accessKey'], $this->config['secretKey']);
         }
 
         if (!$this->uploadMgr) {
@@ -41,29 +41,34 @@ class QiniuService extends Service
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param $file
-     * @param $key
-     * @param string $bucket
+     * @param $filePath       // 文件路径、tmp_name
+     * @param $key            // 生成的文件名
+     * @param string $bucket  // 空间名
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public function uploadFile($file, $key, $bucket = '')
+    public function uploadFile($filePath, $key, $bucket = '')
     {
         $bucket = $bucket ?: $this->config['bucket'];
-        $token = $this->auth->uploadToken($bucket);
+        $token = $this->auth->uploadToken($bucket, $key);
 
         // 上传文件
-        // list($ret, $err) = $this->uploadMgr->putFile($token, $key, $file);
-
-        // 上传二进制流
-        list($ret, $err) = $this->uploadMgr->put($token, $key, $file);
+         list($ret, $err) = $this->uploadMgr->putFile($token, $key, $filePath);
 
         if ($err !== null) {
-            return $err;
+            $res = [
+                'code' => -1,
+                'data' => $err
+            ];
         } else {
-            return $ret;
+            $res = [
+                'code' => 0,
+                'data' => $ret
+            ];
         }
+
+        return $res;
     }
 }

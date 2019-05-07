@@ -41,8 +41,11 @@ class ImageService extends Service
         $newThump = imagecreatetruecolor($newWidth, $newHeight);
         imagecopyresampled($newThump, $image, 0, 0, 0, 0, $newWidth, $newHeight, $imageInfo['width'], $imageInfo['height']);
         imagedestroy($image);
-        // 同类型压缩 $save = "image" . $imageInfo['type'];
-        $save = 'imagejpeg';
+
+        // 同类型压缩
+        $save = "image" . $imageInfo['type'];
+        // 统一压缩生成jpg格式
+        // $save = 'imagejpeg';
 
         if ($save($newThump, $name)) {
             return true;

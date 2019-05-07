@@ -32,6 +32,7 @@ return [
     'action_ttl' => 'You request too many times,and next request time is ',
     'unknown' => 'Unknown ',
     'upload_file_valida_fail' => 'File upload failed ',
+    'upload_file_qiniu_fail' => 'File upload to Qiniu failed ',
     'rename_limit' => 'Sorry, your number of Rename is used up. ',
     'anonymous' => 'Anonymous ',
     'follow' => 'Follow ',
