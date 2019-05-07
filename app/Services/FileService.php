@@ -10,6 +10,7 @@ namespace App\Services;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Services\BaseService\QiniuService;
 use App\Repositories\Eloquent\UserRepository;
 
 class FileService extends Service
@@ -18,16 +19,23 @@ class FileService extends Service
 
     private $userRepository;
 
+    private $qiniuService;
+
     /**
      * FileService constructor.
      *
      * @param ImageService   $imageService
      * @param UserRepository $userRepository
+     * @param QiniuService   $qiniuService
      */
-    public function __construct(ImageService $imageService, UserRepository $userRepository)
-    {
+    public function __construct(
+        ImageService $imageService,
+        UserRepository $userRepository,
+        QiniuService $qiniuService
+    ) {
         $this->imageService = $imageService;
         $this->userRepository = $userRepository;
+        $this->qiniuService = $qiniuService;
     }
 
     /**
@@ -46,7 +54,7 @@ class FileService extends Service
     public function uploadImg($file, $savePath, $prefix = '')
     {
         if ($file->isValid()) {
-            $fileExt = 'jpg';                                                              // $fileExt = $file->extension();
+            $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
             $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
             $imageName = self::uuid($prefix) . '.' . $fileExt;                            // 定义唯一文件名
@@ -90,7 +98,7 @@ class FileService extends Service
     public function uploadAva($file, $savePath)
     {
         if ($file->isValid()) {
-            $fileExt = 'jpg';                                                              // $fileExt = $file->extension();
+            $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
             $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
             $user = $this->userRepository->findBy('id', Auth::id());
@@ -103,10 +111,12 @@ class FileService extends Service
             $fullName = $storagePath . $imageName;
 
             if ($this->imageService->saveImg($file, $fullName)) {
-                $this->userRepository->update(['avatar' => '/storage/' . $tmpPath . $imageName], $user->id);
+                $imageUrl = url('/storage/' . $tmpPath . $imageName);
+                // 存储绝对路径入库
+                $this->userRepository->update(['avatar' => $imageUrl], $user->id);
 
                 return response()->json(
-                    ['data' => url('/storage/' . $tmpPath . $imageName)],
+                    ['data' => $imageUrl],
                     Response::HTTP_OK
                 );
             }
@@ -124,7 +134,7 @@ class FileService extends Service
     }
 
     /**
-     * 删除文件
+     * 删除本地文件
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -138,5 +148,98 @@ class FileService extends Service
         $res = unlink($filePath);
 
         return $res;
+    }
+
+    /**
+     * 上传图片到七牛服务
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $file
+     * @param $savePath
+     * @param string $prefix
+     *
+     * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function uploadImgToQiniu($file, $savePath, $prefix = '')
+    {
+        if ($file->isValid()) {
+            $imageName = self::uuid($prefix) . '.' . $file->extension();
+            $fullName = $savePath . '/' . date('Y-m-d') . '/' . $imageName;
+
+            $result = $this->qiniuService->uploadFile($file->path(), $fullName);
+
+            if ($result['code'] === 0) {
+                // 由于是覆盖上传,刷新七牛cdn缓存，在文件url后加版本号。(不像头像，这里一般不会重复与覆盖)
+                $flushCdn = '?v=' . time();
+                $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $flushCdn;
+
+                return response()->json(
+                    ['data' => $imageUrl],
+                    Response::HTTP_OK
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.upload_file_qiniu_fail')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.upload_file_valida_fail')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+    }
+
+    /**
+     * 上传头像 存入七牛服务
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $file
+     * @param $savePath
+     *
+     * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function uploadAvaToQiniu($file, $savePath)
+    {
+        if ($file->isValid()) {
+            $user = $this->userRepository->findBy('id', Auth::id());
+            // 头像名与用户uuid一致
+            $imageName = $user->uuid . '.' . $file->extension();
+
+            $fullName = $savePath . '/' . date('Y-m-d') . '/' . $imageName;
+            $result = $this->qiniuService->uploadFile($file->path(), $fullName);
+
+            if ($result['code'] === 0) {
+                // 由于是覆盖上传,刷新七牛cdn缓存，在文件url后加版本号。
+                $flushCdn = '?v=' . time();
+                $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $flushCdn;
+                // 存储绝对路径入库
+                $this->userRepository->update(['avatar' => $imageUrl], $user->id);
+
+                return response()->json(
+                    ['data' => $imageUrl],
+                    Response::HTTP_OK
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.upload_file_qiniu_fail')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.upload_file_valida_fail')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
     }
 }

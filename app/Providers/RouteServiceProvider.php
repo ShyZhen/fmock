@@ -52,7 +52,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes()
     {
-        Route::middleware('web')
+//        Route::middleware('web')
+        Route::domain(env('APP_URL'))
+             ->middleware('web')
              ->namespace($this->namespace)
              ->group(base_path('routes/web.php'));
     }
@@ -65,7 +67,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapAdminRoutes()
     {
-        Route::prefix('admin')
+//        Route::prefix('admin')
+        Route::domain(env('ADMIN_URL'))
             ->middleware('web')
             ->namespace($this->namespace)
             ->group(base_path('routes/admin.php'));
@@ -80,7 +83,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes()
     {
-        Route::prefix('api')
+//        Route::prefix('api')
+        Route::domain(env('SERVER_URL'))
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));

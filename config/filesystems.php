@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env('FILESYSTEM_DRIVER', 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -62,7 +62,13 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
         ],
+    ],
 
+    'qiniu' => [
+        'accessKey' => env('AccessKey', ''),
+        'secretKey' => env('SecretKey', ''),
+        'bucket' => env('Bucket', ''),
+        'cdnUrl' => env('CdnUrl', ''),
     ],
 
 ];
