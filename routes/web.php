@@ -23,11 +23,6 @@ Route::namespace('Web')->group(function () {
     Route::get('notification', 'IndexController@notification');
     Route::get('getNotification', 'IndexController@getNotification');
 
-
-
-
-
-
     // 测试控制器
     Route::prefix('test')->group(function () {
         Route::get('/', 'TestController@index');

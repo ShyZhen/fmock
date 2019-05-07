@@ -32,8 +32,7 @@ class FileService extends Service
         ImageService $imageService,
         UserRepository $userRepository,
         QiniuService $qiniuService
-    )
-    {
+    ) {
         $this->imageService = $imageService;
         $this->userRepository = $userRepository;
         $this->qiniuService = $qiniuService;
@@ -161,9 +160,9 @@ class FileService extends Service
      * @param $savePath
      * @param string $prefix
      *
-     * @return \Illuminate\Http\JsonResponse
-     *
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function uploadImgToQiniu($file, $savePath, $prefix = '')
     {
@@ -205,9 +204,9 @@ class FileService extends Service
      * @param $file
      * @param $savePath
      *
-     * @return \Illuminate\Http\JsonResponse
-     *
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function uploadAvaToQiniu($file, $savePath)
     {
@@ -215,7 +214,6 @@ class FileService extends Service
             $user = $this->userRepository->findBy('id', Auth::id());
             // 头像名与用户uuid一致
             $imageName = $user->uuid . '.' . $file->extension();
-
 
             $fullName = $savePath . '/' . date('Y-m-d') . '/' . $imageName;
             $result = $this->qiniuService->uploadFile($file->path(), $fullName);

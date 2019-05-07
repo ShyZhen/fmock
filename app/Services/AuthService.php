@@ -11,9 +11,9 @@ namespace App\Services;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\SmsService;
-use App\Services\BaseService\RegexService;
 use App\Services\BaseService\EmailService;
 use App\Services\BaseService\RedisService;
+use App\Services\BaseService\RegexService;
 use App\Repositories\Eloquent\UserRepository;
 
 class AuthService extends Service
