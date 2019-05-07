@@ -43,7 +43,7 @@ class ImageService extends Service
         imagedestroy($image);
 
         // 同类型压缩
-        $save = "image" . $imageInfo['type'];
+        $save = 'image' . $imageInfo['type'];
         // 统一压缩生成jpg格式
         // $save = 'imagejpeg';
 

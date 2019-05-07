@@ -36,9 +36,9 @@ class FileController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
-     *
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function uploadImage(Request $request)
     {
@@ -57,7 +57,7 @@ class FileController extends Controller
             if (env('QiniuService')) {
 
                 // 上传图片到七牛
-                $res =  $this->fileService->uploadImgToQiniu($file, 'image', 'post-');
+                $res = $this->fileService->uploadImgToQiniu($file, 'image', 'post-');
             } else {
                 // 上传图片到本地
                 $res = $this->fileService->uploadImg($file, 'image', 'post-');
@@ -76,9 +76,9 @@ class FileController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
-     *
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function uploadAvatar(Request $request)
     {
@@ -97,7 +97,7 @@ class FileController extends Controller
             if (env('QiniuService')) {
 
                 // 上传图片到七牛
-                $res =  $this->fileService->uploadAvaToQiniu($file, 'avatar');
+                $res = $this->fileService->uploadAvaToQiniu($file, 'avatar');
             } else {
                 // 上传图片到本地
                 $res = $this->fileService->uploadAva($file, 'avatar');

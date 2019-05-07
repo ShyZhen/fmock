@@ -9,9 +9,6 @@
 namespace App\Http\Controllers\Web;
 
 use App\Services\BaseService\QiniuService;
-use Illuminate\Http\Request;
-use Qiniu\Auth;
-use Qiniu\Storage\UploadManager;
 
 class TestController
 {
@@ -20,7 +17,7 @@ class TestController
         $arr = [33, 2, 45, 6, 77, 24, 100, 47];
 
         for ($i = 0; $i < count($arr) - 1; $i++) {
-            for ($j = 0; $j < count($arr) - 1 - $i; $j ++) {
+            for ($j = 0; $j < count($arr) - 1 - $i; $j++) {
                 if ($arr[$j] > $arr[$j + 1]) {
                     $temp = $arr[$j];
                     $arr[$j] = $arr[$j + 1];
@@ -42,6 +39,4 @@ class TestController
         $a = new QiniuService();
         dd($a->uploadFile($filePath, $key));
     }
-
-
 }

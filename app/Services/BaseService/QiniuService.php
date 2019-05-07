@@ -43,11 +43,11 @@ class QiniuService extends Service
      *
      * @param $filePath       // 文件路径、tmp_name
      * @param $key            // 生成的文件名
-     * @param string $bucket  // 空间名
-     *
-     * @return mixed
+     * @param string $bucket // 空间名
      *
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function uploadFile($filePath, $key, $bucket = '')
     {
@@ -55,17 +55,17 @@ class QiniuService extends Service
         $token = $this->auth->uploadToken($bucket, $key);
 
         // 上传文件
-         list($ret, $err) = $this->uploadMgr->putFile($token, $key, $filePath);
+        list($ret, $err) = $this->uploadMgr->putFile($token, $key, $filePath);
 
         if ($err !== null) {
             $res = [
                 'code' => -1,
-                'data' => $err
+                'data' => $err,
             ];
         } else {
             $res = [
                 'code' => 0,
-                'data' => $ret
+                'data' => $ret,
             ];
         }
 
