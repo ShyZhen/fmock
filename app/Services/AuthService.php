@@ -357,7 +357,13 @@ class AuthService extends Service
      */
     public function getUserByUuid($uuid)
     {
-        $user = $this->userRepository->findBy('uuid', $uuid, ['id', 'email', 'name', 'avatar', 'gender', 'birthday', 'reside_city', 'bio', 'created_at']);
+        $columns = [
+            'id', 'name', 'avatar', 'gender',
+            'birthday', 'reside_city', 'bio',
+            'fans_num', 'followed_num', 'intro',
+            'company', 'company_type', 'position', 'created_at',
+        ];
+        $user = $this->userRepository->findBy('uuid', $uuid, $columns);
 
         if ($user) {
             return response()->json(

@@ -32,7 +32,13 @@ class CreateUsersTable extends Migration
 
             $table->unsignedInteger('fans_num')->default(0);
             $table->unsignedInteger('followed_num')->default(0);
-            $table->string('intro')->default('');
+
+            $table->string('company', 64)->default('');                // 公司
+            $table->string('company_type', 64)->default('');           // 行业
+            $table->string('position', 64)->default('');               // 职位
+
+
+            $table->string('intro', 255)->default('');
             $table->string('qq', 32)->default('');
             $table->string('wechat', 64)->default('');
             $table->string('github', 64)->default('');
