@@ -41,15 +41,36 @@ class PostRepository extends Repository
     /**
      * 按热度排序
      *
-     * @Author huaixiu.zhen@gmail.com
+     * @Author huaixiu.zhen
      * http://litblc.com
+     *
+     * @param $limitDate
      *
      * @return mixed
      */
-    public function getFavoritePost()
+    public function getFavoritePost($limitDate)
     {
         return $this->model::with('user')->where('deleted', 'none')
+            ->where('created_at', '>=', $limitDate)
             ->orderByDesc('like_num')
+            ->paginate(env('PER_PAGE', 10));
+    }
+
+    /**
+     * 分类后按时间排序
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $type
+     *
+     * @return mixed
+     */
+    public function getPostByType($type)
+    {
+        return $this->model::with('user')->where('deleted', 'none')
+            ->where('type', $type)
+            ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));
     }
 
@@ -84,7 +105,7 @@ class PostRepository extends Repository
         if ($user) {
             $userInfo['uuid'] = $user->uuid;
             $userInfo['username'] = $user->name;
-            $userInfo['avatar'] = ($user->avatar ? url($user->avatar) : url('/static/defaultAvatar.jpg'));
+            $userInfo['avatar'] = $user->avatar ?: url('/static/defaultAvatar.jpg');
             $userInfo['bio'] = $user->bio;
         } else {
             $userInfo['uuid'] = 'user-anonymous';

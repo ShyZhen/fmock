@@ -316,8 +316,15 @@ FMock墨客社区。
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `sort` | N | String | N |  | 可选`post-new/post-hot/post-anonymous` |
+| `type` | N | String | N |  | 可选`hot/all/share/question/dynamite/friend/recruit` |
 | `page` | N | Int | N |  | 分页 |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"posts">}
+ 
+ > HTTP/1.1 400
+ {"message" : <"message">}
 
 #### post
 - GET `server_url/V1/post/{uuid}`
@@ -325,6 +332,13 @@ FMock墨客社区。
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"post">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### create-post
 - POST `server_url/V1/post`
@@ -334,6 +348,14 @@ FMock墨客社区。
 | `title` | Y | String | Y | &lt;64 |  |
 | `content` | Y | Int | Y | &lt;10000 |  |
 | `anonymous` | Y | Boolean | Y |  | 是否匿名发布 |
+| `type` | Y | String | Y |  | 可选`share/question/dynamite/friend/recruit` |
+
+ - 返回值
+ > HTTP/1.1 201 OK
+ {"data" : <"post">}
+ 
+ > HTTP/1.1 400、422、500
+ {"message" : <"message">}
 
 #### update-post
 - PUT `server_url/V1/post/{uuid}`
@@ -341,6 +363,15 @@ FMock墨客社区。
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `content` | Y | Int | Y | &lt;10000 |  |
+| `anonymous` | Y | Boolean | Y |  | 是否匿名发布 |
+| `type` | Y | String | Y |  | 可选`share/question/dynamite/friend/recruit` |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"post">}
+ 
+ > HTTP/1.1 400、404、500
+ {"message" : <"message">}
 
 #### delete-post
 - DELETE `server_url/V1/post/{uuid}`
@@ -348,6 +379,13 @@ FMock墨客社区。
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 204 OK
+ {null}
+ 
+ > HTTP/1.1 404、500
+ {"message" : <"message">}
 
 #### follows
 - GET `server_url/V1/follow/posts`

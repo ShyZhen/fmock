@@ -21,6 +21,7 @@ class CreatePostsTable extends Migration
 //            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');  需要匿名发布
             $table->string('title', 128)->defult('');
             $table->text('content');
+            $table->enum('type', ['share', 'question', 'dynamite', 'friend', 'recruit']);  // 分享，问答，爆料，相亲，招聘
             $table->unsignedInteger('follow_num')->default(0);
             $table->unsignedInteger('comment_num')->default(0);
             $table->unsignedInteger('like_num')->default(0);

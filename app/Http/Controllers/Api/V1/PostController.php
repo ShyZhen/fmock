@@ -13,11 +13,14 @@ namespace App\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use App\Services\PostService;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
+    private $type = ['share', 'question', 'dynamite', 'friend', 'recruit'];
+
     private $postService;
 
     /**
@@ -40,9 +43,17 @@ class PostController extends Controller
      */
     public function getAllPosts(Request $request)
     {
-        $sort = $request->get('sort', 'post-new');
+        $type = $request->get('type', 'all');
 
-        return $this->postService->getAllPosts($sort);
+        if (in_array($type, array_merge($this->type, ['hot', 'all']))) {
+            return $this->postService->getAllPosts($type);
+        } else {
+
+            return response()->json(
+                ['message' => __('app.illegal_input')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     /**
@@ -76,6 +87,10 @@ class PostController extends Controller
             'title' => 'required|max:64',
             'content' => 'required|max:' . env('CONTENT_NUM'),
             'anonymous' => 'required|boolean',
+            'type' => [
+                'required',
+                Rule::in($this->type)
+            ]
         ]);
 
         if ($validator->fails()) {
@@ -87,7 +102,8 @@ class PostController extends Controller
             return $this->postService->createPost(
                 $request->get('title'),
                 $request->get('content'),
-                $request->get('anonymous')
+                $request->get('anonymous'),
+                $request->get('type')
             );
         }
     }
@@ -107,6 +123,11 @@ class PostController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'content' => 'required|max:' . env('CONTENT_NUM'),
+            'anonymous' => 'required|boolean',
+            'type' => [
+                'required',
+                Rule::in($this->type)
+            ]
         ]);
 
         if ($validator->fails()) {
@@ -117,7 +138,9 @@ class PostController extends Controller
         } else {
             return $this->postService->updatePost(
                 $uuid,
-                $request->get('content')
+                $request->get('content'),
+                $request->get('anonymous'),
+                $request->get('type')
             );
         }
     }

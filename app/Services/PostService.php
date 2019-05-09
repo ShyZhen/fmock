@@ -8,6 +8,7 @@
  */
 namespace App\Services;
 
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\RedisService;
@@ -43,13 +44,14 @@ class PostService extends Service
      * @Author huaixiu.zhen@gmail.com
      * http://litblc.com
      *
-     * @param $sort [post-new|post-hot|post-anonymous]
+     * @param $type [hot|all|share|question|dynamite|friend|recruit]
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllPosts($sort)
+    public function getAllPosts($type)
     {
-        switch ($sort) {
+        /*
+        switch ($type) {
             case 'post-hot':
                 $posts = $this->postRepository->getFavoritePost();
                 break;
@@ -60,11 +62,22 @@ class PostService extends Service
                 $posts = $this->postRepository->getNewPost();
                 break;
         }
+        */
+
+        if ($type === 'all') {
+            $posts = $this->postRepository->getNewPost();                   // 全部最新
+        } elseif ($type === 'hot') {
+            $limitDate = Carbon::now()->subDays(90)->toDateString();
+            $posts = $this->postRepository->getFavoritePost($limitDate);    // 三个月内点赞最多的热门
+        } else {
+            $posts = $this->postRepository->getPostByType($type);           // 分类最新
+        }
 
         if ($posts->count()) {
             foreach ($posts as $post) {
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
+                unset($post->user_id);
                 $post->content = str_limit($post->content, 400, '...');
             }
         }
@@ -93,6 +106,7 @@ class PostService extends Service
             if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
+                unset($post->user_id);
 
                 return response()->json(
                     ['data' => $post],
@@ -116,10 +130,11 @@ class PostService extends Service
      * @param $title
      * @param $content
      * @param $anonymous
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createPost($title, $content, $anonymous)
+    public function createPost($title, $content, $anonymous, $type)
     {
         $userId = Auth::id();
 
@@ -135,6 +150,7 @@ class PostService extends Service
                 'user_id' => $anonymous ? 0 : $userId,
                 'title' => $title,
                 'content' => $content,
+                'type' => $type,
             ]);
 
             if ($post) {
@@ -142,6 +158,7 @@ class PostService extends Service
                 $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
+                unset($post->user_id);
 
                 return response()->json(
                     ['data' => $post],
@@ -164,23 +181,30 @@ class PostService extends Service
      *
      * @param $uuid
      * @param $content
+     * @param $anonymous
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updatePost($uuid, $content)
+    public function updatePost($uuid, $content, $anonymous, $type)
     {
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post && $post->user_id == Auth::id()) {
             $post->content = $content;
+            $post->type = $type;
+            if ($anonymous) {
+                $post->user_id = 0;
+            }
 
             if ($post->save()) {
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
+                unset($post->user_id);
 
                 return response()->json(
                     ['data' => $post],
-                    Response::HTTP_CREATED
+                    Response::HTTP_OK
                 );
             }
 
@@ -210,7 +234,7 @@ class PostService extends Service
     {
         $post = $this->postRepository->findBy('uuid', $uuid);
 
-        if ($post && $post->user_id == Auth::id()) {
+        if ($post && $post->user_id == Auth::id() && $post->deleted == 'none') {
             $post->deleted = 'yes';
             if ($post->save()) {
                 return response()->json(
