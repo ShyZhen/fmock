@@ -33,7 +33,9 @@ class PostRepository extends Repository
      */
     public function getNewPost()
     {
-        return $this->model::with('user')->where('deleted', 'none')
+        return $this->model::with('user')
+            ->select('id', 'user_id', 'uuid', 'title', 'summary', 'poster', 'type', 'follow_num', 'comment_num', 'like_num', 'dislike_num', 'created_at')
+            ->where('deleted', 'none')
             ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));
     }
@@ -50,7 +52,9 @@ class PostRepository extends Repository
      */
     public function getFavoritePost($limitDate)
     {
-        return $this->model::with('user')->where('deleted', 'none')
+        return $this->model::with('user')
+            ->select('id', 'user_id', 'uuid', 'title', 'summary', 'poster', 'type', 'follow_num', 'comment_num', 'like_num', 'dislike_num', 'created_at')
+            ->where('deleted', 'none')
             ->where('created_at', '>=', $limitDate)
             ->orderByDesc('like_num')
             ->paginate(env('PER_PAGE', 10));
@@ -68,7 +72,9 @@ class PostRepository extends Repository
      */
     public function getPostByType($type)
     {
-        return $this->model::with('user')->where('deleted', 'none')
+        return $this->model::with('user')
+            ->select('id', 'user_id', 'uuid', 'title', 'summary', 'poster', 'type', 'follow_num', 'comment_num', 'like_num', 'dislike_num', 'created_at')
+            ->where('deleted', 'none')
             ->where('type', $type)
             ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));

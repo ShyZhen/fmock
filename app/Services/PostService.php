@@ -64,13 +64,17 @@ class PostService extends Service
         }
         */
 
-        if ($type === 'all') {
-            $posts = $this->postRepository->getNewPost();                   // 全部最新
-        } elseif ($type === 'hot') {
-            $limitDate = Carbon::now()->subDays(90)->toDateString();
-            $posts = $this->postRepository->getFavoritePost($limitDate);    // 三个月内点赞最多的热门
-        } else {
-            $posts = $this->postRepository->getPostByType($type);           // 分类最新
+        switch ($type) {
+            case 'all':
+                $posts = $this->postRepository->getNewPost();                   // 全部最新
+                break;
+            case 'hot':
+                $limitDate = Carbon::now()->subDays(90)->toDateString();
+                $posts = $this->postRepository->getFavoritePost($limitDate);    // 三个月内点赞最多的热门
+                break;
+            default:
+                $posts = $this->postRepository->getPostByType($type);           // 分类最新
+                break;
         }
 
         if ($posts->count()) {
@@ -78,7 +82,6 @@ class PostService extends Service
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
                 unset($post->user_id);
-                $post->content = str_limit($post->content, 400, '...');
             }
         }
 
@@ -100,7 +103,8 @@ class PostService extends Service
      */
     public function getPostByUuid($uuid)
     {
-        $post = $this->postRepository->findBy('uuid', $uuid);
+        $columns = ['id', 'user_id', 'uuid', 'title', 'content', 'type', 'follow_num', 'comment_num', 'like_num', 'dislike_num', 'created_at'];
+        $post = $this->postRepository->findBy('uuid', $uuid, $columns);
 
         if ($post) {
             if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
@@ -128,13 +132,15 @@ class PostService extends Service
      * http://litblc.com
      *
      * @param $title
+     * @param $summary
+     * @param $poster
      * @param $content
      * @param $anonymous
      * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createPost($title, $content, $anonymous, $type)
+    public function createPost($title, $summary, $poster, $content, $anonymous, $type)
     {
         $userId = Auth::id();
 
@@ -149,6 +155,8 @@ class PostService extends Service
                 'uuid' => $uuid,
                 'user_id' => $anonymous ? 0 : $userId,
                 'title' => $title,
+                'summary' => $summary,
+                'poster' => $poster,
                 'content' => $content,
                 'type' => $type,
             ]);
@@ -180,17 +188,21 @@ class PostService extends Service
      * http://litblc.com
      *
      * @param $uuid
+     * @param $summary
+     * @param $poster
      * @param $content
      * @param $anonymous
      * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updatePost($uuid, $content, $anonymous, $type)
+    public function updatePost($uuid, $summary, $poster, $content, $anonymous, $type)
     {
         $post = $this->postRepository->findBy('uuid', $uuid);
 
         if ($post && $post->user_id == Auth::id()) {
+            $post->summary = $summary;
+            $post->poster = $poster;
             $post->content = $content;
             $post->type = $type;
             if ($anonymous) {
@@ -277,6 +289,7 @@ class PostService extends Service
                 foreach ($posts as $post) {
                     $post->user_info = $this->postRepository->handleUserInfo($post->user);
                     unset($post->user);
+                    // 已经改成新逻辑，返回摘要和海报
                     $post->content = str_limit($post->content, 400, '...');
                 }
             }

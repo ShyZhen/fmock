@@ -280,7 +280,7 @@ FMock墨客社区。
 | `image` | Y | File | Y | &lt;5000KB | jpg,jpeg,png,gif |
 
  - 返回值
- > HTTP/1.1 200 OK
+ > HTTP/1.1 201 OK
  {"data" : <"imageUrl">}
  
  > HTTP/1.1 400、422
@@ -294,7 +294,7 @@ FMock墨客社区。
 | `avatar` | Y | File | Y | &lt;1000KB | jpg,jpeg,png,gif |
 
  - 返回值
- > HTTP/1.1 200 OK
+ > HTTP/1.1 201 OK
  {"data" : <"imageUrl">}
  
  > HTTP/1.1 400、422
@@ -346,6 +346,8 @@ FMock墨客社区。
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `title` | Y | String | Y | &lt;64 |  |
+| `summary` | Y | String | Y | &lt;80 |  |
+| `poster` | Y | String | Y | &lt;128 |  |
 | `content` | Y | Int | Y | &lt;10000 |  |
 | `anonymous` | Y | Boolean | Y |  | 是否匿名发布 |
 | `type` | Y | String | Y |  | 可选`share/question/dynamite/friend/recruit` |
@@ -362,6 +364,8 @@ FMock墨客社区。
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
+| `summary` | Y | String | Y | &lt;80 |  |
+| `poster` | Y | String | Y | &lt;128 |  |
 | `content` | Y | Int | Y | &lt;10000 |  |
 | `anonymous` | Y | Boolean | Y |  | 是否匿名发布 |
 | `type` | Y | String | Y |  | 可选`share/question/dynamite/friend/recruit` |

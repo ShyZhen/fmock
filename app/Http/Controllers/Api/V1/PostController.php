@@ -85,6 +85,8 @@ class PostController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:64',
+            'summary' => 'present|max:80',
+            'poster' => 'present|max:128',
             'content' => 'required|max:' . env('CONTENT_NUM'),
             'anonymous' => 'required|boolean',
             'type' => [
@@ -101,6 +103,8 @@ class PostController extends Controller
         } else {
             return $this->postService->createPost(
                 $request->get('title'),
+                $request->get('summary'),
+                $request->get('poster'),
                 $request->get('content'),
                 $request->get('anonymous'),
                 $request->get('type')
@@ -122,6 +126,8 @@ class PostController extends Controller
     public function updatePost(Request $request, $uuid)
     {
         $validator = Validator::make($request->all(), [
+            'summary' => 'present|max:80',
+            'poster' => 'present|max:128',
             'content' => 'required|max:' . env('CONTENT_NUM'),
             'anonymous' => 'required|boolean',
             'type' => [
@@ -138,6 +144,8 @@ class PostController extends Controller
         } else {
             return $this->postService->updatePost(
                 $uuid,
+                $request->get('summary'),
+                $request->get('poster'),
                 $request->get('content'),
                 $request->get('anonymous'),
                 $request->get('type')

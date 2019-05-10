@@ -80,7 +80,7 @@ class FileService extends Service
 
                 return response()->json(
                     ['data' => $imageUrl],
-                    Response::HTTP_OK
+                    Response::HTTP_CREATED
                 );
             }
 
@@ -129,7 +129,7 @@ class FileService extends Service
 
                 return response()->json(
                     ['data' => $imageUrl],
-                    Response::HTTP_OK
+                    Response::HTTP_CREATED
                 );
             }
 
@@ -194,7 +194,7 @@ class FileService extends Service
 
                 return response()->json(
                     ['data' => $imageUrl],
-                    Response::HTTP_OK
+                    Response::HTTP_CREATED
                 );
             }
 
@@ -242,7 +242,7 @@ class FileService extends Service
 
                 return response()->json(
                     ['data' => $imageUrl],
-                    Response::HTTP_OK
+                    Response::HTTP_CREATED
                 );
             }
 
