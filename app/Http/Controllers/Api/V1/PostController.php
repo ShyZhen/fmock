@@ -48,7 +48,6 @@ class PostController extends Controller
         if (in_array($type, array_merge($this->type, ['hot', 'all']))) {
             return $this->postService->getAllPosts($type);
         } else {
-
             return response()->json(
                 ['message' => __('app.illegal_input')],
                 Response::HTTP_BAD_REQUEST
@@ -91,8 +90,8 @@ class PostController extends Controller
             'anonymous' => 'required|boolean',
             'type' => [
                 'required',
-                Rule::in($this->type)
-            ]
+                Rule::in($this->type),
+            ],
         ]);
 
         if ($validator->fails()) {
@@ -132,8 +131,8 @@ class PostController extends Controller
             'anonymous' => 'required|boolean',
             'type' => [
                 'required',
-                Rule::in($this->type)
-            ]
+                Rule::in($this->type),
+            ],
         ]);
 
         if ($validator->fails()) {

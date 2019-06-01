@@ -28,10 +28,10 @@ class FileService extends Service
     /**
      * FileService constructor.
      *
-     * @param ImageService   $imageService
-     * @param UserRepository $userRepository
-     * @param QiniuService   $qiniuService
-     * @param UserUploadImageRepository   $userUploadImageRepository
+     * @param ImageService              $imageService
+     * @param UserRepository            $userRepository
+     * @param QiniuService              $qiniuService
+     * @param UserUploadImageRepository $userUploadImageRepository
      */
     public function __construct(
         ImageService $imageService,
@@ -73,7 +73,6 @@ class FileService extends Service
             $fullName = $storagePath . $imageName;
 
             if ($this->imageService->saveImg($file, $fullName)) {
-
                 $imageUrl = url('/storage/' . $tmpPath . $imageName);
 
                 // 记录用户上传的文件,便于后台管理
@@ -114,7 +113,8 @@ class FileService extends Service
             $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
             $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
-            $user = Auth::user();;
+            $user = Auth::user();
+            ;
             $imageName = $user->uuid . '.' . $fileExt;                                     // 头像名与用户uuid一致
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
@@ -272,7 +272,7 @@ class FileService extends Service
     {
         $this->userUploadImageRepository->create([
             'user_id' => $userId,
-            'url' => $imageUrl
+            'url' => $imageUrl,
         ]);
     }
 }

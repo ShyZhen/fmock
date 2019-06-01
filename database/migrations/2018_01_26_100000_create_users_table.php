@@ -37,7 +37,6 @@ class CreateUsersTable extends Migration
             $table->string('company_type', 64)->default('');           // 行业
             $table->string('position', 64)->default('');               // 职位
 
-
             $table->string('intro', 255)->default('');
             $table->string('qq', 32)->default('');
             $table->string('wechat', 64)->default('');
