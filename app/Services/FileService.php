@@ -10,6 +10,7 @@ namespace App\Services;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Services\BaseService\ImageService;
 use App\Services\BaseService\QiniuService;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\UserUploadImageRepository;

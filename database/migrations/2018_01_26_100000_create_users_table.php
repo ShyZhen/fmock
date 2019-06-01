@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->string('name', 64)->unique();               // 显示的用户昵称,第一次可改
             $table->string('avatar', 255)->default('');         // 没设置既使用默认头像
-            $table->enum('gender', ['Male', 'Famale', 'secrecy'])->default('secrecy');
+            $table->enum('gender', ['male', 'female', 'secrecy'])->default('secrecy');
             $table->date('birthday')->default('1970-01-01');
             $table->string('reside_city', 32)->default('');             // 居住地
             $table->string('bio', 128)->default('');                    // 个人一句话介绍 签名
