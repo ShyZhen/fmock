@@ -169,7 +169,7 @@ class PostService extends Service
                 unset($post->user_id);
 
                 return response()->json(
-                    ['data' => $post],
+                    ['data' => $uuid],
                     Response::HTTP_CREATED
                 );
             }
