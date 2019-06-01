@@ -1,11 +1,15 @@
 <?php
 /**
+ * 上传图片到本地服务器
+ *
  * @Author huaixiu.zhen
  * http://litblc.com
  * User: z00455118
  * Date: 2018/9/7
  */
-namespace App\Services;
+namespace App\Services\BaseService;
+
+use App\Services\Service;
 
 class ImageService extends Service
 {

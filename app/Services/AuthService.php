@@ -357,7 +357,13 @@ class AuthService extends Service
      */
     public function getUserByUuid($uuid)
     {
-        $user = $this->userRepository->findBy('uuid', $uuid, ['id', 'email', 'name', 'avatar', 'gender', 'birthday', 'reside_city', 'bio', 'created_at']);
+        $columns = [
+            'id', 'name', 'avatar', 'gender',
+            'birthday', 'reside_city', 'bio',
+            'fans_num', 'followed_num', 'intro',
+            'company', 'company_type', 'position', 'created_at',
+        ];
+        $user = $this->userRepository->findBy('uuid', $uuid, $columns);
 
         if ($user) {
             return response()->json(
@@ -564,7 +570,7 @@ class AuthService extends Service
     }
 
     /**
-     * ip操作限制，最多60分钟内请求5次
+     * ip操作限制，最多30分钟内请求30次
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -580,13 +586,13 @@ class AuthService extends Service
         if ($this->redisService->isRedisExists('ip:' . $action . ':times:' . $clientIp)) {
             $this->redisService->redisIncr('ip:' . $action . ':times:' . $clientIp);
 
-            if ($this->redisService->getRedis('ip:' . $action . ':times:' . $clientIp) > 5) {
+            if ($this->redisService->getRedis('ip:' . $action . ':times:' . $clientIp) > 30) {
                 return true;
             }
 
             return false;
         } else {
-            $this->redisService->setRedis('ip:' . $action . ':times:' . $clientIp, 1, 'EX', 3600);
+            $this->redisService->setRedis('ip:' . $action . ':times:' . $clientIp, 1, 'EX', 1800);
 
             return false;
         }

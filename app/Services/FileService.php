@@ -10,8 +10,10 @@ namespace App\Services;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Services\BaseService\ImageService;
 use App\Services\BaseService\QiniuService;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\UserUploadImageRepository;
 
 class FileService extends Service
 {
@@ -21,21 +23,26 @@ class FileService extends Service
 
     private $qiniuService;
 
+    private $userUploadImageRepository;
+
     /**
      * FileService constructor.
      *
-     * @param ImageService   $imageService
-     * @param UserRepository $userRepository
-     * @param QiniuService   $qiniuService
+     * @param ImageService              $imageService
+     * @param UserRepository            $userRepository
+     * @param QiniuService              $qiniuService
+     * @param UserUploadImageRepository $userUploadImageRepository
      */
     public function __construct(
         ImageService $imageService,
         UserRepository $userRepository,
-        QiniuService $qiniuService
+        QiniuService $qiniuService,
+        UserUploadImageRepository $userUploadImageRepository
     ) {
         $this->imageService = $imageService;
         $this->userRepository = $userRepository;
         $this->qiniuService = $qiniuService;
+        $this->userUploadImageRepository = $userUploadImageRepository;
     }
 
     /**
@@ -66,8 +73,13 @@ class FileService extends Service
             $fullName = $storagePath . $imageName;
 
             if ($this->imageService->saveImg($file, $fullName)) {
+                $imageUrl = url('/storage/' . $tmpPath . $imageName);
+
+                // 记录用户上传的文件,便于后台管理
+                $this->uploadLog(Auth::id(), $imageUrl);
+
                 return response()->json(
-                    ['data' => url('/storage/' . $tmpPath . $imageName)],
+                    ['data' => $imageUrl],
                     Response::HTTP_CREATED
                 );
             }
@@ -101,7 +113,8 @@ class FileService extends Service
             $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
             $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
-            $user = $this->userRepository->findBy('id', Auth::id());
+            $user = Auth::user();
+            ;
             $imageName = $user->uuid . '.' . $fileExt;                                     // 头像名与用户uuid一致
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
@@ -117,7 +130,7 @@ class FileService extends Service
 
                 return response()->json(
                     ['data' => $imageUrl],
-                    Response::HTTP_OK
+                    Response::HTTP_CREATED
                 );
             }
 
@@ -177,9 +190,12 @@ class FileService extends Service
                 $flushCdn = '?v=' . time();
                 $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $flushCdn;
 
+                // 记录用户上传的文件,便于后台管理
+                $this->uploadLog(Auth::id(), $imageUrl);
+
                 return response()->json(
                     ['data' => $imageUrl],
-                    Response::HTTP_OK
+                    Response::HTTP_CREATED
                 );
             }
 
@@ -211,7 +227,7 @@ class FileService extends Service
     public function uploadAvaToQiniu($file, $savePath)
     {
         if ($file->isValid()) {
-            $user = $this->userRepository->findBy('id', Auth::id());
+            $user = Auth::user();
             // 头像名与用户uuid一致
             $imageName = $user->uuid . '.' . $file->extension();
 
@@ -227,7 +243,7 @@ class FileService extends Service
 
                 return response()->json(
                     ['data' => $imageUrl],
-                    Response::HTTP_OK
+                    Response::HTTP_CREATED
                 );
             }
 
@@ -241,5 +257,22 @@ class FileService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
+    }
+
+    /**
+     * 上传记录
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $userId
+     * @param $imageUrl
+     */
+    private function uploadLog($userId, $imageUrl)
+    {
+        $this->userUploadImageRepository->create([
+            'user_id' => $userId,
+            'url' => $imageUrl,
+        ]);
     }
 }

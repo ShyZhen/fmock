@@ -289,6 +289,10 @@ class AuthController extends Controller
             'birthday' => 'date',
             'reside_city' => 'max:16',
             'bio' => 'max:32',
+            'intro' => 'max:128',
+            'company' => 'max:32',
+            'company_type' => 'max:32',
+            'position' => 'max:32',
         ]);
 
         if ($validator->fails()) {
