@@ -24,7 +24,7 @@ FMock墨客社区。
 
 
 ## Environment
- - PHP >= 7.0.0
+ - PHP >= 7.1.3
  - Mysql
  - Redis
  - Nodejs
