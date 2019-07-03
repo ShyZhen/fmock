@@ -6,7 +6,6 @@
  * Date: 2019/7/3
  * Time: 21:14
  */
-
 namespace App\Services\OAuthService;
 
 use App\Models\User;
@@ -85,7 +84,6 @@ class WechatService extends Service
         $openIdArr = self::getOpenIdByCode($code);
 
         if (is_array($openIdArr) && array_key_exists('openid', $openIdArr)) {
-
             $binding = false;
             $user = User::where('wechat_openid', $openIdArr['openid'])->first();
 
