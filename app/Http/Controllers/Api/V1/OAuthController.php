@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Services\OAuthService\GithubService;
 use App\Services\OAuthService\WechatService;
 
-
 class OAuthController extends Controller
 {
     /**
@@ -92,6 +91,7 @@ class OAuthController extends Controller
                 $request->get('code')
             );
         }
+
         return $response;
     }
 }
