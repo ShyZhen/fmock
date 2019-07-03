@@ -9,9 +9,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Services\OAuthService\GithubService;
+use App\Services\OAuthService\WechatService;
 
 class OAuthController extends Controller
 {
@@ -61,5 +63,35 @@ class OAuthController extends Controller
 
         // 判断如果是PC端直接redirect，或者走另一个通信地址postMessageUrl
         return view('oauth.github', ['response' => $response, 'postMessageUrl' => env('CLIENT_URL')]);
+    }
+
+    /**
+     * 微信小程序登录
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse|string
+     */
+    public function wechatLogin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'code' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response = response()->json(
+                ['message' => $validator->errors()->first()],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $response = WechatService::wechatLogin(
+                $request->get('code')
+            );
+        }
+
+        return $response;
     }
 }

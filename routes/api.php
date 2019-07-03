@@ -29,6 +29,7 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
     // OAuth 第三方登录与绑定
     Route::get('oauth/github/login', 'OAuthController@githubLogin');
     Route::get('oauth/github/callback', 'OAuthController@githubCallback');
+    Route::post('oauth/wechat/login', 'OAuthController@wechatLogin');
 
     // 首页文章列表
     Route::get('posts', 'PostController@getAllPosts');
