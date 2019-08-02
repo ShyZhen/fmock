@@ -230,7 +230,7 @@ class AuthService extends Service
             } else {
                 return response()->json(
                     ['message' => __('app.verify_code') . __('app.error')],
-                    Response::HTTP_UNAUTHORIZED
+                    Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
         }
@@ -334,7 +334,7 @@ class AuthService extends Service
             } else {
                 return response()->json(
                     ['message' => __('app.verify_code') . __('app.error')],
-                    Response::HTTP_UNAUTHORIZED
+                    Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
         }
