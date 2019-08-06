@@ -327,8 +327,9 @@ class AuthService extends Service
                 $user->password = bcrypt($password);
                 $user->save();
 
+                $token = $user->createToken(env('APP_NAME'))->accessToken;
                 return response()->json(
-                    ['message' => __('app.change') . __('app.success')],
+                    ['access_token' => $token],
                     Response::HTTP_OK
                 );
             } else {
