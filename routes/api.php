@@ -54,10 +54,10 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
 
-    // 关注
-    Route::get('follow/posts', 'ActionController@getMyFollowedPosts');
-    Route::post('follow/post', 'ActionController@followedPost');
-    Route::delete('follow/post/{uuid}', 'ActionController@unFollow');
+    // 关注（搜藏、点红心）的文章 入口在个人中心九宫格中
+    Route::get('collection/posts', 'ActionController@getMyFollowedPosts');
+    Route::post('collection/post', 'ActionController@followedPost');
+    Route::delete('collection/post/{uuid}', 'ActionController@unFollow');
 
     // 文章 赞、取消赞，踩、取消踩
     Route::get('like/post/{uuid}', 'ActionController@likePost');

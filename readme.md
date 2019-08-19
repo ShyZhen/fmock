@@ -82,9 +82,9 @@ FMock墨客社区。
 - [updatePost](#update-post) | 更新指定文章
 - [deletePost](#delete-post) | 删除指定文章
 
-- [getMyFollowedPosts](#follows) | 获取我关注的所有文章
-- [followedPost](#post-follow) | 关注指定文章
-- [unFollow](#delete-follow) | 取消关注文章
+- [getMyFollowedPosts](#collections) | 获取我关注的所有文章
+- [followedPost](#post-collection) | 关注指定文章
+- [unFollow](#delete-collection) | 取消关注文章
 - [likePost](#like-post) | 赞/取消赞（文章）
 - [dislikePost](#dislike-post) | 踩/取消踩（文章）
 - [statusPost](#status-post) | 查看赞/踩状态（文章）
@@ -392,22 +392,22 @@ FMock墨客社区。
  > HTTP/1.1 404、500
  {"message" : <"message">}
 
-#### follows
-- GET `server_url/V1/follow/posts`
+#### collections
+- GET `server_url/V1/collection/posts`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
 
-#### post-follow
-- POST `server_url/V1/follow/post`
+#### post-collection
+- POST `server_url/V1/collection/post`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `uuid` | Y | String | Y |  | 文章`uuid` |.
 
-#### delete-follow
-- DELETE `server_url/V1/follow/post/{uuid}`
+#### delete-collection
+- DELETE `server_url/V1/collection/post/{uuid}`
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
