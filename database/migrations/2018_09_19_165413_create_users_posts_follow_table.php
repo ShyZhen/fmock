@@ -13,6 +13,7 @@ class CreateUsersPostsFollowTable extends Migration
      */
     public function up()
     {
+        // 用户收藏的文章表
         Schema::create('users_posts_follow', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');

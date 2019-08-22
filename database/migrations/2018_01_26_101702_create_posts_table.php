@@ -24,8 +24,8 @@ class CreatePostsTable extends Migration
             $table->string('poster', 128)->defult('');                                     // 第一幅海报图片
             $table->text('content');
             $table->enum('type', ['share', 'question', 'dynamite', 'friend', 'recruit']);  // 分享，问答，爆料，相亲，招聘
-            $table->unsignedInteger('follow_num')->default(0);
-            $table->unsignedInteger('comment_num')->default(0);
+            $table->unsignedInteger('follow_num')->default(0);                             // 被收藏数量
+            $table->unsignedInteger('comment_num')->default(0);                            // 被评论数量
             $table->unsignedInteger('like_num')->default(0);
             $table->unsignedInteger('dislike_num')->default(0);
             $table->enum('deleted', ['yes', 'none'])->default('none');
