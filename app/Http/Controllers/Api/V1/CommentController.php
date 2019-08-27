@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 use App\Services\CommentService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +20,9 @@ use Illuminate\Support\Facades\Validator;
 class CommentController extends Controller
 {
     private $commentService;
+
+    // 评论的主体 是文章还是回答
+    private $type = ['post', 'answer'];
 
     /**
      * CommentController constructor.
@@ -36,14 +40,23 @@ class CommentController extends Controller
      * @Author huaixiu.zhen
      * http://litblc.com
      *
+     * @param $type
      * @param $postUuid
-     * @param string $type = ['new', hot]
+     * @param string $sort = ['new', hot]
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getCommentByPostUuid($postUuid, $type = 'new')
+    public function getCommentByPostUuid($type, $postUuid, $sort = 'new')
     {
-        return $this->commentService->getAllComments($postUuid, $type);
+        if (in_array($type, $this->type)) {
+            return $this->commentService->getAllComments($type, $postUuid, $sort);
+        } else {
+
+            return response()->json(
+                ['message' => __('app.normal_param_err')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     /**
@@ -62,6 +75,10 @@ class CommentController extends Controller
             'post_uuid' => 'required',
             'parent_id' => 'required',       // 父级评论id
             'content' => 'required|max:500',
+            'type' => [
+                'required',
+                Rule::in($this->type),
+            ],
         ]);
 
         if ($validator->fails()) {
@@ -73,7 +90,8 @@ class CommentController extends Controller
             return $this->commentService->createComment(
                 $request->get('post_uuid'),
                 $request->get('parent_id'),
-                $request->get('content')
+                $request->get('content'),
+                $request->get('type')
             );
         }
     }

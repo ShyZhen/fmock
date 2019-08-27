@@ -38,7 +38,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * 获取我关注的文章 按关注时间排序
+     * 获取我关注收藏的文章 按关注时间排序
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -47,7 +47,24 @@ class User extends Authenticatable
      */
     public function myFollowedPosts()
     {
-        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'post_id')
+        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'resource_id')
+            ->wherePivot('type', 'post')    // 过滤中间表type为post的
+            ->where('deleted', 'none')
+            ->orderByDesc('pivot_updated_at')
+            ->withTimestamps();
+    }
+
+    /**
+     * 获取我关注收藏的回答 按关注时间排序
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function myFollowedAnswers()
+    {
+        return $this->belongsToMany('App\Models\Answer', 'users_posts_follow', 'user_id', 'resource_id')
+            ->wherePivot('type', 'answer')    // 过滤中间表type为answer的
             ->where('deleted', 'none')
             ->orderByDesc('pivot_updated_at')
             ->withTimestamps();

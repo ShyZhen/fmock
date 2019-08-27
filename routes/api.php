@@ -54,8 +54,8 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
 
-    // 关注（搜藏、点红心）的文章 入口在个人中心九宫格中
-    Route::get('collection/posts', 'ActionController@getMyFollowedPosts');
+    // 关注（搜藏、点红心）的文章、回答 入口在个人中心九宫格中
+    Route::get('collection/posts/{type}', 'ActionController@getMyFollowed');
     Route::post('collection/post', 'ActionController@followedPost');
     Route::delete('collection/post/{uuid}', 'ActionController@unFollow');
 
@@ -65,9 +65,16 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::get('status/post/{uuid}', 'ActionController@statusPost');
 
     // 评论
-    Route::get('comment/{postUuid}/{type?}', 'CommentController@getCommentByPostUuid');
+    Route::get('comment/{type}/{postUuid}/{sort?}', 'CommentController@getCommentByPostUuid');
     Route::post('comment', 'CommentController@createComment');
     Route::delete('comment/{uuid}', 'CommentController@deleteComment');
+
+    // 问答 - 回答
+    Route::get('answers/{postUuid}/{type?}', 'AnswerController@getAnswerByPostUuid');
+    Route::get('answer/detail/{uuid}', 'AnswerController@getAnswerByUuid');
+    Route::post('answer', 'AnswerController@createAnswer');
+    Route::put('answer/{uuid}', 'AnswerController@updateAnswer');
+    Route::delete('answer/{uuid}', 'AnswerController@deleteAnswer');
 
     // 评论 赞、取消赞，踩、取消踩
     Route::get('like/comment/{id}', 'ActionController@likeComment');
@@ -77,6 +84,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     // 个人中心 动态
 //    Route::get('my/likes', 'ActionController@myLike');                         // 我赞过的所有文章、评论
 //    Route::get('my/dislikes', 'ActionController@myDislike');                   // 我踩过的所有文章、评论
-    Route::get('user/comments/{userUuid}', 'CommentController@userComment');  // 某用户发布的所有评论(包括自己)
-    Route::get('user/posts/{userUuid}', 'PostController@userPost');           // 某用户发布的所有文章(包括自己)
+    Route::get('user/comments/{userUuid}', 'CommentController@userComment');     // 某用户发布的所有评论(包括自己)
+    Route::get('user/posts/{userUuid}', 'PostController@userPost');              // 某用户发布的所有文章(包括自己)
+    Route::get('user/answer/{userUuid}', 'AnswerController@userAnswer');         // 某用户发布的所有（回答）文章(包括自己)
 });

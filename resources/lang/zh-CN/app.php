@@ -45,5 +45,6 @@ return [
     'account_validate_fail' => '账号验证失败',
     'token_error' => 'Token获取失败',
     'illegal_input' => '非法输入，您的IP将被记录',
+    'normal_param_err' => '参数错误',
 
 ];

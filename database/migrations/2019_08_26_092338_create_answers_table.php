@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePostsTable extends Migration
+class CreateAnswersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreatePostsTable extends Migration
      */
     public function up()
     {
-        // 文章表
-        Schema::create('posts', function (Blueprint $table) {
+        // （问答类型）文章的回答表 为一对多关系（富文本，与post文章表类似，共用一个评论表）
+        Schema::create('answers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('uuid', 64)->index();   // 代替id暴露在外
+            $table->char('uuid', 64)->index();                                             // 代替id暴露在外
             $table->unsignedInteger('user_id')->index();
-//            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');  需要匿名发布
+            $table->unsignedInteger('post_id')->index();                                   // 关联文章ID 一对多
             $table->string('title', 128)->defult('');
             $table->string('summary', 128)->defult('');                                    // 摘要
             $table->string('poster', 128)->defult('');                                     // 第一幅海报图片
             $table->text('content');
-            $table->enum('type', ['share', 'question', 'dynamite', 'friend', 'recruit']);  // 分享，问答，爆料，相亲，招聘
             $table->unsignedInteger('follow_num')->default(0);                             // 被收藏数量
             $table->unsignedInteger('comment_num')->default(0);                            // 被评论数量
             $table->unsignedInteger('like_num')->default(0);
@@ -40,7 +39,6 @@ class CreatePostsTable extends Migration
      */
     public function down()
     {
-        //
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('answers');
     }
 }

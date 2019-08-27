@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 use App\Services\ActionService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Validator;
 class ActionController extends Controller
 {
     private $actionService;
+
+    // 收藏的主体 是文章还是回答
+    private $type = ['post', 'answer'];
 
     /**
      * ActionController constructor.
@@ -30,16 +34,25 @@ class ActionController extends Controller
     }
 
     /**
-     * 获取我关注的所有文章
+     * 获取我关注(收藏)的所有文章
      *
-     * @Author huaixiu.zhen
-     * http://litblc.com
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMyFollowedPosts()
+    public function getMyFollowed($type)
     {
-        return $this->actionService->getMyFollowedPosts();
+        if (in_array($type, $this->type)) {
+            return $this->actionService->getMyFollowed($type);
+        } else {
+
+            return response()->json(
+                ['message' => __('app.normal_param_err')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     /**
@@ -55,7 +68,11 @@ class ActionController extends Controller
     public function followedPost(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'uuid' => 'required',
+            'uuid' => 'required',
+            'type' => [
+                'required',
+                Rule::in($this->type),
+            ],
         ]);
 
         if ($validator->fails()) {
@@ -64,7 +81,7 @@ class ActionController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            return $this->actionService->followPost($request->get('uuid'));
+            return $this->actionService->followPost($request->get('type'), $request->get('uuid'));
         }
     }
 

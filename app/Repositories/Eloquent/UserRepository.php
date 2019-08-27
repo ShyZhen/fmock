@@ -66,6 +66,20 @@ class UserRepository extends Repository
     }
 
     /**
+     * 获取我关注收藏的回答
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @return mixed
+     */
+    public function getMyFollowedAnswers()
+    {
+        return Auth::user()->myFollowedAnswers()
+            ->paginate(env('PER_PAGE', 10));
+    }
+
+
+    /**
      * 同步中间表 更新用户关注文章的数据
      *
      * @Author huaixiu.zhen
@@ -93,5 +107,35 @@ class UserRepository extends Repository
     public function unFollow($postId)
     {
         return Auth::user()->myFollowedPosts()->detach($postId);
+    }
+
+    /**
+     * 同步中间表 更新用户关注文章的数据
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $postId
+     *
+     * @return mixed
+     */
+    public function followAnswer($postId)
+    {
+        return Auth::user()->myFollowedAnswers()->syncWithoutDetaching($postId);
+    }
+
+    /**
+     * 取消关注
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $postId
+     *
+     * @return mixed
+     */
+    public function unFollowAnswer($postId)
+    {
+        return Auth::user()->myFollowedAnswers()->detach($postId);
     }
 }

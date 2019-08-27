@@ -9,6 +9,7 @@ namespace App\Services;
 use Illuminate\Http\Response;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
 
@@ -17,6 +18,8 @@ class ActionService extends Service
     private $userRepository;
 
     private $postRepository;
+
+    private $answerRepository;
 
     private $commentRepository;
 
@@ -27,17 +30,20 @@ class ActionService extends Service
      *
      * @param UserRepository              $userRepository
      * @param PostRepository              $postRepository
+     * @param AnswerRepository              $answerRepository
      * @param CommentRepository           $commentRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(
         UserRepository $userRepository,
         PostRepository $postRepository,
+        AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
         PostsCommentsLikeRepository $postsCommentsLikeRepository
     ) {
         $this->userRepository = $userRepository;
         $this->postRepository = $postRepository;
+        $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
         $this->postsCommentsLikeRepository = $postsCommentsLikeRepository;
     }
@@ -48,14 +54,23 @@ class ActionService extends Service
      * @Author huaixiu.zhen
      * http://litblc.com
      *
+     * @param $type
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMyFollowedPosts()
+    public function getMyFollowed($type)
     {
-        $posts = $this->userRepository->getMyFollowedPosts();
+        // getMyFollowedPosts() or getMyFollowedAnswers() 方法
+        $func = 'getMyFollowed' . ucfirst($type) . 's';
+        $posts = $this->userRepository->$func();
 
         if ($posts->count()) {
             foreach ($posts as $post) {
+
+                // 文章列表不需要如下字段
+                unset($post->content);
+                unset($post->pivot);
+
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
             }
@@ -67,22 +82,33 @@ class ActionService extends Service
         );
     }
 
+
+
+
+
     /**
      * 关注文章操作 并更新post follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
+     * @param $type
      * @param $uuid
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function followPost($uuid)
+    public function followPost($type, $uuid)
     {
-        $post = $this->postRepository->findBy('uuid', $uuid);
+        if ($type == 'post') {
+            $post = $this->postRepository->findBy('uuid', $uuid);
+        } else {
+            $post = $this->answerRepository->findBy('uuid', $uuid);
+        }
 
         if ($post) {
-            $follow = $this->userRepository->followPost($post->id);
+            // followPost or followAnswer 方法
+            $func = 'follow' . ucfirst($type);
+            $follow = $this->userRepository->$func($type, $post->id);
 
             if (count($follow['attached'])) {
                 $post->follow_num += 1;

@@ -14,13 +14,13 @@ class CreateCommentTable extends Migration
     public function up()
     {
         // 评论回复表，不能使用富文本，最多500个字
-        // TODO 添加一个类型，区分是answer表还是post表；
-        // TODO post_id改为resource_id，代替post_id和answer_id，这样可以把所有评论联系起来用一张表。
+        // post_id改为resource_id，代替post_id和answer_id，这样可以把所有评论联系起来用一张表。
         Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('post_id')->index();
-            $table->unsignedInteger('parent_id')->default(0); // 0代表评论主体，否则代表回复该comment
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+            $table->enum('type', ['post', 'answer']);            // 区分是answer表还是post表
+            $table->unsignedInteger('resource_id')->index();
+            $table->unsignedInteger('parent_id')->default(0);    // 0代表评论主体，否则代表回复该comment
+//            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->integer('user_id');
             $table->string('content', 256)->default('');
             $table->unsignedInteger('like_num')->default(0);

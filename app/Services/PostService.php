@@ -164,9 +164,9 @@ class PostService extends Service
             if ($post) {
                 // 写入限制 2分钟一次
                 $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
-                $post->user_info = $this->postRepository->handleUserInfo($post->user);
-                unset($post->user);
-                unset($post->user_id);
+//                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+//                unset($post->user);
+//                unset($post->user_id);
 
                 return response()->json(
                     ['data' => $uuid],
@@ -290,7 +290,7 @@ class PostService extends Service
                     $post->user_info = $this->postRepository->handleUserInfo($post->user);
                     unset($post->user);
                     // 已经改成新逻辑，返回摘要和海报
-                    $post->content = str_limit($post->content, 400, '...');
+//                    $post->content = str_limit($post->content, 400, '...');
                 }
             }
 

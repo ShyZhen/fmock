@@ -135,7 +135,9 @@ class PostRepository extends Repository
      */
     public function getPostsByUserId($userId)
     {
-        return $this->model::with('user')->where('deleted', 'none')
+        return $this->model::with('user')
+            ->select('id', 'user_id', 'uuid', 'title', 'summary', 'poster', 'type', 'follow_num', 'comment_num', 'like_num', 'dislike_num', 'created_at')
+            ->where('deleted', 'none')
             ->where('user_id', $userId)
             ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));
