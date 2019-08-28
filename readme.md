@@ -98,17 +98,22 @@ FMock墨客社区。
  - [getMyFollowedPosts](#collections) | 获取我关注的所有文章
  - [followedPost](#post-collection) | 关注指定文章
  - [unFollow](#delete-collection) | 取消关注文章
+ 
  - [likePost](#like-post) | 赞/取消赞（文章）
  - [dislikePost](#dislike-post) | 踩/取消踩（文章）
  - [statusPost](#status-post) | 查看赞/踩状态（文章）
  
+ - [likeAnswer](#like-answer) | 赞/取消赞（回答）
+ - [dislikeAnswer](#dislike-answer) | 踩/取消踩（回答）
+ - [statusAnswer](#status-answer) | 查看赞/踩状态（回答）
+ 
+  - [likeComment](#like-comment) | 赞/取消赞（评论）
+  - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
+  - [statusComment](#status-comment) | 查看赞/踩状态（评论）
+ 
  - [getCommentByPostUuid](#post-comment) | 获取文章评论
  - [createComment](#create-post-comment) | 创建评论、回复
  - [deleteComment](#delete-post-comment) | 删除自己的评论、回复
- 
- - [likeComment](#like-comment) | 赞/取消赞（评论）
- - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
- - [statusComment](#status-comment) | 查看赞/踩状态（评论）
  
  - [userComment](#user-comments) | 某用户发布的所有评论(包括自己)
  - [userPost](#user-posts) | 某用户发布的所有文章(包括自己)
@@ -545,8 +550,8 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### delete-collection
-- DELETE `server_url/V1/collection/{type}/{uuid}`
-- 取消收藏文章、回答（不会返回失败，除非404，前端不需要toast提示）
+ - DELETE `server_url/V1/collection/{type}/{uuid}`
+ - 取消收藏文章、回答（不会返回失败，除非404，前端不需要toast提示）
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -560,28 +565,140 @@ FMock墨客社区。
  > HTTP/1.1 404
  {"message" : <"message">}
 
-
-
 #### like-post
-- GET `server_url/V1/like/post/{uuid}`
+ - GET `server_url/V1/like/post/{uuid}`
+ - 赞文章,再次请求取消赞
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `uuid` | Y |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### dislike-post
-- GET `server_url/V1/dislike/post/{uuid}`
+ - GET `server_url/V1/dislike/post/{uuid}`
+ - 踩文章,再次请求取消踩
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### status-post
-- GET `server_url/V1/status/post/{uuid}`
+ - GET `server_url/V1/status/post/{uuid}`
+ - 查询状态
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"data">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+
+#### like-answer
+ - GET `server_url/V1/like/answer/{uuid}`
+ - 赞回答,再次请求取消赞
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `uuid` | Y |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+
+#### dislike-answer
+ - GET `server_url/V1/dislike/answer/{uuid}`
+ - 踩回答,再次请求取消踩
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+
+#### status-answer
+ - GET `server_url/V1/status/answer/{uuid}`
+ - 查询状态
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"data">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+ 
+#### like-comment
+ - GET `server_url/V1/like/comment/{id}`
+ - 赞评论,再次请求取消赞（这里url跟着评论的ID,而不是uuid）
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+
+#### dislike-comment
+ - GET `server_url/V1/dislike/comment/{id}`
+ - 踩评论,再次请求取消踩（这里url跟着评论的ID,而不是uuid）
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+
+#### status-comment
+ - GET `server_url/V1/status/comment/{id}`
+ - 查询状态
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"data">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### post-comment
 - GET `server_url/V1/comment/{type}/{postUuid}/{sort?}`
@@ -622,28 +739,6 @@ FMock墨客社区。
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | 无 |  |  | Y |  | 删除评论传递的是评论ID，评论表没有uuid |
-
-#### like-comment
-- GET `server_url/V1/like/comment/{id}`
-
-参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
-
-#### dislike-comment
-- GET `server_url/V1/dislike/comment/{id}`
-
-参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
-
-#### status-comment
-- GET `server_url/V1/status/comment/{id}`
-
-参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
-
 
 #### user-comments
 - GET `server_url/V1/user/comments/{userUuid}`

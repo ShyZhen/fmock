@@ -64,6 +64,16 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::get('dislike/post/{uuid}', 'ActionController@dislikePost');
     Route::get('status/post/{uuid}', 'ActionController@statusPost');
 
+    // 评论 赞、取消赞，踩、取消踩
+    Route::get('like/comment/{id}', 'ActionController@likeComment');
+    Route::get('dislike/comment/{id}', 'ActionController@dislikeComment');
+    Route::get('status/comment/{id}', 'ActionController@statusComment');
+
+    // 回答 赞、取消赞，踩、取消踩
+    Route::get('like/answer/{uuid}', 'ActionController@likeAnswer');
+    Route::get('dislike/answer/{uuid}', 'ActionController@dislikeAnswer');
+    Route::get('status/answer/{uuid}', 'ActionController@statusAnswer');
+
     // 评论
     Route::get('comment/{type}/{postUuid}/{sort?}', 'CommentController@getCommentByPostUuid');
     Route::post('comment', 'CommentController@createComment');
@@ -75,11 +85,6 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('answer', 'AnswerController@createAnswer');
     Route::put('answer/{uuid}', 'AnswerController@updateAnswer');
     Route::delete('answer/{uuid}', 'AnswerController@deleteAnswer');
-
-    // 评论 赞、取消赞，踩、取消踩
-    Route::get('like/comment/{id}', 'ActionController@likeComment');
-    Route::get('dislike/comment/{id}', 'ActionController@dislikeComment');
-    Route::get('status/comment/{id}', 'ActionController@statusComment');
 
     // 个人中心 动态
 //    Route::get('my/likes', 'ActionController@myLike');                         // 我赞过的所有文章、评论

@@ -155,7 +155,7 @@ class ActionService extends Service
     }
 
     /**
-     * 对 文章/评论 进行 赞、取消赞、踩、取消踩
+     * 对 文章/回答/评论 进行 赞、取消赞、踩、取消踩
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -171,10 +171,13 @@ class ActionService extends Service
         $resource = '';
         $field = $type . '_num';
 
+        // 文章和回答都是uuid，评论是id
         if ($resourceType === 'post') {
             $resource = $this->postRepository->findBy('uuid', $resourceId);
         } elseif ($resourceType === 'comment') {
             $resource = $this->commentRepository->find($resourceId);
+        } elseif ($resourceType === 'answer') {
+            $resource = $this->answerRepository->findBy('uuid', $resourceId);;
         }
 
         if ($resource) {
@@ -207,7 +210,7 @@ class ActionService extends Service
     }
 
     /**
-     * 查询该 文章/评论 是否存在 赞、踩
+     * 查询该 文章/回答/评论 是否存在 赞、踩
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -224,12 +227,13 @@ class ActionService extends Service
             $resource = $this->postRepository->findBy('uuid', $resourceId, ['id']);
         } elseif ($resourceType === 'comment') {
             $resource = $this->commentRepository->find($resourceId, ['id']);
+        } elseif ($resourceType === 'answer') {
+            $resource = $this->answerRepository->findBy('uuid', $resourceId);;
         }
 
-        $resId = $resource ? $resource->id : 0;
-        if ($resId) {
-            $like = $this->postsCommentsLikeRepository->hasAction($resId, 'like', $resourceType);
-            $dislike = $this->postsCommentsLikeRepository->hasAction($resId, 'dislike', $resourceType);
+        if ($resource) {
+            $like = $this->postsCommentsLikeRepository->hasAction($resource->id, 'like', $resourceType);
+            $dislike = $this->postsCommentsLikeRepository->hasAction($resource->id, 'dislike', $resourceType);
 
             return response()->json(
                 ['data' => ['like' => $like ? true : false, 'dislike' => $dislike ? true : false]],
@@ -237,7 +241,7 @@ class ActionService extends Service
             );
         } else {
             return response()->json(
-                ['message' => __('app.no_' . $resourceType . 's')],
+                ['message' => __('app.no_posts')],
                 Response::HTTP_NOT_FOUND
             );
         }

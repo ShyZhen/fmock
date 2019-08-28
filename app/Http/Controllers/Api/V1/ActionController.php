@@ -199,4 +199,50 @@ class ActionController extends Controller
     {
         return $this->actionService->status($id, 'comment');
     }
+
+    /**
+     * 赞、取消赞(回答)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likeAnswer($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'like', 'answer');
+    }
+
+    /**
+     * 踩、取消踩(回答)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dislikeAnswer($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'dislike', 'answer');
+    }
+
+    /**
+     * 查询 当前用户 对该文章（回答）是否存在 赞、踩
+     * 所有 对内查询 可以使用ID，其他一律使用uuid
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusAnswer($uuid)
+    {
+        return $this->actionService->status($uuid, 'answer');
+    }
 }
