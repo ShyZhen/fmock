@@ -51,7 +51,6 @@ class CommentController extends Controller
         if (in_array($type, $this->type)) {
             return $this->commentService->getAllComments($type, $postUuid, $sort);
         } else {
-
             return response()->json(
                 ['message' => __('app.normal_param_err')],
                 Response::HTTP_BAD_REQUEST

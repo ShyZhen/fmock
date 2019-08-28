@@ -84,7 +84,6 @@ class UserRepository extends Repository
 //            ->paginate(env('PER_PAGE', 10));
 //    }
 
-
     /**
      * 同步中间表 更新用户关注文章、回答的数据
      *
@@ -138,10 +137,11 @@ class UserRepository extends Repository
     {
         // myFollowedPosts or myFollowedAnswers
         $func = 'myFollowed' . ucfirst($type) . 's';
+
         return Auth::user()->$func()->detach($postId);
     }
 
-    /**
+    /*
      * 取消关注
      * （已废弃）使用 unFollow() 统一方法
      *

@@ -11,8 +11,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
 use App\Services\ActionService;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -47,7 +47,6 @@ class ActionController extends Controller
         if (in_array($type, $this->type)) {
             return $this->actionService->getMyFollowed($type);
         } else {
-
             return response()->json(
                 ['message' => __('app.normal_param_err')],
                 Response::HTTP_BAD_REQUEST
@@ -101,7 +100,6 @@ class ActionController extends Controller
         if (in_array($type, $this->type)) {
             return $this->actionService->unFollow($type, $uuid);
         } else {
-
             return response()->json(
                 ['message' => __('app.normal_param_err')],
                 Response::HTTP_BAD_REQUEST

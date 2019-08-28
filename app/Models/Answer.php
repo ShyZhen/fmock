@@ -10,7 +10,7 @@ class Answer extends Model
     protected $table = 'answers';
 
     protected $fillable = [
-        'uuid', 'user_id', 'post_id', 'title', 'summary', 'poster', 'content'
+        'uuid', 'user_id', 'post_id', 'title', 'summary', 'poster', 'content',
     ];
 
     /**
