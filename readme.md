@@ -250,7 +250,7 @@ FMock墨客社区。
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `uuid` | Y | String | Y |  |  |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -363,7 +363,7 @@ FMock墨客社区。
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `uuid` | Y |  | Y |  |  |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -417,7 +417,7 @@ FMock墨客社区。
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `uuid` | Y |  | Y |  |  |
 
  - 返回值
  > HTTP/1.1 204 OK
@@ -435,7 +435,7 @@ FMock墨客社区。
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `postUuid` | Y | String | Y |  |  |
 | `type` | N | String | Y |  | 可选`hot/new`默认`new` |
-| `page` | N | Int | N |  | 分页 |
+| `page` | N | Int | Y |  | 分页 |
  
  - 返回值
  > HTTP/1.1 200 OK
@@ -485,7 +485,6 @@ FMock墨客社区。
  
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `uuid` | Y | String | Y | &lt;64 |  |
 | `summary` | Y | String | Y | &lt;80 |  |
 | `poster` | Y | String | Y | &lt;128 |  |
 | `content` | Y | Int | Y | &lt;10000 |  |
@@ -514,13 +513,13 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### collections
- - GET `server_url/V1/collection/posts/{type}`
+ - GET `server_url/V1/collection/{type}`
  - 获取我收藏的文章、回答
  - 支持分页操作
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| type | Y | Enum | Y |  | 区分收藏的类型`post`/`answer` |
+| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer` |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -529,25 +528,39 @@ FMock墨客社区。
  > HTTP/1.1 404
  {"message" : <"message">}
 
-
-
-
-
-
 #### post-collection
- - POST `server_url/V1/collection/post`
+ - POST `server_url/V1/collection`
  - 收藏某篇文章、回答
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `uuid` | Y | String | Y |  | 文章`uuid` |
+| `resource_uuid` | Y | String | Y |  | 文章或回答的`uuid` |
+| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer` |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### delete-collection
-- DELETE `server_url/V1/collection/post/{uuid}`
+- DELETE `server_url/V1/collection/{type}/{uuid}`
+- 取消收藏文章、回答（不会返回失败，除非404，前端不需要toast提示）
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `type` | Y | Enum | Y |  | 区分类型`post`/`answer` |
+| `uuid` | Y | String | Y |  | 该文章、回答的`uuid` |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+
+
 
 #### like-post
 - GET `server_url/V1/like/post/{uuid}`

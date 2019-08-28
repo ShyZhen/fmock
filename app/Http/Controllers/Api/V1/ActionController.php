@@ -56,7 +56,7 @@ class ActionController extends Controller
     }
 
     /**
-     * 关注文章
+     * 关注文章、回答
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -65,10 +65,10 @@ class ActionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function followedPost(Request $request)
+    public function followed(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'uuid' => 'required',
+            'resource_uuid' => 'required',
             'type' => [
                 'required',
                 Rule::in($this->type),
@@ -81,7 +81,7 @@ class ActionController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            return $this->actionService->followPost($request->get('type'), $request->get('uuid'));
+            return $this->actionService->follow($request->get('type'), $request->get('resource_uuid'));
         }
     }
 
@@ -91,13 +91,22 @@ class ActionController extends Controller
      * @Author huaixiu.zhen
      * http://litblc.com
      *
+     * @param $type
      * @param $uuid
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unFollow($uuid)
+    public function unFollow($type, $uuid)
     {
-        return $this->actionService->unFollow($uuid);
+        if (in_array($type, $this->type)) {
+            return $this->actionService->unFollow($type, $uuid);
+        } else {
+
+            return response()->json(
+                ['message' => __('app.normal_param_err')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     /**

@@ -48,6 +48,7 @@ class User extends Authenticatable
     public function myFollowedPosts()
     {
         return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'resource_id')
+            ->withPivot('type')
             ->wherePivot('type', 'post')    // 过滤中间表type为post的
             ->where('deleted', 'none')
             ->orderByDesc('pivot_updated_at')
@@ -64,6 +65,7 @@ class User extends Authenticatable
     public function myFollowedAnswers()
     {
         return $this->belongsToMany('App\Models\Answer', 'users_posts_follow', 'user_id', 'resource_id')
+            ->withPivot('type')
             ->wherePivot('type', 'answer')    // 过滤中间表type为answer的
             ->where('deleted', 'none')
             ->orderByDesc('pivot_updated_at')

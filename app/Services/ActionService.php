@@ -60,9 +60,7 @@ class ActionService extends Service
      */
     public function getMyFollowed($type)
     {
-        // getMyFollowedPosts() or getMyFollowedAnswers() 方法
-        $func = 'getMyFollowed' . ucfirst($type) . 's';
-        $posts = $this->userRepository->$func();
+        $posts = $this->userRepository->getMyFollowed($type);
 
         if ($posts->count()) {
             foreach ($posts as $post) {
@@ -82,12 +80,8 @@ class ActionService extends Service
         );
     }
 
-
-
-
-
     /**
-     * 关注文章操作 并更新post follow_num 表字段
+     * 关注文章操作 并更新follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -97,18 +91,15 @@ class ActionService extends Service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function followPost($type, $uuid)
+    public function follow($type, $uuid)
     {
-        if ($type == 'post') {
-            $post = $this->postRepository->findBy('uuid', $uuid);
-        } else {
-            $post = $this->answerRepository->findBy('uuid', $uuid);
-        }
+        // postRepository or answerRepository
+        $repository = $type . 'Repository';
+
+        $post = $this->$repository->findBy('uuid', $uuid);
 
         if ($post) {
-            // followPost or followAnswer 方法
-            $func = 'follow' . ucfirst($type);
-            $follow = $this->userRepository->$func($type, $post->id);
+            $follow = $this->userRepository->follow($post->id, $type);
 
             if (count($follow['attached'])) {
                 $post->follow_num += 1;
@@ -128,22 +119,26 @@ class ActionService extends Service
     }
 
     /**
-     * 取消关注 并更新post follow_num 表字段
+     * 取消关注 并更新follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
      * @param $uuid
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unFollow($uuid)
+    public function unFollow($type, $uuid)
     {
-        $post = $this->postRepository->findBy('uuid', $uuid);
+        // postRepository or answerRepository
+        $repository = $type . 'Repository';
+
+        $post = $this->$repository->findBy('uuid', $uuid);
 
         if ($post) {
-            if ($this->userRepository->unFollow($post->id)) {
-                $post->follow_num -= 1;
+            if ($this->userRepository->unFollow($post->id, $type)) {
+                $post->follow_num > 0 && $post->follow_num -= 1;
                 $post->save();
             }
 
