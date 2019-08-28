@@ -45,5 +45,6 @@ return [
     'account_validate_fail' => 'The account illegal. ',
     'token_error' => 'Token Error. ',
     'illegal_input' => 'Illegal input, your IP will be recorded. ',
+    'normal_param_err' => 'Param error',
 
 ];

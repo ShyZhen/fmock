@@ -9,6 +9,7 @@ namespace App\Services;
 use Illuminate\Http\Response;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
 
@@ -17,6 +18,8 @@ class ActionService extends Service
     private $userRepository;
 
     private $postRepository;
+
+    private $answerRepository;
 
     private $commentRepository;
 
@@ -27,17 +30,20 @@ class ActionService extends Service
      *
      * @param UserRepository              $userRepository
      * @param PostRepository              $postRepository
+     * @param AnswerRepository            $answerRepository
      * @param CommentRepository           $commentRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(
         UserRepository $userRepository,
         PostRepository $postRepository,
+        AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
         PostsCommentsLikeRepository $postsCommentsLikeRepository
     ) {
         $this->userRepository = $userRepository;
         $this->postRepository = $postRepository;
+        $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
         $this->postsCommentsLikeRepository = $postsCommentsLikeRepository;
     }
@@ -48,14 +54,21 @@ class ActionService extends Service
      * @Author huaixiu.zhen
      * http://litblc.com
      *
+     * @param $type
+     *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMyFollowedPosts()
+    public function getMyFollowed($type)
     {
-        $posts = $this->userRepository->getMyFollowedPosts();
+        $posts = $this->userRepository->getMyFollowed($type);
 
         if ($posts->count()) {
             foreach ($posts as $post) {
+
+                // 文章列表不需要如下字段
+                unset($post->content);
+                unset($post->pivot);
+
                 $post->user_info = $this->postRepository->handleUserInfo($post->user);
                 unset($post->user);
             }
@@ -68,21 +81,25 @@ class ActionService extends Service
     }
 
     /**
-     * 关注文章操作 并更新post follow_num 表字段
+     * 关注文章操作 并更新follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
+     * @param $type
      * @param $uuid
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function followPost($uuid)
+    public function follow($type, $uuid)
     {
-        $post = $this->postRepository->findBy('uuid', $uuid);
+        // postRepository or answerRepository
+        $repository = $type . 'Repository';
+
+        $post = $this->$repository->findBy('uuid', $uuid);
 
         if ($post) {
-            $follow = $this->userRepository->followPost($post->id);
+            $follow = $this->userRepository->follow($post->id, $type);
 
             if (count($follow['attached'])) {
                 $post->follow_num += 1;
@@ -102,22 +119,26 @@ class ActionService extends Service
     }
 
     /**
-     * 取消关注 并更新post follow_num 表字段
+     * 取消关注 并更新follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
      *
      * @param $uuid
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unFollow($uuid)
+    public function unFollow($type, $uuid)
     {
-        $post = $this->postRepository->findBy('uuid', $uuid);
+        // postRepository or answerRepository
+        $repository = $type . 'Repository';
+
+        $post = $this->$repository->findBy('uuid', $uuid);
 
         if ($post) {
-            if ($this->userRepository->unFollow($post->id)) {
-                $post->follow_num -= 1;
+            if ($this->userRepository->unFollow($post->id, $type)) {
+                $post->follow_num > 0 && $post->follow_num -= 1;
                 $post->save();
             }
 
@@ -134,7 +155,7 @@ class ActionService extends Service
     }
 
     /**
-     * 对 文章/评论 进行 赞、取消赞、踩、取消踩
+     * 对 文章/回答/评论 进行 赞、取消赞、踩、取消踩
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -150,10 +171,14 @@ class ActionService extends Service
         $resource = '';
         $field = $type . '_num';
 
+        // 文章和回答都是uuid，评论是id
         if ($resourceType === 'post') {
             $resource = $this->postRepository->findBy('uuid', $resourceId);
         } elseif ($resourceType === 'comment') {
             $resource = $this->commentRepository->find($resourceId);
+        } elseif ($resourceType === 'answer') {
+            $resource = $this->answerRepository->findBy('uuid', $resourceId);
+            ;
         }
 
         if ($resource) {
@@ -186,7 +211,7 @@ class ActionService extends Service
     }
 
     /**
-     * 查询该 文章/评论 是否存在 赞、踩
+     * 查询该 文章/回答/评论 是否存在 赞、踩
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -203,12 +228,14 @@ class ActionService extends Service
             $resource = $this->postRepository->findBy('uuid', $resourceId, ['id']);
         } elseif ($resourceType === 'comment') {
             $resource = $this->commentRepository->find($resourceId, ['id']);
+        } elseif ($resourceType === 'answer') {
+            $resource = $this->answerRepository->findBy('uuid', $resourceId);
+            ;
         }
 
-        $resId = $resource ? $resource->id : 0;
-        if ($resId) {
-            $like = $this->postsCommentsLikeRepository->hasAction($resId, 'like', $resourceType);
-            $dislike = $this->postsCommentsLikeRepository->hasAction($resId, 'dislike', $resourceType);
+        if ($resource) {
+            $like = $this->postsCommentsLikeRepository->hasAction($resource->id, 'like', $resourceType);
+            $dislike = $this->postsCommentsLikeRepository->hasAction($resource->id, 'dislike', $resourceType);
 
             return response()->json(
                 ['data' => ['like' => $like ? true : false, 'dislike' => $dislike ? true : false]],
@@ -216,7 +243,7 @@ class ActionService extends Service
             );
         } else {
             return response()->json(
-                ['message' => __('app.no_' . $resourceType . 's')],
+                ['message' => __('app.no_posts')],
                 Response::HTTP_NOT_FOUND
             );
         }

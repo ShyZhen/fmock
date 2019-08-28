@@ -36,7 +36,7 @@ class CommentRepository extends Repository
     public function getAllNewComments($postId)
     {
         $comments = $this->model::with('user')
-            ->where(['post_id' => $postId])
+            ->where(['resource_id' => $postId])
             ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));
 
@@ -56,7 +56,7 @@ class CommentRepository extends Repository
     public function getAllHotComments($postId)
     {
         $comments = $this->model::with('user')
-            ->where(['post_id' => $postId])
+            ->where(['resource_id' => $postId])
             ->orderByDesc('like_num')
             ->paginate(env('PER_PAGE', 10));
 

@@ -1,26 +1,20 @@
 <?php
 
-/**
- * Author huaixiu.zhen
- * http://litblc.com
- * User: litblc
- * Date: 2018/08/21
- * Time: 15:10
- */
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model
+class Answer extends Model
 {
-    protected $table = 'comments';
+    //
+    protected $table = 'answers';
 
     protected $fillable = [
-        'type', 'resource_id', 'parent_id', 'user_id', 'content', 'like_num', 'dislike_num', 'deleted',
+        'uuid', 'user_id', 'post_id', 'title', 'summary', 'poster', 'content',
     ];
 
     /**
-     * 评论预加载用户信息
+     * 文章预加载用户信息
      *
      * @Author huaixiu.zhen
      * http://litblc.com

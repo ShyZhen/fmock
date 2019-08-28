@@ -16,12 +16,12 @@ class CreateUsersTable extends Migration
         // 用户表
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('uuid', 255)->index();                   // 代替id暴露在外
+            $table->string('uuid', 64)->index();                   // 代替id暴露在外
             $table->string('email', 64)->default('')->index();               // 登录邮箱
             $table->string('mobile', 64)->default('')->index();              // 登录手机
             $table->string('password', 255);
             $table->rememberToken();
-            $table->string('name', 64)->unique();               // 显示的用户昵称,第一次可改
+            $table->string('name', 64)->index();               // 显示的用户昵称,第一次可改
             $table->string('avatar', 255)->default('');         // 没设置既使用默认头像
             $table->enum('gender', ['male', 'female', 'secrecy'])->default('secrecy');
             $table->date('birthday')->default('1970-01-01');

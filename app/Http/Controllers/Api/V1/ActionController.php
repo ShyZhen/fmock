@@ -12,12 +12,16 @@ namespace App\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\ActionService;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class ActionController extends Controller
 {
     private $actionService;
+
+    // 收藏的主体 是文章还是回答
+    private $type = ['post', 'answer'];
 
     /**
      * ActionController constructor.
@@ -30,20 +34,28 @@ class ActionController extends Controller
     }
 
     /**
-     * 获取我关注的所有文章
+     * 获取我关注(收藏)的所有文章
      *
-     * @Author huaixiu.zhen
-     * http://litblc.com
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMyFollowedPosts()
+    public function getMyFollowed($type)
     {
-        return $this->actionService->getMyFollowedPosts();
+        if (in_array($type, $this->type)) {
+            return $this->actionService->getMyFollowed($type);
+        } else {
+            return response()->json(
+                ['message' => __('app.normal_param_err')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     /**
-     * 关注文章
+     * 关注文章、回答
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -52,10 +64,14 @@ class ActionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function followedPost(Request $request)
+    public function followed(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'uuid' => 'required',
+            'resource_uuid' => 'required',
+            'type' => [
+                'required',
+                Rule::in($this->type),
+            ],
         ]);
 
         if ($validator->fails()) {
@@ -64,7 +80,7 @@ class ActionController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            return $this->actionService->followPost($request->get('uuid'));
+            return $this->actionService->follow($request->get('type'), $request->get('resource_uuid'));
         }
     }
 
@@ -74,13 +90,21 @@ class ActionController extends Controller
      * @Author huaixiu.zhen
      * http://litblc.com
      *
+     * @param $type
      * @param $uuid
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unFollow($uuid)
+    public function unFollow($type, $uuid)
     {
-        return $this->actionService->unFollow($uuid);
+        if (in_array($type, $this->type)) {
+            return $this->actionService->unFollow($type, $uuid);
+        } else {
+            return response()->json(
+                ['message' => __('app.normal_param_err')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     /**
@@ -172,5 +196,51 @@ class ActionController extends Controller
     public function statusComment($id)
     {
         return $this->actionService->status($id, 'comment');
+    }
+
+    /**
+     * 赞、取消赞(回答)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likeAnswer($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'like', 'answer');
+    }
+
+    /**
+     * 踩、取消踩(回答)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dislikeAnswer($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'dislike', 'answer');
+    }
+
+    /**
+     * 查询 当前用户 对该文章（回答）是否存在 赞、踩
+     * 所有 对内查询 可以使用ID，其他一律使用uuid
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusAnswer($uuid)
+    {
+        return $this->actionService->status($uuid, 'answer');
     }
 }

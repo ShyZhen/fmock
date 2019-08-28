@@ -13,11 +13,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\RedisService;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
 
 class CommentService extends Service
 {
     private $postRepository;
+
+    private $answerRepository;
 
     private $commentRepository;
 
@@ -29,17 +32,20 @@ class CommentService extends Service
      * CommentService constructor.
      *
      * @param PostRepository    $postRepository
+     * @param AnswerRepository  $answerRepository
      * @param CommentRepository $commentRepository
      * @param RedisService      $redisService
      * @param UserRepository    $userRepository
      */
     public function __construct(
         PostRepository $postRepository,
+        AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
         RedisService $redisService,
         UserRepository $userRepository
     ) {
         $this->postRepository = $postRepository;
+        $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
         $this->redisService = $redisService;
         $this->userRepository = $userRepository;
@@ -93,22 +99,27 @@ class CommentService extends Service
      *
      * @param $postUuid
      * @param $type
+     * @param $sort
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getAllComments($postUuid, $type)
+    public function getAllComments($type, $postUuid, $sort)
     {
-        $post = $this->postRepository->findBy('uuid', $postUuid);
+        if ($type == 'post') {
+            $post = $this->postRepository->findBy('uuid', $postUuid);
+        } else {
+            $post = $this->answerRepository->findBy('uuid', $postUuid);
+        }
         if ($post) {
 
             // 获取评论集合
-            if ($type == 'hot') {
+            if ($sort == 'hot') {
                 $comments = $this->commentRepository->getAllHotComments($post->id);
             } else {
                 $comments = $this->commentRepository->getAllNewComments($post->id);
             }
 
-            // 处理预加载的用户信息
+            // 处理评论信息
             if ($comments->count()) {
                 $comments = $this->handleComments($comments);
             }
@@ -134,10 +145,11 @@ class CommentService extends Service
      * @param $postUuid
      * @param $parentId
      * @param $content
+     * @param $type
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createComment($postUuid, $parentId, $content)
+    public function createComment($postUuid, $parentId, $content, $type)
     {
         $userId = Auth::id();
 
@@ -148,12 +160,17 @@ class CommentService extends Service
             );
         } else {
             // 简单验证
-            $post = $this->postRepository->findBy('uuid', $postUuid);
+            if ($type == 'post') {
+                $post = $this->postRepository->findBy('uuid', $postUuid);
+            } else {
+                $post = $this->answerRepository->findBy('uuid', $postUuid);
+            }
             $parentComment = $this->commentRepository->find($parentId);
 
             if ($post) {
                 $comment = $this->commentRepository->create([
-                    'post_id' => $post->id,
+                    'type' => $type,
+                    'resource_id' => $post->id,
                     'parent_id' => $parentComment ? $parentComment->id : 0,
                     'user_id' => $userId,
                     'content' => $content,
