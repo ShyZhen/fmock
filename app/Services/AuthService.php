@@ -328,6 +328,7 @@ class AuthService extends Service
                 $user->save();
 
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
+
                 return response()->json(
                     ['access_token' => $token],
                     Response::HTTP_OK

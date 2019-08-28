@@ -10,6 +10,6 @@ class UsersPostsFollow extends Model
     protected $table = 'users_posts_follow';
 
     protected $fillable = [
-        'user_id', 'resource_id', 'type'
+        'user_id', 'resource_id', 'type',
     ];
 }

@@ -30,7 +30,7 @@ class ActionService extends Service
      *
      * @param UserRepository              $userRepository
      * @param PostRepository              $postRepository
-     * @param AnswerRepository              $answerRepository
+     * @param AnswerRepository            $answerRepository
      * @param CommentRepository           $commentRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
@@ -177,7 +177,8 @@ class ActionService extends Service
         } elseif ($resourceType === 'comment') {
             $resource = $this->commentRepository->find($resourceId);
         } elseif ($resourceType === 'answer') {
-            $resource = $this->answerRepository->findBy('uuid', $resourceId);;
+            $resource = $this->answerRepository->findBy('uuid', $resourceId);
+            ;
         }
 
         if ($resource) {
@@ -228,7 +229,8 @@ class ActionService extends Service
         } elseif ($resourceType === 'comment') {
             $resource = $this->commentRepository->find($resourceId, ['id']);
         } elseif ($resourceType === 'answer') {
-            $resource = $this->answerRepository->findBy('uuid', $resourceId);;
+            $resource = $this->answerRepository->findBy('uuid', $resourceId);
+            ;
         }
 
         if ($resource) {
