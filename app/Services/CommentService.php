@@ -32,7 +32,7 @@ class CommentService extends Service
      * CommentService constructor.
      *
      * @param PostRepository    $postRepository
-     * @param AnswerRepository    $answerRepository
+     * @param AnswerRepository  $answerRepository
      * @param CommentRepository $commentRepository
      * @param RedisService      $redisService
      * @param UserRepository    $userRepository

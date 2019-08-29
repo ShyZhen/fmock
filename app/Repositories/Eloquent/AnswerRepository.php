@@ -6,7 +6,6 @@
  * Date: 2019/8/26
  * Time: 11:29
  */
-
 namespace App\Repositories\Eloquent;
 
 class AnswerRepository extends Repository

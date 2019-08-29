@@ -22,6 +22,7 @@ class AnswerController extends Controller
 
     /**
      * AnswerController constructor.
+     *
      * @param AnswerService $answerService
      */
     public function __construct(AnswerService $answerService)
@@ -31,6 +32,7 @@ class AnswerController extends Controller
 
     /**
      * 根据文章ID获取回答列表（类似文章列表）
+     *
      * @author z00455118 <zhenhuaixiu@huawei.com>
      *
      * @param $postUuid

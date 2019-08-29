@@ -12,8 +12,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\RedisService;
-use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\PostRepository;
+use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 
 class AnswerService extends Service
@@ -27,9 +27,9 @@ class AnswerService extends Service
     private $postRepository;
 
     /**
-     * @param RedisService   $redisService
-     * @param UserRepository $userRepository
-     * @param PostRepository $postRepository
+     * @param RedisService     $redisService
+     * @param UserRepository   $userRepository
+     * @param PostRepository   $postRepository
      * @param AnswerRepository $answerRepository
      */
     public function __construct(
@@ -105,7 +105,6 @@ class AnswerService extends Service
         $answer = $this->answerRepository->findBy('uuid', $uuid, $columns);
 
         if ($answer) {
-
             if ($answer->deleted == 'none' || $answer->user_id == Auth::id()) {
                 $answer->user_info = $this->postRepository->handleUserInfo($answer->user);
                 unset($answer->user);
@@ -284,7 +283,6 @@ class AnswerService extends Service
     {
         $user = $this->userRepository->findBy('uuid', $userUuid);
         if ($user) {
-
             $answers = $this->answerRepository->getAnswersByUserId($user->id);
 
             if ($answers->count()) {
