@@ -105,18 +105,17 @@ class CommentService extends Service
      */
     public function getAllComments($type, $postUuid, $sort)
     {
-        if ($type == 'post') {
-            $post = $this->postRepository->findBy('uuid', $postUuid);
-        } else {
-            $post = $this->answerRepository->findBy('uuid', $postUuid);
-        }
+        // postRepository or answerRepository
+        $repository = $type . 'Repository';
+        $post = $this->$repository->findBy('uuid', $postUuid);
+
         if ($post) {
 
             // 获取评论集合
             if ($sort == 'hot') {
-                $comments = $this->commentRepository->getAllHotComments($post->id);
+                $comments = $this->commentRepository->getAllHotComments($post->id, $type);
             } else {
-                $comments = $this->commentRepository->getAllNewComments($post->id);
+                $comments = $this->commentRepository->getAllNewComments($post->id, $type);
             }
 
             // 处理评论信息
@@ -160,17 +159,17 @@ class CommentService extends Service
             );
         } else {
             // 简单验证
-            if ($type == 'post') {
-                $post = $this->postRepository->findBy('uuid', $postUuid);
-            } else {
-                $post = $this->answerRepository->findBy('uuid', $postUuid);
-            }
+            // postRepository or answerRepository
+            $repository = $type . 'Repository';
+            $post = $this->$repository->findBy('uuid', $postUuid);
+
             $parentComment = $this->commentRepository->find($parentId);
 
             if ($post) {
                 $comment = $this->commentRepository->create([
                     'type' => $type,
                     'resource_id' => $post->id,
+                    'resource_uuid' => $postUuid,    // 方便通过评论找到原始文章
                     'parent_id' => $parentComment ? $parentComment->id : 0,
                     'user_id' => $userId,
                     'content' => $content,
@@ -182,7 +181,7 @@ class CommentService extends Service
                     $comment->user_info = $this->postRepository->handleUserInfo($comment->user);
                     unset($comment->user);
 
-                    // 更新评论数量
+                    // 更新评论数量,回复也算在内
                     $post->comment_num += 1;
                     $post->save();
 

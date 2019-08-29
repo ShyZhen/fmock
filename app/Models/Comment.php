@@ -16,7 +16,7 @@ class Comment extends Model
     protected $table = 'comments';
 
     protected $fillable = [
-        'type', 'resource_id', 'parent_id', 'user_id', 'content', 'like_num', 'dislike_num', 'deleted',
+        'type', 'resource_id', 'resource_uuid', 'parent_id', 'user_id', 'content', 'like_num', 'dislike_num', 'deleted',
     ];
 
     /**

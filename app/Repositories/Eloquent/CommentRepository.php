@@ -30,13 +30,14 @@ class CommentRepository extends Repository
      * http://litblc.com
      *
      * @param $postId
+     * @param $type
      *
      * @return mixed
      */
-    public function getAllNewComments($postId)
+    public function getAllNewComments($postId, $type)
     {
         $comments = $this->model::with('user')
-            ->where(['resource_id' => $postId])
+            ->where(['resource_id' => $postId, 'type' => $type])
             ->orderByDesc('created_at')
             ->paginate(env('PER_PAGE', 10));
 
@@ -50,13 +51,14 @@ class CommentRepository extends Repository
      * http://litblc.com
      *
      * @param $postId
+     * @param $type
      *
      * @return mixed
      */
-    public function getAllHotComments($postId)
+    public function getAllHotComments($postId, $type)
     {
         $comments = $this->model::with('user')
-            ->where(['resource_id' => $postId])
+            ->where(['resource_id' => $postId, 'type' => $type])
             ->orderByDesc('like_num')
             ->paginate(env('PER_PAGE', 10));
 
