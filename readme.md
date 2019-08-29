@@ -701,7 +701,8 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### post-comment
-- GET `server_url/V1/comment/{type}/{postUuid}/{sort?}`
+ - GET `server_url/V1/comment/{type}/{postUuid}/{sort?}`
+ - 获取文章或回答的评论列表
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -709,57 +710,86 @@ FMock墨客社区。
 | `postUuid` | Y | String | Y |  | 资源的uuid |
 | `sort` | N | String | Y |  | `{sort}`可选new/hot,默认new |
 
-  - 返回值
-  > HTTP/1.1 200 OK
-  {"data" : <"comments">}
-  
-  > HTTP/1.1 404
-  {"message" : <"message">}
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"comments">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### create-post-comment
-- POST `server_url/V1/comment`
+ - POST `server_url/V1/comment`
+ - 写评论、回复评论
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `post_uuid` | Y | String | Y |  |  |
-| `parent_id` | Y | Int | Y |  |  |
+| `resource_uuid` | Y | String | Y |  | 资源ID |
+| `parent_id` | Y | Int | Y |  | 是否有父评论（即是否是回复），没有填0 |
 | `content` | Y | String | Y | &lt;500 |  |
 | `type` | Y | Enum | Y |  | 只能在`answer`/`post`中选取 |
 
-  - 返回值
-  > HTTP/1.1 201 OK
-  {"data" : <"comment">}
-  
-  > HTTP/1.1 400、404、422、500
-  {"message" : <"message">}
+ - 返回值
+ > HTTP/1.1 201 OK
+ {"data" : <"comment">}
+ 
+ > HTTP/1.1 400、404、422、500
+ {"message" : <"message">}
 
 #### delete-post-comment
-- DELETE `server_url/V1/comment/{id}`
+ - DELETE `server_url/V1/comment/{id}`
+ - 删除我的某条评论
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  | 删除评论传递的是评论ID，评论表没有uuid |
+| `id` | Y | Int | Y |  | 删除评论传递的是评论ID，评论表没有uuid |
+
+ - 返回值
+ > HTTP/1.1 204 Not Content
+ {null}
+ 
+ > HTTP/1.1 404、500
+ {"message" : <"message">}
 
 #### user-comments
-- GET `server_url/V1/user/comments/{userUuid}`
+ - GET `server_url/V1/user/comments/{userUuid}`
+ - 获取某个用户曾经的所有评论
+ - 支持分页
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `userUuid` | Y | String | Y |  | 可以通过type和resource_uuid找到原始文章 |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"comments">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### user-posts
-- GET `server_url/V1/user/posts/{userUuid}`
+ - GET `server_url/V1/user/posts/{userUuid}`
+ - 获取某个用户的所有文章
+ - 支持分页
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `userUuid` | Y | String | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"comments">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
 
 #### user-answers
-- GET `server_url/V1/user/answer/{userUuid}`
+ - GET `server_url/V1/user/answers/{userUuid}`
+ - 获取某个用户的所有回答
+ 支持分页
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `userUuid` |  |  | Y |  |  |
+| `userUuid` | Y | String | Y |  |  |
 
   - 返回值
   > HTTP/1.1 200 OK

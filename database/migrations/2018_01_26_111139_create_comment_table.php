@@ -18,6 +18,7 @@ class CreateCommentTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->increments('id');
             $table->enum('type', ['post', 'answer']);            // 区分是answer表还是post表
+            $table->string('resource_uuid', 64)->index();
             $table->unsignedInteger('resource_id')->index();
             $table->unsignedInteger('parent_id')->default(0);    // 0代表评论主体，否则代表回复该comment
 //            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');

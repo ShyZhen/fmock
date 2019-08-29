@@ -72,8 +72,8 @@ class CommentController extends Controller
     public function createComment(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'post_uuid' => 'required',
-            'parent_id' => 'required',       // 父级评论id
+            'resource_uuid' => 'required',
+            'parent_id' => 'required|integer',       // 父级评论id
             'content' => 'required|max:500',
             'type' => [
                 'required',
@@ -88,7 +88,7 @@ class CommentController extends Controller
             );
         } else {
             return $this->commentService->createComment(
-                $request->get('post_uuid'),
+                $request->get('resource_uuid'),
                 $request->get('parent_id'),
                 $request->get('content'),
                 $request->get('type')
