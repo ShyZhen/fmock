@@ -178,7 +178,6 @@ class ActionService extends Service
             $resource = $this->commentRepository->find($resourceId);
         } elseif ($resourceType === 'answer') {
             $resource = $this->answerRepository->findBy('uuid', $resourceId);
-            ;
         }
 
         if ($resource) {
@@ -230,7 +229,6 @@ class ActionService extends Service
             $resource = $this->commentRepository->find($resourceId, ['id']);
         } elseif ($resourceType === 'answer') {
             $resource = $this->answerRepository->findBy('uuid', $resourceId);
-            ;
         }
 
         if ($resource) {
