@@ -46,5 +46,8 @@ return [
     'token_error' => 'Token获取失败',
     'illegal_input' => '非法输入，您的IP将被记录',
     'normal_param_err' => '参数错误',
+    'cant_follow_myself' => '不能关注自己哟',
+    'already' => '已',
+    'cant_exceed_max_follow' => '您已达到关注上限',
 
 ];

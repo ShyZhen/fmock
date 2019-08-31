@@ -156,4 +156,19 @@ class UserRepository extends Repository
 //    {
 //        return Auth::user()->myFollowedAnswers()->detach($postId);
 //    }
+
+
+    /**
+     * 根据用户ID集合 查询用户信息
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $idArr
+     *
+     * @return mixed
+     */
+    public function getUsersByIdArr($idArr)
+    {
+        return $this->model::whereIn('id', $idArr)->get(['id', 'uuid', 'name', 'avatar', 'bio']);
+    }
 }

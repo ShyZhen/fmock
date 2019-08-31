@@ -92,4 +92,10 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::get('user/comments/{userUuid}', 'CommentController@userComment');     // 某用户发布的所有评论(包括自己)
     Route::get('user/posts/{userUuid}', 'PostController@userPost');              // 某用户发布的所有文章(包括自己)
     Route::get('user/answers/{userUuid}', 'AnswerController@userAnswer');         // 某用户发布的所有（回答）文章(包括自己)
+
+    // 关注、取关某人
+    Route::get('follow/{userUuid}', 'UserController@follow');
+    Route::get('follow/status/{userUuid}', 'UserController@status');
+    Route::get('follows/list/{userUuid}', 'UserController@getFollowsList');
+    Route::get('fans/list/{userUuid}', 'UserController@getFansList');
 });
