@@ -65,7 +65,8 @@ class UserController extends Controller
      */
     public function getFollowsList($userUuid)
     {
-        $page = (int)request('page') > 0 ? (int)request('page') : 1;
+        $page = (int) request('page') > 0 ? (int) request('page') : 1;
+
         return $this->userService->getFollowsList($userUuid, $page);
     }
 
@@ -80,7 +81,8 @@ class UserController extends Controller
      */
     public function getFansList($userUuid)
     {
-        $page = (int)request('page') > 0 ? (int)request('page') : 1;
+        $page = (int) request('page') > 0 ? (int) request('page') : 1;
+
         return $this->userService->getFansList($userUuid, $page);
     }
 }

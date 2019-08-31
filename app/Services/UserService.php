@@ -17,7 +17,9 @@ class UserService extends Service
 
     /**
      * 用户的最大关注上限
+     *
      * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
      * @var int
      */
     private $maxFollowNum = 500;
@@ -26,12 +28,11 @@ class UserService extends Service
 
     private $userRepository;
 
-
     /**
      * ActionService constructor.
      *
-     * @param RedisService              $redisService
-     * @param UserRepository              $userRepository
+     * @param RedisService   $redisService
+     * @param UserRepository $userRepository
      */
     public function __construct(
         RedisService $redisService,
@@ -101,7 +102,6 @@ class UserService extends Service
                 );
             }
         } else {
-
             return response()->json(
                 ['message' => __('app.user_is_closure')],
                 Response::HTTP_NOT_FOUND
@@ -132,15 +132,14 @@ class UserService extends Service
             $myFansKey = 'user:' . $currId . ':fans';          // 他关注我，他成为我的粉丝
             $myFollowsKey = 'user:' . $currId . ':follows';    // 我关注某人，他在我的关注列表
 
-            $iFollowedYou = (bool)$this->redisService->zscore($myFollowsKey, $user->id);
-            $youFollowMe = (bool)$this->redisService->zscore($myFansKey, $user->id);
+            $iFollowedYou = (bool) $this->redisService->zscore($myFollowsKey, $user->id);
+            $youFollowMe = (bool) $this->redisService->zscore($myFansKey, $user->id);
 
             return response()->json(
                 ['data' => ['inMyFollows' => $iFollowedYou, 'inMyFans' => $youFollowMe]],
                 Response::HTTP_OK
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.user_is_closure')],
                 Response::HTTP_NOT_FOUND
@@ -182,15 +181,15 @@ class UserService extends Service
             // 看别人
             if ($user->id != $currId) {
                 foreach ($userFollowsList as &$userFollow) {
-                    $userFollow->inMyFollows = (bool)$this->redisService->zscore($myFollowsKey, $userFollow->id);
-                    $userFollow->inMyFans = (bool)$this->redisService->zscore($myFansKey, $userFollow->id);
+                    $userFollow->inMyFollows = (bool) $this->redisService->zscore($myFollowsKey, $userFollow->id);
+                    $userFollow->inMyFans = (bool) $this->redisService->zscore($myFansKey, $userFollow->id);
                 }
                 unset($userFollow);
             } else {
                 // 看的是自己
                 foreach ($userFollowsList as &$userFollow) {
                     $userFollow->inMyFollows = true;
-                    $userFollow->inMyFans = (bool)$this->redisService->zscore($myFansKey, $userFollow->id);
+                    $userFollow->inMyFans = (bool) $this->redisService->zscore($myFansKey, $userFollow->id);
                 }
                 unset($userFollow);
             }
@@ -200,7 +199,6 @@ class UserService extends Service
                 Response::HTTP_OK
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.user_is_closure')],
                 Response::HTTP_NOT_FOUND
@@ -243,14 +241,14 @@ class UserService extends Service
             // 看别人
             if ($user->id != $currId) {
                 foreach ($userFansList as &$userFan) {
-                    $userFan->inMyFollows = (bool)$this->redisService->zscore($myFollowsKey, $userFan->id);
-                    $userFan->inMyFans = (bool)$this->redisService->zscore($myFansKey, $userFan->id);
+                    $userFan->inMyFollows = (bool) $this->redisService->zscore($myFollowsKey, $userFan->id);
+                    $userFan->inMyFans = (bool) $this->redisService->zscore($myFansKey, $userFan->id);
                 }
                 unset($userFan);
             } else {
                 // 看的是自己
                 foreach ($userFansList as &$userFan) {
-                    $userFan->inMyFollows = (bool)$this->redisService->zscore($myFollowsKey, $userFan->id);
+                    $userFan->inMyFollows = (bool) $this->redisService->zscore($myFollowsKey, $userFan->id);
                     $userFan->inMyFans = true;
                 }
                 unset($userFan);
@@ -261,7 +259,6 @@ class UserService extends Service
                 Response::HTTP_OK
             );
         } else {
-
             return response()->json(
                 ['message' => __('app.user_is_closure')],
                 Response::HTTP_NOT_FOUND
