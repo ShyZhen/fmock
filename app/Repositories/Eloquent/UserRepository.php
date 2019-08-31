@@ -157,7 +157,6 @@ class UserRepository extends Repository
 //        return Auth::user()->myFollowedAnswers()->detach($postId);
 //    }
 
-
     /**
      * 根据用户ID集合 查询用户信息
      *
