@@ -106,4 +106,103 @@ class RedisService extends Service
 
         return $ttl;
     }
+
+    /**
+     * 有序集合
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $key
+     * @param $score
+     * @param $val
+     *
+     * @return mixed
+     */
+    public function zadd($key, $score, $val)
+    {
+        $bool = $this->redis->zadd($key, $score, $val);
+
+        return $bool;
+    }
+
+    /**
+     * 删除集合中的某个值
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $key
+     * @param $val
+     *
+     * @return mixed
+     */
+    public function zrem($key, $val)
+    {
+        $bool = $this->redis->zrem($key, $val);
+
+        return $bool;
+    }
+
+    /**
+     * 查询集合中是否存在某个值
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $key
+     * @param $val
+     *
+     * @return mixed
+     */
+    public function zscore($key, $val)
+    {
+        $bool = $this->redis->zscore($key, $val);
+
+        return $bool;
+    }
+
+    /**
+     * 顺序获取集合中的值
+     *
+     * Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $key
+     * @param $start
+     * @param $end
+     * @param $score
+     *
+     * @return string or null
+     */
+    public function zrange($key, $start, $end, $score = false)
+    {
+        if ($score) {
+            $res = $this->redis->zrange($key, $start, $end, 'withscores');
+        } else {
+            $res = $this->redis->zrange($key, $start, $end);
+        }
+
+        return $res;
+    }
+
+    /**
+     * 倒序获取集合中的值
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $key
+     * @param $start
+     * @param $end
+     * @param $score
+     *
+     * @return mixed
+     */
+    public function zrevrange($key, $start, $end, $score = false)
+    {
+        if ($score) {
+            $res = $this->redis->zrevrange($key, $start, $end, 'withscores');
+        } else {
+            $res = $this->redis->zrevrange($key, $start, $end);
+        }
+
+        return $res;
+    }
 }

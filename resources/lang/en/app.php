@@ -45,6 +45,9 @@ return [
     'account_validate_fail' => 'The account illegal. ',
     'token_error' => 'Token Error. ',
     'illegal_input' => 'Illegal input, your IP will be recorded. ',
-    'normal_param_err' => 'Param error',
+    'normal_param_err' => 'Param error ',
+    'cant_follow_myself' => 'Can\'t Follow Yourself ',
+    'already' => 'Has ',
+    'cant_exceed_max_follow' => 'You have exceeded your maximum attention limit. ',
 
 ];
