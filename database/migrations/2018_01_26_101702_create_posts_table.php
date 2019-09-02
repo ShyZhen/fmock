@@ -15,7 +15,7 @@ class CreatePostsTable extends Migration
     {
         // 文章表
         Schema::create('posts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('uuid', 64)->index();   // 代替id暴露在外
             $table->unsignedInteger('user_id')->index();
 //            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');  需要匿名发布

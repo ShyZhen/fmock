@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
     {
         // 用户表
         Schema::create('users', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('uuid', 64)->index();                   // 代替id暴露在外
             $table->string('email', 64)->default('')->index();               // 登录邮箱
             $table->string('mobile', 64)->default('')->index();              // 登录手机

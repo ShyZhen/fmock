@@ -589,6 +589,11 @@ class AuthService extends Service
             $this->redisService->redisIncr('ip:' . $action . ':times:' . $clientIp);
 
             if ($this->redisService->getRedis('ip:' . $action . ':times:' . $clientIp) > 30) {
+                // 本地环境关闭该限制
+                if (env('APP_ENV') == 'local') {
+                    return false;
+                }
+
                 return true;
             }
 

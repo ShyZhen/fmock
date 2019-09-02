@@ -37,7 +37,11 @@ class UserController extends Controller
      */
     public function follow($userUuid)
     {
-        return $this->userService->follow($userUuid);
+        if (env('SaveFansToRedis')) {
+            return $this->userService->follow($userUuid);
+        } else {
+            return $this->userService->followDB($userUuid);
+        }
     }
 
     /**
@@ -51,7 +55,11 @@ class UserController extends Controller
      */
     public function status($userUuid)
     {
-        return $this->userService->status($userUuid);
+        if (env('SaveFansToRedis')) {
+            return $this->userService->status($userUuid);
+        } else {
+            return $this->userService->statusDB($userUuid);
+        }
     }
 
     /**
@@ -67,7 +75,11 @@ class UserController extends Controller
     {
         $page = (int) request('page') > 0 ? (int) request('page') : 1;
 
-        return $this->userService->getFollowsList($userUuid, $page);
+        if (env('SaveFansToRedis')) {
+            return $this->userService->getFollowsList($userUuid, $page);
+        } else {
+            return $this->userService->getFollowsListDB($userUuid, $page);
+        }
     }
 
     /**
@@ -83,6 +95,10 @@ class UserController extends Controller
     {
         $page = (int) request('page') > 0 ? (int) request('page') : 1;
 
-        return $this->userService->getFansList($userUuid, $page);
+        if (env('SaveFansToRedis')) {
+            return $this->userService->getFansList($userUuid, $page);
+        } else {
+            return $this->userService->getFansListDB($userUuid, $page);
+        }
     }
 }

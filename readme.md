@@ -33,7 +33,7 @@ FMock墨客社区。
 
 ## Installation
  - `git clone https://github.com/ShyZhen/fmock.git`
- - `copy .env.example .env` and edit .env
+ - `copy .env.example .env` and edit .env (生成环境记得修改env中APP_ENV=production)
  > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
  如果想上传文件到七牛，需要开启`.env`中的`QiniuService=true`,并配置好七牛的各项参数。
  - `composer install`
@@ -57,11 +57,9 @@ FMock墨客社区。
  - 支持微信小程序登录
  - 支持切换上传图片到七牛云与本地存储，使用七牛融合CDN进行静态资源加速
  - 记录用户上传文件日志，用户后续控制
- 
- 
  - 支持社区的基本操作：普通文章模块、问答模块、点赞、评论、搜藏
  - Delta格式富文本编辑器
- - 支持粉丝系统
+ - 支持粉丝系统，查看用户关注、粉丝列表等操作，支持redis以及关系型数据库两种存储方式，量小推荐使用数据库
 
 ## API Index
 
@@ -119,6 +117,10 @@ FMock墨客社区。
  - [userPost](#user-posts) | 某用户发布的所有文章(包括自己)
  - [userAnswer](#user-answers) | 某用户发布的所有(回答)文章(包括自己)
 
+ - [follow](#follow-user) | 关注、取关某用户
+ - [status](#follow-status-user) | 查看某个用户与自己的关注、互粉状态
+ - [getFansList](#follows-list) | 查看某个用户的关注列表(包括自己)
+ - [getFansList](#fans-list) | 查看某个用户的粉丝列表(包括自己)
 
 
 #### register-code
@@ -566,7 +568,7 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### like-post
- - GET `server_url/V1/like/post/{uuid}`
+ - POST `server_url/V1/like/post/{uuid}`
  - 赞文章,再次请求取消赞
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
@@ -581,12 +583,12 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### dislike-post
- - GET `server_url/V1/dislike/post/{uuid}`
+ - POST `server_url/V1/dislike/post/{uuid}`
  - 踩文章,再次请求取消踩
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `uuid` | Y |  | Y |  |  |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -611,7 +613,7 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### like-answer
- - GET `server_url/V1/like/answer/{uuid}`
+ - POST `server_url/V1/like/answer/{uuid}`
  - 赞回答,再次请求取消赞
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
@@ -626,12 +628,12 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### dislike-answer
- - GET `server_url/V1/dislike/answer/{uuid}`
+ - POST `server_url/V1/dislike/answer/{uuid}`
  - 踩回答,再次请求取消踩
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `uuid` | Y |  | Y |  |  |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -656,12 +658,12 @@ FMock墨客社区。
  {"message" : <"message">}
  
 #### like-comment
- - GET `server_url/V1/like/comment/{id}`
+ - POST `server_url/V1/like/comment/{id}`
  - 赞评论,再次请求取消赞（这里url跟着评论的ID,而不是uuid）
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `id` | Y |  | Y |  |  |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -671,12 +673,12 @@ FMock墨客社区。
  {"message" : <"message">}
 
 #### dislike-comment
- - GET `server_url/V1/dislike/comment/{id}`
+ - POST `server_url/V1/dislike/comment/{id}`
  - 踩评论,再次请求取消踩（这里url跟着评论的ID,而不是uuid）
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 无 |  |  | Y |  |  |
+| `id` | Y |  | Y |  |  |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -797,6 +799,71 @@ FMock墨客社区。
   
   > HTTP/1.1 404
   {"message" : <"message">}
+
+
+
+
+#### follow-user
+ - POST `server_url/V1/follow/{userUuid}`
+ - 关注、取关某人
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `userUuid` | Y | String | Y |  |  |
+
+  - 返回值
+  > HTTP/1.1 200 OK
+  {"message" : <"message">}
+  
+  > HTTP/1.1 404、422
+  {"message" : <"message">}
+  
+#### follow-status-user
+ - GET `server_url/V1/follow/status/{userUuid}`
+ - 查询对某个用户的关注、互粉状态
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `userUuid` | Y | String | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"data">}
+ 
+ > HTTP/1.1 404、422
+ {"message" : <"message">} 
+ 
+#### follows-list
+ - GET `server_url/V1/follows/list/{userUuid}`
+ - 查询某个用户的关注列表（包括我自己）
+ - 支持分页 `?page=x`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `userUuid` | Y | String | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"list">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">} 
+
+#### fans-list
+ - GET `server_url/V1/fans/list/{userUuid}`
+ - 查询某个用户的粉丝列表（包括我自己）
+ - 支持分页 `?page=x`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `userUuid` | Y | String | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"list">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">} 
 
 ## Security Vulnerabilities
 

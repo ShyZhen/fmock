@@ -15,7 +15,7 @@ class CreateUsersPostsFollowTable extends Migration
     {
         // 用户收藏的文章、回答表
         Schema::create('users_posts_follow', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('resource_id')->index();
             $table->enum('type', ['post', 'answer']);        // 区分文章、回答

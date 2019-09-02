@@ -49,5 +49,6 @@ return [
     'cant_follow_myself' => '不能关注自己哟',
     'already' => '已',
     'cant_exceed_max_follow' => '您已达到关注上限',
+    'exceed_day_max_follow' => '已超过每日关注上限',
 
 ];

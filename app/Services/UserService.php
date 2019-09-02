@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\RedisService;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\UsersFollowRepository;
 
 class UserService extends Service
 {
@@ -28,18 +29,23 @@ class UserService extends Service
 
     private $userRepository;
 
+    private $userFollowRepository;
+
     /**
      * ActionService constructor.
      *
      * @param RedisService   $redisService
      * @param UserRepository $userRepository
+     * @param UsersFollowRepository $userFollowRepository
      */
     public function __construct(
         RedisService $redisService,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        UsersFollowRepository $userFollowRepository
     ) {
         $this->redisService = $redisService;
         $this->userRepository = $userRepository;
+        $this->userFollowRepository = $userFollowRepository;
     }
 
     /**
@@ -80,6 +86,15 @@ class UserService extends Service
                     $msg = __('app.already') . __('app.cancel');
                 } else {
                     // 关注操作
+
+                    // 每日关注上限
+                    if ($this->verifyFollowingLimit($currId)) {
+                        return response()->json(
+                            ['message' => __('app.exceed_day_max_follow')],
+                            Response::HTTP_FORBIDDEN
+                        );
+                    }
+
                     // 最大关注上限
                     if ($mime->followed_num >= $this->maxFollowNum) {
                         return response()->json(
@@ -267,6 +282,308 @@ class UserService extends Service
     }
 
     /**
+     * 关注、取关 某个用户（Mysql版）
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $userUuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function followDB($userUuid)
+    {
+        // 当前用户ID
+        $mime = Auth::user();
+        $currId = $mime->id;
+
+        // 目标用户
+        $user = $this->userRepository->findBy('uuid', $userUuid);
+
+        if ($user) {
+            if ($user->id == $currId) {
+                return response()->json(
+                    ['message' => __('app.cant_follow_myself')],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            } else {
+                $follow = $this->userFollowRepository->isFollowed($currId, $user->id);
+
+                // 取关操作
+                if ($follow) {
+                    // 查看是否互关状态
+                    if ($follow->both_status == 'yes') {
+                        $this->userFollowRepository->updateFollowStatus($user->id, $currId, 'none');
+                    }
+
+                    $follow->delete();
+                    // 更新数据库计数
+                    $this->updateFansAndFollowNum($mime, $user, 'cancel');
+                    $msg = __('app.already') . __('app.cancel');
+
+                } else {
+                    // 关注操作
+                    // 每日关注上限
+                    if ($this->verifyFollowingLimit($currId)) {
+                        return response()->json(
+                            ['message' => __('app.exceed_day_max_follow')],
+                            Response::HTTP_FORBIDDEN
+                        );
+                    }
+
+                    // 最大关注上限
+                    if ($mime->followed_num >= $this->maxFollowNum) {
+                        return response()->json(
+                            ['message' => __('app.cant_exceed_max_follow')],
+                            Response::HTTP_UNPROCESSABLE_ENTITY
+                        );
+                    } else {
+                        // 查看他是否已经关注了我
+                        $youFollowedMe = $this->userFollowRepository->isFollowed($user->id, $currId);
+
+                        $bothStatus = $youFollowedMe ? 'yes' : 'none';
+                        $createFollow = $this->userFollowRepository->create([
+                            'master_user_id' => $user->id,
+                            'following_user_id' => $currId,
+                            'both_status' => $bothStatus
+                        ]);
+
+                        // 如果他已经关注了我，则修改双方状态为互关
+                        if ($createFollow && $youFollowedMe) {
+                            $youFollowedMe->both_status = $bothStatus;
+                            $youFollowedMe->save();
+                        }
+
+                        // 更新数据库计数
+                        $this->updateFansAndFollowNum($mime, $user, '');
+                        $msg = __('app.already') . __('app.follow');
+                    }
+                }
+
+                return response()->json(
+                    ['message' => $msg],
+                    Response::HTTP_OK
+                );
+            }
+        } else {
+            return response()->json(
+                ['message' => __('app.user_is_closure')],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    /**
+     * 查看某个用户与我的互粉状态（MYSQL版）
+     * 用在查看用户detail时
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $userUuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusDB($userUuid)
+    {
+        // 当前用户ID
+        $mime = Auth::user();
+        $currId = $mime->id;
+
+        // 目标用户
+        $user = $this->userRepository->findBy('uuid', $userUuid);
+
+        if ($user) {
+            $iFollowedYou = (bool) $this->userFollowRepository->isFollowed($currId, $user->id);
+            $youFollowMe = (bool) $this->userFollowRepository->isFollowed($user->id, $currId);
+
+            return response()->json(
+                ['data' => ['inMyFollows' => $iFollowedYou, 'inMyFans' => $youFollowMe]],
+                Response::HTTP_OK
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.user_is_closure')],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    /**
+     * 获取用户的关注列表（MYSQL版本）
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $userUuid
+     * @param $page
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFollowsListDB($userUuid, $page)
+    {
+        // 当前用户ID
+        $mime = Auth::user();
+        $currId = $mime->id;
+
+        // 目标用户
+        $user = $this->userRepository->findBy('uuid', $userUuid);
+
+        if ($user) {
+
+            $start = ($page - 1) * $this->pageSize;
+
+            // 目标用户的关注列表
+            $userFollows = $this->userFollowRepository->getSomeoneFollows($user->id, $start, $this->pageSize);
+            $userFollowsIdArr = $userFollows->pluck('master_user_id');
+            $userFollowsList = $this->userRepository->getUsersByIdArr($userFollowsIdArr);
+
+            // 看别人
+            if ($user->id != $currId) {
+
+                // 找到这些人中 也同时关注了我的
+                $myFansArr = $this->userFollowRepository->getSomeoneFansByIdArr($currId, $userFollowsIdArr);
+                // 找到这些人中 我同时关注了的
+                $myFollowedArr = $this->userFollowRepository->getSomeoneFollowsByIdArr($currId, $userFollowsIdArr);
+
+                foreach ($userFollowsList as &$userFollow) {
+                    $userFollow->inMyFans = (bool) false;
+                    $userFollow->inMyFollows = (bool) false;
+
+                    // 同时关注了我
+                    foreach ($myFansArr as $myFans) {
+                        if ($myFans->following_user_id == $userFollow->id){
+                            $userFollow->inMyFans = (bool) true;
+                        }
+                    }
+
+                    // 我同时关注了他（她）
+                    foreach ($myFollowedArr as $myFollower) {
+                        if ($myFollower->master_user_id == $userFollow->id){
+                            $userFollow->inMyFollows = (bool) true;
+                        }
+                    }
+                }
+                unset($userFollow);
+            } else {
+                // 看的是自己
+                // 查看状态是否互粉，即可知道他们关注我没有
+                foreach ($userFollowsList as &$userFollow) {
+                    foreach ($userFollows as $userFollowerItem) {
+                        if ($userFollow->id == $userFollowerItem->master_user_id) {
+                            $userFollow->both_status = $userFollowerItem->both_status;
+                        }
+                    }
+                }
+                unset($userFollow);
+
+                // 最终遍历数据，减少数据库请求
+                foreach ($userFollowsList as &$userFollow) {
+                    $userFollow->inMyFollows = true;
+                    $userFollow->inMyFans = $userFollow->both_status == 'yes' ? true : false;
+                    unset($userFollow->both_status);
+                }
+                unset($userFollow);
+            }
+
+            return response()->json(
+                ['data' => $userFollowsList],
+                Response::HTTP_OK
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.user_is_closure')],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    /**
+     * 获取用户的粉丝列表（MYSQL版本）
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $userUuid
+     * @param $page
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFansListDB($userUuid, $page)
+    {
+        // 当前用户ID
+        $mime = Auth::user();
+        $currId = $mime->id;
+
+        // 目标用户
+        $user = $this->userRepository->findBy('uuid', $userUuid);
+
+        if ($user) {
+
+            $start = ($page - 1) * $this->pageSize;
+
+            // 目标用户的粉丝列表
+            $userFans = $this->userFollowRepository->getSomeoneFans($user->id, $start, $this->pageSize);
+            $userFansIdArr = $userFans->pluck('following_user_id');
+            $userFansList = $this->userRepository->getUsersByIdArr($userFansIdArr);
+
+            // 看别人
+            if ($user->id != $currId) {
+
+                // 找到这些人中 也同时关注了我的
+                $myFansArr = $this->userFollowRepository->getSomeoneFansByIdArr($currId, $userFansIdArr);
+                // 找到这些人中 我同时关注了的
+                $myFollowedArr = $this->userFollowRepository->getSomeoneFollowsByIdArr($currId, $userFansIdArr);
+
+                foreach ($userFansList as &$userFan) {
+                    $userFan->inMyFans = (bool) false;
+                    $userFan->inMyFollows = (bool) false;
+
+                    // 同时关注了我
+                    foreach ($myFansArr as $myFan) {
+                        if ($myFan->following_user_id == $userFan->id){
+                            $userFan->inMyFans = (bool) true;
+                        }
+                    }
+
+                    // 我同时关注了他（她）
+                    foreach ($myFollowedArr as $myFollower) {
+                        if ($myFollower->master_user_id == $userFan->id){
+                            $userFan->inMyFollows = (bool) true;
+                        }
+                    }
+                }
+                unset($userFan);
+            } else {
+                // 看的是自己
+                // 查看状态是否互粉，即可知道他们关注我没有
+                foreach ($userFansList as &$userFan) {
+                    foreach ($userFans as $userFanItem) {
+                        if ($userFan->id == $userFanItem->following_user_id) {
+                            $userFan->both_status = $userFanItem->both_status;
+                        }
+                    }
+                }
+                unset($userFan);
+
+                // 最终遍历数据，减少数据库请求
+                foreach ($userFansList as &$userFan) {
+                    $userFan->inMyFollows = $userFan->both_status == 'yes' ? true : false;
+                    $userFan->inMyFans = true;
+                    unset($userFan->both_status);
+                }
+                unset($userFollow);
+            }
+
+            return response()->json(
+                ['data' => $userFansList],
+                Response::HTTP_OK
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.user_is_closure')],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    /**
      * 关注、取关 操作用户表计数
      *
      * @author z00455118 <zhenhuaixiu@huawei.com>
@@ -289,6 +606,37 @@ class UserService extends Service
             $mime->followed_num > 0 && $mime->followed_num -= 1;
             $user->save();
             $mime->save();
+        }
+    }
+
+
+    /**
+     * 每天最多进行关注30个人
+     *
+     * @author z00455118 <zhenhuaixiu@huawei.com>
+     *
+     * @param $currId
+     *
+     * @return bool
+     */
+    private function verifyFollowingLimit($currId)
+    {
+        if ($this->redisService->isRedisExists('following:user:' . $currId)) {
+            $this->redisService->redisIncr('following:user:' . $currId);
+
+            if ($this->redisService->getRedis('following:user:' . $currId) > 30) {
+                // 本地环境关闭该限制
+                if (env('APP_ENV') == 'local') {
+                    return false;
+                }
+                return true;
+            }
+
+            return false;
+        } else {
+            $this->redisService->setRedis('following:user:' . $currId, 1, 'EX', 86400);
+
+            return false;
         }
     }
 }
