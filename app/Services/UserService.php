@@ -34,8 +34,8 @@ class UserService extends Service
     /**
      * ActionService constructor.
      *
-     * @param RedisService   $redisService
-     * @param UserRepository $userRepository
+     * @param RedisService          $redisService
+     * @param UserRepository        $userRepository
      * @param UsersFollowRepository $userFollowRepository
      */
     public function __construct(
@@ -319,7 +319,6 @@ class UserService extends Service
                     // 更新数据库计数
                     $this->updateFansAndFollowNum($mime, $user, 'cancel');
                     $msg = __('app.already') . __('app.cancel');
-
                 } else {
                     // 关注操作
                     // 每日关注上限
@@ -344,7 +343,7 @@ class UserService extends Service
                         $createFollow = $this->userFollowRepository->create([
                             'master_user_id' => $user->id,
                             'following_user_id' => $currId,
-                            'both_status' => $bothStatus
+                            'both_status' => $bothStatus,
                         ]);
 
                         // 如果他已经关注了我，则修改双方状态为互关
@@ -427,7 +426,6 @@ class UserService extends Service
         $user = $this->userRepository->findBy('uuid', $userUuid);
 
         if ($user) {
-
             $start = ($page - 1) * $this->pageSize;
 
             // 目标用户的关注列表
@@ -449,14 +447,14 @@ class UserService extends Service
 
                     // 同时关注了我
                     foreach ($myFansArr as $myFans) {
-                        if ($myFans->following_user_id == $userFollow->id){
+                        if ($myFans->following_user_id == $userFollow->id) {
                             $userFollow->inMyFans = (bool) true;
                         }
                     }
 
                     // 我同时关注了他（她）
                     foreach ($myFollowedArr as $myFollower) {
-                        if ($myFollower->master_user_id == $userFollow->id){
+                        if ($myFollower->master_user_id == $userFollow->id) {
                             $userFollow->inMyFollows = (bool) true;
                         }
                     }
@@ -515,7 +513,6 @@ class UserService extends Service
         $user = $this->userRepository->findBy('uuid', $userUuid);
 
         if ($user) {
-
             $start = ($page - 1) * $this->pageSize;
 
             // 目标用户的粉丝列表
@@ -537,14 +534,14 @@ class UserService extends Service
 
                     // 同时关注了我
                     foreach ($myFansArr as $myFan) {
-                        if ($myFan->following_user_id == $userFan->id){
+                        if ($myFan->following_user_id == $userFan->id) {
                             $userFan->inMyFans = (bool) true;
                         }
                     }
 
                     // 我同时关注了他（她）
                     foreach ($myFollowedArr as $myFollower) {
-                        if ($myFollower->master_user_id == $userFan->id){
+                        if ($myFollower->master_user_id == $userFan->id) {
                             $userFan->inMyFollows = (bool) true;
                         }
                     }
@@ -609,7 +606,6 @@ class UserService extends Service
         }
     }
 
-
     /**
      * 每天最多进行关注30个人
      *
@@ -629,6 +625,7 @@ class UserService extends Service
                 if (env('APP_ENV') == 'local') {
                     return false;
                 }
+
                 return true;
             }
 
