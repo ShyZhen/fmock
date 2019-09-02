@@ -15,7 +15,7 @@ class CreateAnswersTable extends Migration
     {
         // （问答类型）文章的回答表 为一对多关系（富文本，与post文章表类似，共用一个评论表）
         Schema::create('answers', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->char('uuid', 64)->index();                                             // 代替id暴露在外
             $table->unsignedInteger('user_id')->index();
             $table->unsignedInteger('post_id')->index();                                   // 关联文章ID 一对多

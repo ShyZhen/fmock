@@ -15,7 +15,7 @@ class CreatePostsCommentsLikeTable extends Migration
     {
         // 用户对文章、回答、评论的赞和踩动作
         Schema::create('posts_comments_like', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('resource_id')->index();            // 资源ID(文章或评论)
             $table->enum('action', ['like', 'dislike']);                // 动作

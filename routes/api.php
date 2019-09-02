@@ -60,18 +60,18 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::delete('collection/{type}/{uuid}', 'ActionController@unFollow');
 
     // 文章 赞、取消赞，踩、取消踩
-    Route::get('like/post/{uuid}', 'ActionController@likePost');
-    Route::get('dislike/post/{uuid}', 'ActionController@dislikePost');
+    Route::post('like/post/{uuid}', 'ActionController@likePost');
+    Route::post('dislike/post/{uuid}', 'ActionController@dislikePost');
     Route::get('status/post/{uuid}', 'ActionController@statusPost');
 
     // 评论 赞、取消赞，踩、取消踩
-    Route::get('like/comment/{id}', 'ActionController@likeComment');
-    Route::get('dislike/comment/{id}', 'ActionController@dislikeComment');
+    Route::post('like/comment/{id}', 'ActionController@likeComment');
+    Route::post('dislike/comment/{id}', 'ActionController@dislikeComment');
     Route::get('status/comment/{id}', 'ActionController@statusComment');
 
     // 回答 赞、取消赞，踩、取消踩
-    Route::get('like/answer/{uuid}', 'ActionController@likeAnswer');
-    Route::get('dislike/answer/{uuid}', 'ActionController@dislikeAnswer');
+    Route::post('like/answer/{uuid}', 'ActionController@likeAnswer');
+    Route::post('dislike/answer/{uuid}', 'ActionController@dislikeAnswer');
     Route::get('status/answer/{uuid}', 'ActionController@statusAnswer');
 
     // 评论
@@ -91,10 +91,10 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
 //    Route::get('my/dislikes', 'ActionController@myDislike');                   // 我踩过的所有文章、评论
     Route::get('user/comments/{userUuid}', 'CommentController@userComment');     // 某用户发布的所有评论(包括自己)
     Route::get('user/posts/{userUuid}', 'PostController@userPost');              // 某用户发布的所有文章(包括自己)
-    Route::get('user/answers/{userUuid}', 'AnswerController@userAnswer');         // 某用户发布的所有（回答）文章(包括自己)
+    Route::get('user/answers/{userUuid}', 'AnswerController@userAnswer');        // 某用户发布的所有（回答）文章(包括自己)
 
     // 关注、取关某人
-    Route::get('follow/{userUuid}', 'UserController@follow');
+    Route::post('follow/{userUuid}', 'UserController@follow');
     Route::get('follow/status/{userUuid}', 'UserController@status');
     Route::get('follows/list/{userUuid}', 'UserController@getFollowsList');
     Route::get('fans/list/{userUuid}', 'UserController@getFansList');

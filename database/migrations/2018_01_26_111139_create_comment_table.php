@@ -16,7 +16,7 @@ class CreateCommentTable extends Migration
         // 评论回复表，不能使用富文本，最多500个字
         // post_id改为resource_id，代替post_id和answer_id，这样可以把所有评论联系起来用一张表。
         Schema::create('comments', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->enum('type', ['post', 'answer']);            // 区分是answer表还是post表
             $table->string('resource_uuid', 64)->index();
             $table->unsignedInteger('resource_id')->index();

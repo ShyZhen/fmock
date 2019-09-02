@@ -15,7 +15,7 @@ class CreateUserUploadImagesTable extends Migration
     {
         // 用户发布文章中上传的图片关系表，记录用户上传的图片。便于后台管理
         Schema::create('user_upload_images', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->unsignedInteger('user_id')->index();
             $table->string('url', 255)->defult('');
             $table->timestamps();
