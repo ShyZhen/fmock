@@ -35,7 +35,7 @@ class UsersFollowRepository extends Repository
     {
         return $this->model::where([
             'master_user_id' => $userId,
-            'following_user_id' => $currId
+            'following_user_id' => $currId,
         ])->first();
     }
 
@@ -54,9 +54,9 @@ class UsersFollowRepository extends Repository
     {
         return $this->model::where([
             'master_user_id' => $userId,
-            'following_user_id' => $currId
+            'following_user_id' => $currId,
         ])->update([
-            'both_status' => $status
+            'both_status' => $status,
         ]);
     }
 
@@ -74,7 +74,7 @@ class UsersFollowRepository extends Repository
     public function getSomeoneFollows($userId, $start, $limit)
     {
         return $this->model::where([
-            'following_user_id' => $userId
+            'following_user_id' => $userId,
         ])->offset($start)->limit($limit)->get();
     }
 
@@ -92,10 +92,9 @@ class UsersFollowRepository extends Repository
     public function getSomeoneFans($userId, $start, $limit)
     {
         return $this->model::where([
-            'master_user_id' => $userId
+            'master_user_id' => $userId,
         ])->offset($start)->limit($limit)->get();
     }
-
 
     /**
      * 在固定数组里查找某人的粉丝
