@@ -568,7 +568,7 @@ class UserService extends Service
                     $userFan->inMyFans = true;
                     unset($userFan->both_status);
                 }
-                unset($userFollow);
+                unset($userFan);
             }
 
             return response()->json(
@@ -608,7 +608,6 @@ class UserService extends Service
             $mime->save();
         }
     }
-
 
     /**
      * 每天最多进行关注30个人
