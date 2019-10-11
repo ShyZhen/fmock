@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ebe6f5e033a506eaecb9265d82e48f52",
+    "content-hash": "157a43b548dd26181b4de2d08e4506c5",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -5981,7 +5981,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1.3"
+        "php": ">=7.1.3",
+        "ext-gd": "*"
     },
     "platform-dev": []
 }
