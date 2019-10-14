@@ -50,20 +50,6 @@ class PostService extends Service
      */
     public function getAllPosts($type)
     {
-        /*
-        switch ($type) {
-            case 'post-hot':
-                $posts = $this->postRepository->getFavoritePost();
-                break;
-            case 'post-anonymous':
-                $posts = $this->postRepository->getPostsByUserId(0);
-                break;
-            default:
-                $posts = $this->postRepository->getNewPost();
-                break;
-        }
-        */
-
         switch ($type) {
             case 'all':
                 $posts = $this->postRepository->getNewPost();                   // 全部最新
@@ -164,9 +150,6 @@ class PostService extends Service
             if ($post) {
                 // 写入限制 2分钟一次
                 $this->redisService->setRedis('post:user:' . $userId, 'create', 'EX', 120);
-//                $post->user_info = $this->postRepository->handleUserInfo($post->user);
-//                unset($post->user);
-//                unset($post->user_id);
 
                 return response()->json(
                     ['data' => $uuid],
@@ -289,8 +272,6 @@ class PostService extends Service
                 foreach ($posts as $post) {
                     $post->user_info = $this->postRepository->handleUserInfo($post->user);
                     unset($post->user);
-                    // 已经改成新逻辑，返回摘要和海报
-//                    $post->content = str_limit($post->content, 400, '...');
                 }
             }
 
