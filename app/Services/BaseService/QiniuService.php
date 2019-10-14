@@ -43,7 +43,7 @@ class QiniuService extends Service
      *
      * @param $filePath       // 文件路径、tmp_name
      * @param $key            // 生成的文件名
-     * @param string $bucket // 空间名
+     * @param string $bucket  // 空间名
      *
      * @throws \Exception
      *

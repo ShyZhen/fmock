@@ -64,7 +64,6 @@ class AuthService extends Service
             );
         }
 
-        // 正常逻辑
         if ($this->redisService->isRedisExists('user:register:account:' . $account)) {
             return response()->json(
                 ['message' => __('app.account_ttl') . $this->redisService->getRedisTtl('user:register:account:' . $account) . 's'],
@@ -75,8 +74,6 @@ class AuthService extends Service
             $code = self::code();
 
             switch ($type) {
-
-                // 邮箱
                 case 'email':
                     $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
                     $subject = __('app.fmock_register_service');
@@ -90,8 +87,6 @@ class AuthService extends Service
                         );
                     }
                     break;
-
-                // 手机短信
                 case 'mobile':
                     $data = ['code' => $code];
                     $res = SmsService::sendSms($account, json_encode($data), 'FMock');

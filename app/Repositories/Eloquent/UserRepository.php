@@ -141,7 +141,7 @@ class UserRepository extends Repository
         return Auth::user()->$func()->detach($postId);
     }
 
-    /*
+    /**
      * 取消关注
      * （已废弃）使用 unFollow() 统一方法
      *
