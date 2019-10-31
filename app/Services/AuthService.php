@@ -50,9 +50,8 @@ class AuthService extends Service
      * @param $account
      * @param $type
      *
-     * @throws \AlibabaCloud\Client\Exception\ClientException
-     *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \AlibabaCloud\Client\Exception\ClientException
      */
     public function sendRegisterCode($account, $type)
     {
@@ -75,21 +74,23 @@ class AuthService extends Service
 
             switch ($type) {
                 case 'email':
-                    $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
-                    $subject = __('app.fmock_register_service');
-                    $res = $this->emailService->sendEmail($account, $data, $subject);
-                    if ($res) {
+                    if ($this->sendCodeByEmail($code, $account, __('app.fmock_register_service'))) {
                         $this->redisService->setRedis('user:register:account:' . $account, $code, 'EX', 600);
 
                         return response()->json(
                             ['message' => __('app.send_email') . __('app.success')],
                             Response::HTTP_OK
                         );
+                    } else {
+                        return response()->json(
+                            ['message' => __('app.try_again')],
+                            Response::HTTP_INTERNAL_SERVER_ERROR
+                        );
                     }
                     break;
+
                 case 'mobile':
-                    $data = ['code' => $code];
-                    $res = SmsService::sendSms($account, json_encode($data), 'FMock');
+                    $res = $this->sendCodeBySms($code, $account);
                     if (is_array($res) && $res['Code'] === 'OK') {
                         $this->redisService->setRedis('user:register:account:' . $account, $code, 'EX', 600);
 
@@ -146,13 +147,8 @@ class AuthService extends Service
 
             switch ($type) {
 
-                // email
                 case 'email':
-                    $data = ['data' => __('app.verify_code') . $code . __('app.email_error'),];
-                    $subject = __('app.fmock_reset_pwd_service');
-                    $res = $this->emailService->sendEmail($account, $data, $subject);
-
-                    if ($res) {
+                    if ($this->sendCodeByEmail($code, $account, __('app.fmock_reset_pwd_service'))) {
                         $this->redisService->setRedis('user:password:account:' . $account, $code, 'EX', 600);
 
                         return response()->json(
@@ -162,10 +158,8 @@ class AuthService extends Service
                     }
                     break;
 
-                // mobile
                 case 'mobile':
-                    $data = ['code' => $code];
-                    $res = SmsService::sendSms($account, json_encode($data), 'FMock');
+                    $res = $this->sendCodeBySms($code, $account);
                     if (is_array($res) && $res['Code'] === 'OK') {
                         $this->redisService->setRedis('user:password:account:' . $account, $code, 'EX', 600);
 
@@ -598,5 +592,37 @@ class AuthService extends Service
 
             return false;
         }
+    }
+
+
+    /**
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $code
+     * @param $account
+     * @param $subject
+     * @return bool
+     */
+    private function sendCodeByEmail($code, $account, $subject)
+    {
+        $data = ['data' => __('app.verify_code') . $code . __('app.email_error')];
+
+        return $this->emailService->sendEmail($account, $data, $subject);
+    }
+
+    /**
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $code
+     * @param $account
+     * @return array
+     * @throws \AlibabaCloud\Client\Exception\ClientException
+     */
+    private function sendCodeBySms($code, $account)
+    {
+        $data = ['code' => $code];
+        return SmsService::sendSms($account, json_encode($data), 'FMock');
     }
 }
