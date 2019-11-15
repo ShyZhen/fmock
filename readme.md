@@ -36,6 +36,8 @@ FMock墨客社区。
  - `copy .env.example .env` and edit .env (生产环境记得修改env中APP_ENV=production)
  > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
  如果想上传文件到七牛，需要开启`.env`中的`QiniuService=true`,并配置好七牛的各项参数。
+ - composer 全量镜像不稳定，推荐更换`composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/`
+ - `composer self-update`
  - `composer install`
  - `php artisan key:generate`
  - `php artisan storage:link`
