@@ -13,62 +13,62 @@ use Illuminate\Contracts\Redis\Factory as Redis;
 
 class RedisService extends Service
 {
-    const AFTER                 = 'after';
-    const BEFORE                = 'before';
+    const AFTER = 'after';
+    const BEFORE = 'before';
 
     /**
      * Options
      */
-    const OPT_SERIALIZER        = 1;
-    const OPT_PREFIX            = 2;
-    const OPT_READ_TIMEOUT      = 3;
-    const OPT_SCAN              = 4;
-    const OPT_SLAVE_FAILOVER    = 5;
+    const OPT_SERIALIZER = 1;
+    const OPT_PREFIX = 2;
+    const OPT_READ_TIMEOUT = 3;
+    const OPT_SCAN = 4;
+    const OPT_SLAVE_FAILOVER = 5;
 
     /**
      * Cluster options
      */
-    const FAILOVER_NONE         = 0;
-    const FAILOVER_ERROR        = 1;
-    const FAILOVER_DISTRIBUTE   = 2;
+    const FAILOVER_NONE = 0;
+    const FAILOVER_ERROR = 1;
+    const FAILOVER_DISTRIBUTE = 2;
 
     /**
      * SCAN options
      */
-    const SCAN_NORETRY          = 0;
-    const SCAN_RETRY            = 1;
+    const SCAN_NORETRY = 0;
+    const SCAN_RETRY = 1;
 
     /**
      * Serializers
      */
-    const SERIALIZER_NONE       = 0;
-    const SERIALIZER_PHP        = 1;
-    const SERIALIZER_IGBINARY   = 2;
-    const SERIALIZER_MSGPACK    = 3;
-    const SERIALIZER_JSON       = 4;
+    const SERIALIZER_NONE = 0;
+    const SERIALIZER_PHP = 1;
+    const SERIALIZER_IGBINARY = 2;
+    const SERIALIZER_MSGPACK = 3;
+    const SERIALIZER_JSON = 4;
 
     /**
      * Multi
      */
-    const ATOMIC                = 0;
-    const MULTI                 = 1;
-    const PIPELINE              = 2;
+    const ATOMIC = 0;
+    const MULTI = 1;
+    const PIPELINE = 2;
 
     /**
      * Type
      */
-    const REDIS_NOT_FOUND       = 0;
-    const REDIS_STRING          = 1;
-    const REDIS_SET             = 2;
-    const REDIS_LIST            = 3;
-    const REDIS_ZSET            = 4;
-    const REDIS_HASH            = 5;
+    const REDIS_NOT_FOUND = 0;
+    const REDIS_STRING = 1;
+    const REDIS_SET = 2;
+    const REDIS_LIST = 3;
+    const REDIS_ZSET = 4;
+    const REDIS_HASH = 5;
 
     //永久生效的ttl值
     const TTL_NO_EXPIRE = -1;
 
-    const PINF = "+inf";    // 正无穷大
-    const NINF = "-inf";    // 负无穷大
+    const PINF = '+inf';    // 正无穷大
+    const NINF = '-inf';    // 负无穷大
 
     private $redis;
 
@@ -267,7 +267,7 @@ class RedisService extends Service
      * 读取bit值
      *
      * @param string $key
-     * @param int $offset 必须大于或等于 0 ，小于 2^32
+     * @param int    $offset 必须大于或等于 0 ，小于 2^32
      *
      * @return int 0 或 1
      */
@@ -281,9 +281,9 @@ class RedisService extends Service
      * bit位数与内存关系:1千万=>2.9MB, 5千万=>8.7MB, 1亿=>16MB, 2亿=>28MB, 3亿=>40MB, 10亿=>124MB
      *
      * @param string $key
-     * @param int $offset 必须大于或等于 0 ，小于 2^32
-     * @param int $value, 0 或 1
-     * @param int $expire, 有效期，单位秒
+     * @param int    $offset  必须大于或等于 0 ，小于 2^32
+     * @param int    $value,  0 或 1
+     * @param int    $expire, 有效期，单位秒
      *
      * @return int 0 或 1, 该bit本次被设置之前的旧值
      */
@@ -314,9 +314,9 @@ class RedisService extends Service
      * 对一个或多个保存二进制位的字符串 key 进行位元操作，并将结果保存到 destkey 上
      *
      * @param string $operation 取值有AND, OR, XOR, NOT
-     * @param array $keys
+     * @param array  $keys
      * @param string $destKey
-     * @param int $expire, 有效期，单位秒
+     * @param int    $expire,   有效期，单位秒
      *
      * @return int
      */
@@ -325,7 +325,7 @@ class RedisService extends Service
         $params[] = $operation;
         $params[] = $destKey;
         $params = array_merge($params, $keys);
-        $result = call_user_func_array(array($this->redis, 'bitOp'), $params);
+        $result = call_user_func_array([$this->redis, 'bitOp'], $params);
         if ($expire) {
             $this->redis->expire($destKey, $expire);
         }
@@ -349,16 +349,16 @@ class RedisService extends Service
         $result = bin2hex($result);
         $result = str_split($result, 2);  //按单字节字符串截取
         $i = 0;
-        $offset = array();
-        foreach($result as $hexByteStr) {
+        $offset = [];
+        foreach ($result as $hexByteStr) {
             if ($hexByteStr == '00') {
                 $i++;
                 continue;
             }
             $binStr = sprintf('%08s', base_convert($hexByteStr, 16, 2));
-            for($j = 0; $j < 8; $j++) {
+            for ($j = 0; $j < 8; $j++) {
                 if ($binStr[$j] == '1') {
-                    $offset[] = ($i*8) + $j;
+                    $offset[] = ($i * 8) + $j;
                 }
             }
             $i++;
@@ -380,12 +380,13 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hSet($h, $key, $value, $expire = 0)
+    public function hSet($h, $key, $value, $expire = 0)
     {
-        $res = $this->redis->hSet($h,$key,$value);
+        $res = $this->redis->hSet($h, $key, $value);
         if ($expire) {
             $this->redis->expire($h, $expire);
         }
+
         return $res;
     }
 
@@ -399,12 +400,13 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hMset($h, $data, $expire = 0)
+    public function hMset($h, $data, $expire = 0)
     {
-        $res =  $this->redis->hMset($h, $data);
+        $res = $this->redis->hMset($h, $data);
         if ($expire) {
             $this->redis->expire($h, $expire);
         }
+
         return $res;
     }
 
@@ -417,7 +419,7 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hGet($h, $key)
+    public function hGet($h, $key)
     {
         return $this->redis->hGet($h, $key);
     }
@@ -431,12 +433,12 @@ class RedisService extends Service
      *
      * @return array
      */
-    public  function hMget($hash, $keys)
+    public function hMget($hash, $keys)
     {
         $result = $this->redis->hMget($hash, $keys);
 
-        $members = array();
-        foreach($keys as $key) {
+        $members = [];
+        foreach ($keys as $key) {
             if (false === $result[$key]) {
                 continue;
             }
@@ -459,10 +461,10 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hIncrBy($h, $key, $step = 1, $expire = 0)
+    public function hIncrBy($h, $key, $step = 1, $expire = 0)
     {
         $result = $this->redis->hIncrBy($h, $key, $step);
-        if ($expire){
+        if ($expire) {
             $this->redis->expire($h, $expire);
         }
 
@@ -476,14 +478,14 @@ class RedisService extends Service
      * @param $h
      * @param $key
      * @param float $step
-     * @param int $expire
+     * @param int   $expire
      *
      * @return mixed
      */
-    public  function hIncrByFloat($h, $key, $step = 1.0, $expire = 0)
+    public function hIncrByFloat($h, $key, $step = 1.0, $expire = 0)
     {
         $result = $this->redis->hIncrByFloat($h, $key, $step);
-        if ($expire){
+        if ($expire) {
             $this->redis->expire($h, $expire);
         }
 
@@ -498,7 +500,7 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hGetAll($h)
+    public function hGetAll($h)
     {
         return $this->redis->hGetAll($h);
     }
@@ -511,7 +513,7 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hKeys($h)
+    public function hKeys($h)
     {
         return $this->redis->hKeys($h);
     }
@@ -524,7 +526,7 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hVals($h)
+    public function hVals($h)
     {
         return $this->redis->hVals($h);
     }
@@ -538,7 +540,7 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hDel($h, $key)
+    public function hDel($h, $key)
     {
         return $this->redis->hDel($h, $key);
     }
@@ -552,7 +554,7 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public  function hExists($h, $key)
+    public function hExists($h, $key)
     {
         return $this->redis->hExists($h, $key);
     }
@@ -560,8 +562,8 @@ class RedisService extends Service
     /** 分段扫描hash中的成员
      *
      * @param string $hash
-     * @param mix $cursor 第一次循环使用null, 后续循环传上一次hScan返回的cursor
-     * @param int $count 每次读取的成员数量, 当hash成员数不超过512时,此参数无效, hScan将返回全部成员
+     * @param mix    $cursor  第一次循环使用null, 后续循环传上一次hScan返回的cursor
+     * @param int    $count   每次读取的成员数量, 当hash成员数不超过512时,此参数无效, hScan将返回全部成员
      * @param string $pattern 匹配模式
      *
      * @return array($cursor, $data) 其中data的格式为array($key => $value)
@@ -572,7 +574,8 @@ class RedisService extends Service
         $this->redis->setOption(self::OPT_SCAN, self::SCAN_RETRY);
 
         $data = $this->redis->hScan($hash, $cursor, $pattern, $count);
-        return array($cursor, $data);
+
+        return [$cursor, $data];
     }
 
     /**
@@ -588,9 +591,7 @@ class RedisService extends Service
         return $this->redis->hLen($hash);
     }
 
-
     /******************List（列表）*********************/
-
 
     /**
      * author shyZhen <huaixiu.zhen@gmail.com>
@@ -647,7 +648,7 @@ class RedisService extends Service
      * 将value 插入到列表 key 的表头(最左边)
      *
      * @param string $value
-     * @param bool $createKey: 如果key不存在，是否创建
+     * @param bool   $createKey: 如果key不存在，是否创建
      *
      * @return int 返回执行成功后列表的长度
      */
@@ -659,7 +660,7 @@ class RedisService extends Service
         } else {
             $result = $this->redis->lPushx($key, $value);
         }
-        if ($expire){
+        if ($expire) {
             $this->redis->expire($key, $expire);
         }
 
@@ -670,8 +671,8 @@ class RedisService extends Service
      * 将value 插入到列表 key 的表尾(最右边)
      *
      * @param string $value
-     * @param bool $createKey: 如果key不存在，是否创建
-     * @param int $expire
+     * @param bool   $createKey: 如果key不存在，是否创建
+     * @param int    $expire
      *
      * @return int 返回执行成功后列表的长度
      */
@@ -683,7 +684,7 @@ class RedisService extends Service
         } else {
             $result = $this->redis->rPushX($key, $value);
         }
-        if ($expire){
+        if ($expire) {
             $this->redis->expire($key, $expire);
         }
 
@@ -694,22 +695,22 @@ class RedisService extends Service
      * 批量将数组list 插入到列表 key 的表尾(最右边)
      *
      * @param array $memberList
-     * @param bool $createKey: 如果key不存在，是否创建
+     * @param bool  $createKey: 如果key不存在，是否创建
      *
      * @return int 返回执行成功后列表的长度
      */
-    public function listRPushBatch($key, $memberList , $createKey = true, $expire = 0)
+    public function listRPushBatch($key, $memberList, $createKey = true, $expire = 0)
     {
         $params[] = $key;
-        foreach($memberList as $member) {
+        foreach ($memberList as $member) {
             $params[] = $member;
         }
         if ($createKey) {
-            $result = call_user_func_array(array($this->redis, 'rPush'), $params);
+            $result = call_user_func_array([$this->redis, 'rPush'], $params);
         } else {
-            $result = call_user_func_array(array($this->redis, 'rPush'), $params);
+            $result = call_user_func_array([$this->redis, 'rPush'], $params);
         }
-        if ($expire){
+        if ($expire) {
             $this->redis->expire($key, $expire);
         }
 
@@ -743,9 +744,11 @@ class RedisService extends Service
 
     /**
      * 返回列表 key 中，下标为 index 的元素
+     *
      * @param $key
      * @param $index
-     * @return String
+     *
+     * @return string
      */
     public function listIndex($key, $index)
     {
@@ -754,10 +757,12 @@ class RedisService extends Service
 
     /**
      * 将值 value 插入到列表 key 当中，位于值 pivot 之前或之后。当 key | pivot 不存在于列表 key 时，不执行任何操作.
+     *
      * @param $key
      * @param $pivot
      * @param $value
      * @param string $position : BEFORE | AFTER
+     *
      * @return int
      */
     public function listInsert($key, $pivot, $value, $position = 'BEFORE')
@@ -765,9 +770,7 @@ class RedisService extends Service
         return $this->redis->lInsert($key, $position, $pivot, $value);
     }
 
-
     /*******************set(集合）********************/
-
 
     /**
      * author shyZhen <huaixiu.zhen@gmail.com>
@@ -814,8 +817,8 @@ class RedisService extends Service
      * 分段扫描set中的成员
      *
      * @param string $s
-     * @param mix $cursor 第一次循环使用null, 后续循环传上一次sScan返回的cursor
-     * @param int $count 每次读取的成员数量, 当set成员数不超过512时,此参数无效, sScan将返回全部成员
+     * @param mix    $cursor  第一次循环使用null, 后续循环传上一次sScan返回的cursor
+     * @param int    $count   每次读取的成员数量, 当set成员数不超过512时,此参数无效, sScan将返回全部成员
      * @param string $pattern 匹配模式
      *
      * @return array($cursor, $data) 其中data的格式为array($key => $value)
@@ -826,7 +829,8 @@ class RedisService extends Service
         $this->redis->setOption(self::OPT_SCAN, self::SCAN_RETRY);
 
         $data = $this->redis->sScan($s, $cursor, $pattern, $count);
-        return array($cursor, $data);
+
+        return [$cursor, $data];
     }
 
     /**
@@ -871,9 +875,7 @@ class RedisService extends Service
         return $this->redis->sSize($key);
     }
 
-
     /******************hyperLog start**********************/
-
 
     /**
      * author shyZhen <huaixiu.zhen@gmail.com>
@@ -884,12 +886,13 @@ class RedisService extends Service
      *
      * @return mixed
      */
-    public function pfAdd($key , $member)
+    public function pfAdd($key, $member)
     {
-        if(!is_array($member)) {
-            $member = array($member);
+        if (!is_array($member)) {
+            $member = [$member];
         }
-        return $this->redis->pfadd($key , $member);
+
+        return $this->redis->pfadd($key, $member);
     }
 
     /**
@@ -909,7 +912,7 @@ class RedisService extends Service
      * 合并hyperLog
      *
      * @param string $distKey 目标key
-     * @param array $keys, 需要合并的key数组
+     * @param array  $keys,   需要合并的key数组
      *
      * @return bool true or false
      */
@@ -918,17 +921,15 @@ class RedisService extends Service
         return $this->redis->pfmerge($distKey, $keys);
     }
 
-
     /*******************互斥锁********************/
-
 
     /**
      * 获取互斥锁
      *
      * @param string $key
-     * @param int $timeout
+     * @param int    $timeout
      *
-     * @return boolean   是否获得锁
+     * @return bool 是否获得锁
      */
     public function lock($key, $timeout = 10)
     {
@@ -936,13 +937,16 @@ class RedisService extends Service
         $result = $this->redis->setnx($key, 1);
         if ($result == 1) {
             $this->redis->expire($key, $timeout);
+
             return true;
         }
+
         return false;
     }
 
     /**
      * 删除互斥锁
+     *
      * @param string $key
      */
     public function unlock($key)
@@ -961,12 +965,10 @@ class RedisService extends Service
      */
     private function getLockKey($key)
     {
-        return "lock:" . $key;
+        return 'lock:' . $key;
     }
 
-
     /******************通用key操作*********************/
-
 
     /**
      * author shyZhen <huaixiu.zhen@gmail.com>
@@ -1037,9 +1039,7 @@ class RedisService extends Service
         return $this->redis->delete($key);
     }
 
-
     /*******************其他********************/
-
 
     /**
      * author shyZhen <huaixiu.zhen@gmail.com>
@@ -1061,7 +1061,6 @@ class RedisService extends Service
         $this->redis->ping();
     }
 
-
     /**
      * 选择数据库
      *
@@ -1074,7 +1073,8 @@ class RedisService extends Service
      */
     public function select($db = 0)
     {
-        return $this->redis->select($db);;
+        return $this->redis->select($db);
+        ;
     }
 
     /**
@@ -1091,7 +1091,6 @@ class RedisService extends Service
     {
         return $this->redis->keys($key);
     }
-
 
     /**
      * 比较危险哦，谨慎使用
@@ -1127,18 +1126,18 @@ class RedisService extends Service
      * 获取redis运行统计信息
      *
      * @param string $section, 需要查询的片段, 可选, 取值如下
-     *    server: General information about the Redis server
-     *    clients: Client connections section
-     *    memory: Memory consumption related information
-     *    persistence: RDB and AOF related information
-     *    stats: General statistics
-     *    replication: Master/slave replication information
-     *    cpu: CPU consumption statistics
-     *    commandstats: Redis command statistics
-     *    cluster: Redis Cluster section
-     *    keyspace: Database related statistics
-     *    all: Return all sections
-     *    default: Return only the default set of sections
+     *                         server: General information about the Redis server
+     *                         clients: Client connections section
+     *                         memory: Memory consumption related information
+     *                         persistence: RDB and AOF related information
+     *                         stats: General statistics
+     *                         replication: Master/slave replication information
+     *                         cpu: CPU consumption statistics
+     *                         commandstats: Redis command statistics
+     *                         cluster: Redis Cluster section
+     *                         keyspace: Database related statistics
+     *                         all: Return all sections
+     *                         default: Return only the default set of sections
      *
      * @return array
      */
