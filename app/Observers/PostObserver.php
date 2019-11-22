@@ -21,6 +21,7 @@ class PostObserver
      * https://www.litblc.com
      *
      * @param Post $post
+     *
      * @throws \Exception
      */
     public function created(Post $post)
@@ -39,7 +40,8 @@ class PostObserver
     /**
      * Handle the post "updated" event.
      *
-     * @param  Post  $post
+     * @param Post $post
+     *
      * @return void
      */
     public function updated(Post $post)
@@ -50,7 +52,8 @@ class PostObserver
     /**
      * Handle the post "deleted" event.
      *
-     * @param  Post  $post
+     * @param Post $post
+     *
      * @return void
      */
     public function deleted(Post $post)
@@ -61,7 +64,8 @@ class PostObserver
     /**
      * Handle the post "restored" event.
      *
-     * @param  Post  $post
+     * @param Post $post
+     *
      * @return void
      */
     public function restored(Post $post)
@@ -72,7 +76,8 @@ class PostObserver
     /**
      * Handle the post "force deleted" event.
      *
-     * @param  Post  $post
+     * @param Post $post
+     *
      * @return void
      */
     public function forceDeleted(Post $post)
