@@ -41,7 +41,7 @@ class ElasticSearchService extends Service
     {
         if (!self::$esClient) {
             $host = [
-                env('ELASTICSEARCH_HOST_NODE_1')
+                env('ELASTICSEARCH_HOST_NODE_1'),
             ];
 
             self::$esClient = ClientBuilder::create()
@@ -61,6 +61,7 @@ class ElasticSearchService extends Service
      * http://litblc.com
      *
      * @param $index
+     *
      * @return array
      */
     public function createIndex($index)
@@ -73,18 +74,19 @@ class ElasticSearchService extends Service
             'body' => [
                 'settings' => [
                     'number_of_shards' => env('NUMBER_OF_SHARDS', 5),      // 分片 默认5
-                    'number_of_replicas' => env('NUMBER_OF_REPLICAS', 1)   // 副本、备份 默认1
+                    'number_of_replicas' => env('NUMBER_OF_REPLICAS', 1),   // 副本、备份 默认1
                 ],
                 'mappings' => [
                     '_source' => [
-                        'enabled' => true
+                        'enabled' => true,
                     ],
-                    'properties' => $properties
-                ]
-            ]
+                    'properties' => $properties,
+                ],
+            ],
         ];
 
         $response = self::$esClient->indices()->create($params);
+
         return $response;
     }
 
@@ -101,10 +103,11 @@ class ElasticSearchService extends Service
     public function deleteIndex($index)
     {
         $params = [
-            'index' => $index
+            'index' => $index,
         ];
 
-        $response =  self::$esClient->indices()->delete($params);
+        $response = self::$esClient->indices()->delete($params);
+
         return $response;
     }
 
@@ -127,13 +130,14 @@ class ElasticSearchService extends Service
             'index' => $index,
             'body' => [
                 '_source' => [
-                    'enabled' => true
+                    'enabled' => true,
                 ],
-                'properties' => $properties
-            ]
+                'properties' => $properties,
+            ],
         ];
 
         $response = self::$esClient->indices()->putMapping($params);
+
         return $response;
     }
 
@@ -144,15 +148,17 @@ class ElasticSearchService extends Service
      * https://www.litblc.com
      *
      * @param $index
+     *
      * @return array
      */
     public function getMappings($index)
     {
         $params = [
-            'index' => $index
+            'index' => $index,
         ];
 
         $response = self::$esClient->indices()->getMapping($params);
+
         return $response;
     }
 
@@ -173,11 +179,12 @@ class ElasticSearchService extends Service
         $params = [
             'index' => $index,
             'body' => [
-                'settings' => $settings
-            ]
+                'settings' => $settings,
+            ],
         ];
 
         $response = self::$esClient->indices()->putSettings($params);
+
         return $response;
     }
 
@@ -194,10 +201,11 @@ class ElasticSearchService extends Service
     public function getSettings($index)
     {
         $params = [
-            'index' => $index
+            'index' => $index,
         ];
 
         $response = self::$esClient->indices()->getSettings($params);
+
         return $response;
     }
 
@@ -211,8 +219,9 @@ class ElasticSearchService extends Service
      * @param $id int 推荐使用数据库的ID
      * @param $body array('key' => 'val')
      *
-     * @return array
      * @throws \Exception
+     *
+     * @return array
      */
     public function createDoc($index, $id, $body)
     {
@@ -232,6 +241,7 @@ class ElasticSearchService extends Service
         ];
 
         $response = self::$esClient->index($params);
+
         return $response;
     }
 
@@ -250,10 +260,11 @@ class ElasticSearchService extends Service
     {
         $params = [
             'index' => $index,
-            'id' => $id
+            'id' => $id,
         ];
 
         $response = self::$esClient->get($params);
+
         return $response;
     }
 
@@ -272,10 +283,11 @@ class ElasticSearchService extends Service
     {
         $params = [
             'index' => $index,
-            'id' => $id
+            'id' => $id,
         ];
 
         $response = self::$esClient->getSource($params);
+
         return $response;
     }
 
@@ -296,13 +308,14 @@ class ElasticSearchService extends Service
         $body['date'] = date('Y-m-d');
         $params = [
             'index' => $index,
-            'id'    => $id,
-            'body'  => [
-                'doc' => $body
-            ]
+            'id' => $id,
+            'body' => [
+                'doc' => $body,
+            ],
         ];
 
         $response = self::$esClient->update($params);
+
         return $response;
     }
 
@@ -339,19 +352,20 @@ class ElasticSearchService extends Service
                         'query' => $query,
                         'type' => 'best_fields',
                         'operator' => 'or',
-                        'fields' => self::$fields
-                    ]
+                        'fields' => self::$fields,
+                    ],
                 ],
                 'sort' => [
                     '_id' => [
-                        'order' => 'desc'
-                    ]
-                ]
+                        'order' => 'desc',
+                    ],
+                ],
             ],
 
         ];
 
         $response = self::$esClient->search($params);
+
         return $response['hits']['hits'];
     }
 
@@ -370,10 +384,11 @@ class ElasticSearchService extends Service
     {
         $params = [
             'index' => $index,
-            'id' => $id
+            'id' => $id,
         ];
 
         $response = self::$esClient->delete($params);
+
         return $response;
     }
 
@@ -392,7 +407,7 @@ class ElasticSearchService extends Service
             'type' => 'text',
             'analyzer' => 'ik_smart',
             'search_analyzer' => 'ik_smart',
-            'search_quote_analyzer' => 'ik_smart'
+            'search_quote_analyzer' => 'ik_smart',
         ];
 
         foreach (self::$fields as $val) {
@@ -402,7 +417,7 @@ class ElasticSearchService extends Service
         // 添加单独的时间字段
         $properties['date'] = [
             'type' => 'date',
-            'format' => 'year_month_day '
+            'format' => 'year_month_day ',
         ];
 
         return $properties;
