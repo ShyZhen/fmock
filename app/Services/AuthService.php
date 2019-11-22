@@ -50,8 +50,9 @@ class AuthService extends Service
      * @param $account
      * @param $type
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendRegisterCode($account, $type)
     {
@@ -594,7 +595,6 @@ class AuthService extends Service
         }
     }
 
-
     /**
      * author shyZhen <huaixiu.zhen@gmail.com>
      * https://www.litblc.com
@@ -602,6 +602,7 @@ class AuthService extends Service
      * @param $code
      * @param $account
      * @param $subject
+     *
      * @return bool
      */
     private function sendCodeByEmail($code, $account, $subject)
@@ -617,12 +618,15 @@ class AuthService extends Service
      *
      * @param $code
      * @param $account
-     * @return array
+     *
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return array
      */
     private function sendCodeBySms($code, $account)
     {
         $data = ['code' => $code];
+
         return SmsService::sendSms($account, json_encode($data), 'FMock');
     }
 }
