@@ -6,8 +6,11 @@
     "type": "project",
     "require": {
         "php": ">=7.1.3",
+        "ext-gd": "*",
+        "ext-json": "*",
         "alibabacloud/client": "^1.3",
         "barryvdh/laravel-cors": "^0.11.0",
+        "elasticsearch/elasticsearch": "7.4.0",
         "fideloper/proxy": "~4.0",
         "laravel/framework": "5.8.*",
         "laravel/passport": "~7.0",

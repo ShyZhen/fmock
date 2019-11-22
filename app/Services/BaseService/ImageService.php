@@ -69,7 +69,7 @@ class ImageService extends Service
      *
      * @return float|int
      */
-    public function setPercent($maxWidth, $width)
+    private function setPercent($maxWidth, $width)
     {
         if ($width > $maxWidth) {
             $percent = $maxWidth / $width;

@@ -21,6 +21,8 @@ abstract class Repository implements RepositoryInterface
      * Repository constructor.
      *
      * @param Container $container
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function __construct(Container $container)
     {
@@ -41,6 +43,8 @@ abstract class Repository implements RepositoryInterface
     /**
      * @Author huaixiu.zhen
      * http://litblc.com
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      *
      * @return mixed
      */
