@@ -28,7 +28,8 @@ FMock墨客社区。
  - Mysql
  - Redis
  - Nodejs
- - ElasticSearch = 6.2.4 && ElasticSearch-analysis-ik (one index,one type)
+ - ElasticSearch = 7.4.2
+ - ElasticSearch-analysis-ik 7.4.2
 
 
 ## Installation
@@ -45,7 +46,9 @@ FMock墨客社区。
  - `php artisan migrate`
  - `php artisan passport:install`
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
-
+ 
+## ES Init
+ - `php artisan es:init`, 该命令将创建默认index,并设置默认mappings
 
 ## API Info
 
