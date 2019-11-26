@@ -65,6 +65,7 @@ FMock墨客社区。
  - 支持社区的基本操作：普通文章模块、问答模块、点赞、评论、搜藏
  - Delta格式富文本编辑器
  - 支持粉丝系统，查看用户关注、粉丝列表等操作，支持redis以及关系型数据库两种存储方式，量小推荐使用数据库
+ - 支持ElasticSearch，使用Observer自动插入ES数据
 
 ## API Index
 
@@ -110,9 +111,9 @@ FMock墨客社区。
  - [dislikeAnswer](#dislike-answer) | 踩/取消踩（回答）
  - [statusAnswer](#status-answer) | 查看赞/踩状态（回答）
  
-  - [likeComment](#like-comment) | 赞/取消赞（评论）
-  - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
-  - [statusComment](#status-comment) | 查看赞/踩状态（评论）
+ - [likeComment](#like-comment) | 赞/取消赞（评论）
+ - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
+ - [statusComment](#status-comment) | 查看赞/踩状态（评论）
  
  - [getCommentByPostUuid](#post-comment) | 获取文章评论
  - [createComment](#create-post-comment) | 创建评论、回复
