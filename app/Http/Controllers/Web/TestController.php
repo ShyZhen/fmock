@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Services\BaseService\QiniuService;
+use App\Library\ElasticSearch\PostElasticSearch;
 
 class TestController
 {
@@ -38,5 +39,20 @@ class TestController
 
         $a = new QiniuService();
         dd($a->uploadFile($filePath, $key));
+    }
+
+    public function esTest()
+    {
+        $id = 25;
+        $postEs = new PostElasticSearch();
+
+//        dd($postEs->deleteIndex());
+//        dd($postEs->getMappings());
+//        dd($postEs->getSettings());
+//        dd($postEs->getDoc($id));
+//        dd($postEs->getDocSource($id));
+//        dd($postEs->deleteDoc($id));
+//        dd($postEs->updateDoc($id, ['title' => 'test']));
+        dd($postEs->search('测试'));
     }
 }

@@ -47,8 +47,18 @@ FMock墨客社区。
  - `php artisan passport:install`
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
  
-## ES Init
- - `php artisan es:init`, 该命令将创建默认index,并设置默认mappings
+ 
+## ES类库使用方法
+ - 新建es类并继承抽象类`Base/ElasticSearch`，例如PostElasticSearch
+ - 必须实现抽象函数 `createIndex` 和 `getIndexName`，这样就可以完全使用基类中的任意方法（其中createIndex方法仅在es:init中使用）
+ - 使用方法参考`Web/TestController@esTest`
+#### ES Init
+ - `php artisan es:init`, 该命令将创建文章默认的index,并设置文章默认的mappings
+#### ES 通过observer自动注入
+ - 需要提前开启env中的ESToObserver
+ - 创建Observers，例如`app/Observers/PostObserver.php`
+ - 在`app/Providers/ObserversServiceProvider.php`中添加观察者模型,例如`Post::observe(PostObserver::class);`
+
 
 ## API Info
 
@@ -65,6 +75,7 @@ FMock墨客社区。
  - 支持社区的基本操作：普通文章模块、问答模块、点赞、评论、搜藏
  - Delta格式富文本编辑器
  - 支持粉丝系统，查看用户关注、粉丝列表等操作，支持redis以及关系型数据库两种存储方式，量小推荐使用数据库
+ - 支持ElasticSearch，使用Observer自动插入ES数据
 
 ## API Index
 
@@ -110,9 +121,9 @@ FMock墨客社区。
  - [dislikeAnswer](#dislike-answer) | 踩/取消踩（回答）
  - [statusAnswer](#status-answer) | 查看赞/踩状态（回答）
  
-  - [likeComment](#like-comment) | 赞/取消赞（评论）
-  - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
-  - [statusComment](#status-comment) | 查看赞/踩状态（评论）
+ - [likeComment](#like-comment) | 赞/取消赞（评论）
+ - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
+ - [statusComment](#status-comment) | 查看赞/踩状态（评论）
  
  - [getCommentByPostUuid](#post-comment) | 获取文章评论
  - [createComment](#create-post-comment) | 创建评论、回复

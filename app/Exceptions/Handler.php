@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -50,6 +51,24 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if (!env('APP_DEBUG')) {
+            return self::handler($request, $exception);
+        }
+
         return parent::render($request, $exception);
+    }
+
+    public function handler($request, Exception $exception)
+    {
+//        记录日志
+//        echo date('Y-m-d H:i:s');
+//        print_r($exception->getMessage());
+//        print_r($exception->getLine());
+//        print_r($exception->getFile());
+
+        return response()->json(
+            ['message' => $exception->getMessage()],
+            Response::HTTP_INTERNAL_SERVER_ERROR
+        );
     }
 }

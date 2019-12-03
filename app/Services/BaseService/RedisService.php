@@ -9,7 +9,9 @@
 namespace App\Services\BaseService;
 
 use App\Services\Service;
-use Illuminate\Contracts\Redis\Factory as Redis;
+use Illuminate\Support\Facades\Redis;
+
+//use Illuminate\Contracts\Redis\Factory as Redis;
 
 class RedisService extends Service
 {
@@ -75,11 +77,11 @@ class RedisService extends Service
     /**
      * RedisService constructor.
      *
-     * @param Redis $redis
+     * @param null $connection
      */
-    public function __construct(Redis $redis)
+    public function __construct($connection = null)
     {
-        $this->redis = $redis;
+        $this->redis = Redis::connection($connection);
     }
 
     /**
@@ -952,7 +954,7 @@ class RedisService extends Service
     public function unlock($key)
     {
         $key = self::getLockKey($key);
-        $this->redis->delete($key);
+        $this->redis->del($key);
     }
 
     /**
@@ -1036,7 +1038,7 @@ class RedisService extends Service
      */
     public function delete($key)
     {
-        return $this->redis->delete($key);
+        return $this->redis->del($key);
     }
 
     /*******************其他********************/

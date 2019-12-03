@@ -29,7 +29,9 @@ class ObserversServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-        Post::observe(PostObserver::class);
-        Answer::observe(AnswerObserver::class);
+        if (env('ESToObserver')) {
+            Post::observe(PostObserver::class);
+            Answer::observe(AnswerObserver::class);
+        }
     }
 }

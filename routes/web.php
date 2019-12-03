@@ -26,7 +26,11 @@ Route::namespace('Web')->group(function () {
     // 测试控制器
     Route::prefix('test')->group(function () {
         Route::get('/', 'TestController@index');
-        #七牛
+
+        #七牛测试
         Route::get('/qiniu', 'TestController@qiniu');
+
+        # ES测试
+        Route::get('/es', 'TestController@esTest');
     });
 });
