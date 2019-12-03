@@ -3,7 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\BaseService\ElasticSearchService;
+use App\Library\ElasticSearch\PostElasticSearch;
+
 
 class EsInit extends Command
 {
@@ -38,10 +39,9 @@ class EsInit extends Command
      */
     public function handle()
     {
-        //
-        $es = new ElasticSearchService();
-        $index = env('ES_INDEX');
-        $res = $es->createIndex($index);
+        // 所有需要创建index的操作
+        $es = new PostElasticSearch();
+        $res = $es->createIndex();
 
         if (array_key_exists('acknowledged', $res) && $res['acknowledged']) {
             $this->info('===== create index successed =====');

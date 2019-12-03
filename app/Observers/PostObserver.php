@@ -3,15 +3,19 @@
 namespace App\Observers;
 
 use App\Models\Post;
-use App\Services\BaseService\ElasticSearchService;
+use App\Repositories\Eloquent\UserRepository;
+use App\Library\ElasticSearch\PostElasticSearch;
 
 class PostObserver
 {
-    private $elasticSearchService;
+    private $userRepository;
 
-    public function __construct(ElasticSearchService $elasticSearchService)
+    private $postElasticSearch;
+
+    public function __construct(PostElasticSearch $postElasticSearch, UserRepository $userRepository)
     {
-        $this->elasticSearchService = $elasticSearchService;
+        $this->userRepository = $userRepository;
+        $this->postElasticSearch = $postElasticSearch;
     }
 
     /**
@@ -26,15 +30,15 @@ class PostObserver
      */
     public function created(Post $post)
     {
-        /*
+        $user = $this->userRepository->find($post->user_id, 'name');
+
         $body = [
             'title' => $post->title,
             'content' => $post->content,
-            'user_id' => $post->user_id
+            'username' => $user ? $user->name : __('app.anonymous')
         ];
 
-        $this->elasticSearchService->createDoc(env('ES_INDEX'), $post->id, $body);
-        */
+        $this->postElasticSearch->createDoc($post->id, $body);
     }
 
     /**
@@ -47,6 +51,15 @@ class PostObserver
     public function updated(Post $post)
     {
         //
+        $user = $this->userRepository->find($post->user_id, 'name');
+
+        $body = [
+            'title' => $post->title,
+            'content' => $post->content,
+            'username' => $user ? $user->name : __('app.anonymous')
+        ];
+
+        $this->postElasticSearch->updateDoc($post->id, $body);
     }
 
     /**
@@ -59,6 +72,7 @@ class PostObserver
     public function deleted(Post $post)
     {
         //
+        $this->postElasticSearch->deleteDoc($post->id);
     }
 
     /**

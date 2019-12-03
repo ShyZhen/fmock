@@ -47,8 +47,18 @@ FMock墨客社区。
  - `php artisan passport:install`
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
  
-## ES Init
- - `php artisan es:init`, 该命令将创建默认index,并设置默认mappings
+ 
+## ES类库使用方法
+ - 新建es类并继承抽象类`Base/ElasticSearch`，例如PostElasticSearch
+ - 必须实现抽象函数 `createIndex` 和 `getIndexName`，这样就可以完全使用基类中的任意方法（其中createIndex方法仅在es:init中使用）
+ - 使用方法参考`Web/TestController@esTest`
+#### ES Init
+ - `php artisan es:init`, 该命令将创建文章默认的index,并设置文章默认的mappings
+#### ES 通过observer自动注入
+ - 需要提前开启env中的ESToObserver
+ - 创建Observers，例如`app/Observers/PostObserver.php`
+ - 在`app/Providers/ObserversServiceProvider.php`中添加观察者模型,例如`Post::observe(PostObserver::class);`
+
 
 ## API Info
 
