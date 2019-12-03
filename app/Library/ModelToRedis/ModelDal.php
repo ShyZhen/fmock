@@ -4,7 +4,6 @@ namespace App\Library\ModelToRedis;
 
 trait ModelDal
 {
-
     /**
      * 查询单条数据
      *
@@ -28,13 +27,14 @@ trait ModelDal
      *
      * @param $params
      * @param array $orderBy
-     * @param int $limit
-     * @param int $offset
-     * @return mixed
+     * @param int   $limit
+     * @param int   $offset
      *
      * @throws \Exception
+     *
+     * @return mixed
      */
-    public function getsByTrait($params, $orderBy = array(), $limit = 0, $offset = 0)
+    public function getsByTrait($params, $orderBy = [], $limit = 0, $offset = 0)
     {
         if (!$params || !is_array($params) || !is_array($orderBy)) {
             throw new \Exception("getsBy() args error: {$params}, {$orderBy}");
@@ -61,14 +61,14 @@ trait ModelDal
      * @param $fields
      * @param $query
      * @param array $orderBy
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return mixed
+     * @param int   $limit
+     * @param int   $offset
      *
      * @throws \Exception
+     *
+     * @return mixed
      */
-    public function getsColumnsByTrait($fields, $query, $orderBy = array(), $limit = 0, $offset = 0)
+    public function getsColumnsByTrait($fields, $query, $orderBy = [], $limit = 0, $offset = 0)
     {
         if (!$query || !is_array($orderBy)) {
             throw new \Exception("getsColumnsBy() args error: {$fields}, {$query}, {$orderBy}");
@@ -128,7 +128,10 @@ trait ModelDal
      */
     public function multiInsertTrait($data)
     {
-        if (!is_array($data)) return false;
+        if (!is_array($data)) {
+            return false;
+        }
+
         return parent::insert($data);
     }
 
@@ -173,7 +176,8 @@ trait ModelDal
      *
      * @return mixed
      */
-    public function countTrait($params = array()) {
+    public function countTrait($params = [])
+    {
         return parent::where($params)->count();
     }
 }

@@ -14,7 +14,6 @@ use Elasticsearch\ClientBuilder;
  * ES工具类
  *
  * Class ElasticSearchUtil
- * @package App\Util
  */
 abstract class ElasticSearch
 {
@@ -101,10 +100,11 @@ abstract class ElasticSearch
     public function deleteIndex()
     {
         $params = [
-            'index' => $this->index
+            'index' => $this->index,
         ];
 
-        $response =  $this->esClient->indices()->delete($params);
+        $response = $this->esClient->indices()->delete($params);
+
         return $response;
     }
 
@@ -119,10 +119,11 @@ abstract class ElasticSearch
     public function getMappings()
     {
         $params = [
-            'index' => $this->index
+            'index' => $this->index,
         ];
 
         $response = $this->esClient->indices()->getMapping($params);
+
         return $response;
     }
 
@@ -137,10 +138,11 @@ abstract class ElasticSearch
     public function getSettings()
     {
         $params = [
-            'index' => $this->index
+            'index' => $this->index,
         ];
 
         $response = $this->esClient->indices()->getSettings($params);
+
         return $response;
     }
 
@@ -175,6 +177,7 @@ abstract class ElasticSearch
         ];
 
         $response = $this->esClient->index($params);
+
         return $response;
     }
 
@@ -192,10 +195,11 @@ abstract class ElasticSearch
     {
         $params = [
             'index' => $this->index,
-            'id' => $id
+            'id' => $id,
         ];
 
         $response = $this->esClient->get($params);
+
         return $response;
     }
 
@@ -213,10 +217,11 @@ abstract class ElasticSearch
     {
         $params = [
             'index' => $this->index,
-            'id' => $id
+            'id' => $id,
         ];
 
         $response = $this->esClient->getSource($params);
+
         return $response;
     }
 
@@ -236,13 +241,14 @@ abstract class ElasticSearch
         $body['date'] = date('Y-m-d');
         $params = [
             'index' => $this->index,
-            'id'    => $id,
-            'body'  => [
-                'doc' => $body
-            ]
+            'id' => $id,
+            'body' => [
+                'doc' => $body,
+            ],
         ];
 
         $response = $this->esClient->update($params);
+
         return $response;
     }
 
@@ -260,10 +266,11 @@ abstract class ElasticSearch
     {
         $params = [
             'index' => $this->index,
-            'id' => $id
+            'id' => $id,
         ];
 
         $response = $this->esClient->delete($params);
+
         return $response;
     }
 
@@ -301,20 +308,20 @@ abstract class ElasticSearch
                         'type' => 'best_fields',
                         'operator' => 'or',
                         'fields' => $this->fields,
-                        'analyzer' => $analyzer ?: $this->tokenizer
-                    ]
+                        'analyzer' => $analyzer ?: $this->tokenizer,
+                    ],
                 ],
                 'sort' => [
                     '_id' => [
-                        'order' => 'desc'
-                    ]
-                ]
+                        'order' => 'desc',
+                    ],
+                ],
             ],
 
         ];
 
         $response = $this->esClient->search($params);
+
         return $response['hits']['hits'];
     }
-
 }

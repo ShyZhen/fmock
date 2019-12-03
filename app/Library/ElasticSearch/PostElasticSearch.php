@@ -5,7 +5,6 @@
  * Date: 2019/12/2
  * Time: 11:25
  */
-
 namespace App\Library\ElasticSearch;
 
 use App\Library\ElasticSearch\Base\ElasticSearch;
@@ -49,6 +48,7 @@ class PostElasticSearch extends ElasticSearch
         $mappings = $this->articleMappingsConfig();
         $params = $this->articleSettingConfig($mappings);
         $response = $this->esClient->indices()->create($params);
+
         return $response;
     }
 
@@ -67,7 +67,7 @@ class PostElasticSearch extends ElasticSearch
             'type' => 'text',
             'analyzer' => $this->tokenizer,
             'search_analyzer' => $this->tokenizer,
-            'search_quote_analyzer' => $this->tokenizer
+            'search_quote_analyzer' => $this->tokenizer,
         ];
 
         foreach ($this->fields as $val) {
@@ -77,7 +77,7 @@ class PostElasticSearch extends ElasticSearch
         // 添加单独的时间字段
         $properties['date'] = [
             'type' => 'date',
-            'format' => 'year_month_day '
+            'format' => 'year_month_day ',
         ];
 
         return $properties;
@@ -90,6 +90,7 @@ class PostElasticSearch extends ElasticSearch
      * https://www.litblc.com
      *
      * @param $properties
+     *
      * @return array
      */
     private function articleSettingConfig($properties)
@@ -105,28 +106,28 @@ class PostElasticSearch extends ElasticSearch
                         'filter' => [
                             'my_english_stemmer' => [
                                 'type' => 'stemmer',
-                                'name' => 'english'
-                            ]
+                                'name' => 'english',
+                            ],
                         ],
                         'analyzer' => [
                             'optimizeIK' => [
                                 'type' => 'custom',
                                 'tokenizer' => $this->tokenizer,
                                 'filter' => [
-                                    'my_english_stemmer'
-                                ]
-                            ]
-                        ]
-                    ]
+                                    'my_english_stemmer',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 // 设置mappings
                 'mappings' => [
                     '_source' => [
-                        'enabled' => true
+                        'enabled' => true,
                     ],
-                    'properties' => $properties
-                ]
-            ]
+                    'properties' => $properties,
+                ],
+            ],
         ];
 
         return $params;

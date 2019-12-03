@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Library\ElasticSearch\PostElasticSearch;
 
-
 class EsInit extends Command
 {
     /**

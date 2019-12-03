@@ -10,6 +10,7 @@ namespace App\Services\BaseService;
 
 use App\Services\Service;
 use Illuminate\Support\Facades\Redis;
+
 //use Illuminate\Contracts\Redis\Factory as Redis;
 
 class RedisService extends Service
@@ -75,6 +76,7 @@ class RedisService extends Service
 
     /**
      * RedisService constructor.
+     *
      * @param null $connection
      */
     public function __construct($connection = null)
