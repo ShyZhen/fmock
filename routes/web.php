@@ -32,6 +32,5 @@ Route::namespace('Web')->group(function () {
 
         # ES测试
         Route::get('/es', 'TestController@esTest');
-
     });
 });

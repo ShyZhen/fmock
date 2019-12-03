@@ -35,7 +35,7 @@ class PostObserver
         $body = [
             'title' => $post->title,
             'content' => $post->content,
-            'username' => $user ? $user->name : __('app.anonymous')
+            'username' => $user ? $user->name : __('app.anonymous'),
         ];
 
         $this->postElasticSearch->createDoc($post->id, $body);
@@ -56,7 +56,7 @@ class PostObserver
         $body = [
             'title' => $post->title,
             'content' => $post->content,
-            'username' => $user ? $user->name : __('app.anonymous')
+            'username' => $user ? $user->name : __('app.anonymous'),
         ];
 
         $this->postElasticSearch->updateDoc($post->id, $body);

@@ -6,7 +6,6 @@
  * Date: 2019/11/15
  * Time: 14:46
  */
-
 namespace App\Library\ModelToRedis;
 
 use Illuminate\Support\Facades\DB;
@@ -19,15 +18,15 @@ abstract class ModelToRedis extends Model
 
     const TAG_FIELDS_VERSION = 'fieldsVer';
 
-    const TAG_DATA    = 'data';
+    const TAG_DATA = 'data';
 
     const TAG_VERSION_TABLE = 'VerT';
     const TAG_VERSION_SHARD = 'VerS';
     const TAG_VERSION_ALL_SHARDS = 'VerAS';
     const TAG_VERSION_LINE = 'VerL';
 
-    const TAG_LINE_GET_BY_ID   = 'id';
-    const TAG_LINE_GET_BY_UK   = 'uk';
+    const TAG_LINE_GET_BY_ID = 'id';
+    const TAG_LINE_GET_BY_UK = 'uk';
 
     //表级缓存: 只要表中数据有任意变化，该表的所有表级缓存数据都将失效
     const CACHE_LEVEL_TABLE = 1;
@@ -52,8 +51,8 @@ abstract class ModelToRedis extends Model
     private $mEnableTableCache = false;
 
     private $mRedisId;
-    private $mShardKeys = array();
-    private $mTransactionObserver = array();
+    private $mShardKeys = [];
+    private $mTransactionObserver = [];
 
     //部分后台任务会从数据库查询大量数据, 而这些数据有可能因量太大或者没有缓存价值,
     //需要临时禁止查询数据入缓存
@@ -67,7 +66,7 @@ abstract class ModelToRedis extends Model
     // laravel 配置的redis缓存实例名称
     private static $sSqlRedisList = [
         'default',
-        'cache'
+        'cache',
     ];
 
     private $redisUtil;
@@ -79,6 +78,7 @@ abstract class ModelToRedis extends Model
 
     /**
      * 用于分区缓存, 如不需要使用分区缓存, 返回空数组, 否则返回用户分区的数据库列名的数组
+     *
      * @return $shardKeys array, 用于指定哪些列用来分区, 如array('userId')
      */
     abstract protected function onShardKeys();
@@ -109,7 +109,8 @@ abstract class ModelToRedis extends Model
 
     /**
      * 设置sql缓存类型和有效期, 有效期设置注意要同时兼顾缓存利用率和内存占用, 并尽可能的让旧版本的缓存数据尽早过期
-     * @param int $lineCacheExpire 主键和唯一键查询的数据缓存有效期, 如果单条数据很少变化, 此有效期可以设置久一点
+     *
+     * @param int $lineCacheExpire  主键和唯一键查询的数据缓存有效期, 如果单条数据很少变化, 此有效期可以设置久一点
      * @param int $shardCacheExpire 用于设置只在单个分区中查询的数据缓存有效期, 请根据单个分区数据变化频率设置此时间
      * @param int $tableCacheExpire 用于设置查询可能跨多个分区的缓存有效期, 对于数据变化较快的表, 此有效期不宜过长.
      */
@@ -148,7 +149,7 @@ abstract class ModelToRedis extends Model
             throw new \Exception("setShardKeys() unexpire fields. {$fields}");
         }
 
-        foreach($fields as $name) {
+        foreach ($fields as $name) {
             if (!is_string($name)) {
                 throw new \Exception("setShardKeys() field should be string, error:{$name}");
             }
@@ -174,7 +175,9 @@ abstract class ModelToRedis extends Model
             return parent::find($id, $columns);
         }
         $value = $this->getLineCacheById($id);
-        if ($value) return $value;
+        if ($value) {
+            return $value;
+        }
         $value = parent::find($id);
         $this->setLineCacheById($id, $value);
 
@@ -198,7 +201,9 @@ abstract class ModelToRedis extends Model
         }
 
         $value = $this->getLineCacheByUK($query);
-        if ($value) return $value;
+        if ($value) {
+            return $value;
+        }
         $value = parent::where($query)->get();
         $this->setLineCacheByUK($query, $value);
 
@@ -284,18 +289,19 @@ abstract class ModelToRedis extends Model
         }
         if ($changeShardOfItem) {
             /*可能将数据移动到了另一个分区, 需要将旧的分区和新的分区缓存都失效*/
-            $this->onDataChanged(array($data, $cache), true);
+            $this->onDataChanged([$data, $cache], true);
         } else {
             $this->onDataChanged($cache, false);
         }
 
         $this->registerTransactionObserver('incrLineVersion');
+
         return $result;
     }
 
     private function getCacheLevel($data)
     {
-        if(empty($this->mShardKeys) || empty($data)) {
+        if (empty($this->mShardKeys) || empty($data)) {
             return self::CACHE_LEVEL_TABLE;
         }
 
@@ -320,8 +326,8 @@ abstract class ModelToRedis extends Model
 
     private function extractShardKeyValue($query)
     {
-        $shardKeysQuery = array();
-        foreach($this->mShardKeys as $keyName) {
+        $shardKeysQuery = [];
+        foreach ($this->mShardKeys as $keyName) {
             $shardKeysQuery[$keyName] = $query[$keyName];
         }
 
@@ -343,12 +349,13 @@ abstract class ModelToRedis extends Model
     private function doQuery($method, $args, $query)
     {
         if ($this->mDisableCache) {
-            return call_user_func_array(array($this, $method . 'Trait'), $args);
+            return call_user_func_array([$this, $method . 'Trait'], $args);
         }
         $cacheLevel = $this->getCacheLevel($query);
-        switch($cacheLevel) {
+        switch ($cacheLevel) {
             case self::CACHE_LEVEL_SHARD:
                 $shardKeyValue = $this->extractShardKeyValue($query);
+
                 return $this->getFromSingleShard($method, $args, $shardKeyValue);
             case self::CACHE_LEVEL_TABLE:
                 return $this->getFromTable($method, $args);
@@ -362,12 +369,14 @@ abstract class ModelToRedis extends Model
      * https://www.litblc.com
      *
      * @param array $query
+     *
      * @return mixed
      */
     public function getFirstByParamArray(array $query)
     {
         $method = __FUNCTION__;
         $args = func_get_args();
+
         return $this->doQuery($method, $args, $query);
     }
 
@@ -379,15 +388,16 @@ abstract class ModelToRedis extends Model
      *
      * @param array $query
      * @param array $orderBy 默认['id' => 'desc']
-     * @param int $limit 默认取所有符合条件的记录
-     * @param int $offset
+     * @param int   $limit   默认取所有符合条件的记录
+     * @param int   $offset
      *
      * @return mixed
      */
-    public function getsBy(array $query, $orderBy = array(), $limit = 0, $offset = 0)
+    public function getsBy(array $query, $orderBy = [], $limit = 0, $offset = 0)
     {
         $method = __FUNCTION__;
         $args = func_get_args();
+
         return $this->doQuery($method, $args, $query);
     }
 
@@ -400,15 +410,16 @@ abstract class ModelToRedis extends Model
      * @param array $fields
      * @param $query
      * @param array $orderBy 默认['id' => 'desc']
-     * @param int $limit 默认取所有符合条件的记录
-     * @param integer $offset
+     * @param int   $limit   默认取所有符合条件的记录
+     * @param int   $offset
      *
      * @return mixed
      */
-    public function getsColumnsBy(array $fields, $query, $orderBy = array(), $limit = 0, $offset = 0)
+    public function getsColumnsBy(array $fields, $query, $orderBy = [], $limit = 0, $offset = 0)
     {
         $method = __FUNCTION__;
         $args = func_get_args();
+
         return $this->doQuery($method, $args, $query);
     }
 
@@ -422,10 +433,11 @@ abstract class ModelToRedis extends Model
      *
      * @return mixed
      */
-    public function count($query = array())
+    public function count($query = [])
     {
         $method = __FUNCTION__;
         $args = func_get_args();
+
         return $this->doQuery($method, $args, $query);
     }
 
@@ -443,7 +455,8 @@ abstract class ModelToRedis extends Model
     {
         $method = __FUNCTION__;
         $args = func_get_args();
-        return $this->doQuery($method, $args, array());
+
+        return $this->doQuery($method, $args, []);
     }
 
     private function onDataChanged($data, $isMultiItem)
@@ -457,13 +470,13 @@ abstract class ModelToRedis extends Model
         }
 
         $changedUnkownShard = false;
-        $shardKeyValueArr = array();
+        $shardKeyValueArr = [];
         if (!$isMultiItem) {
-            $data = array($data);
+            $data = [$data];
         }
-        foreach($data as $item) {
+        foreach ($data as $item) {
             $cacheLevel = $this->getCacheLevel($item);
-            if(self::CACHE_LEVEL_SHARD == $cacheLevel) {
+            if (self::CACHE_LEVEL_SHARD == $cacheLevel) {
                 $shardKeyValue = $this->extractShardKeyValue($item);
                 $key = $this->getShardVersionKey($shardKeyValue);
                 $shardKeyValueArr[$key] = $shardKeyValue;
@@ -477,16 +490,16 @@ abstract class ModelToRedis extends Model
         if ($changedUnkownShard) {
             $this->incrAllShardsVersion();
             $this->registerTransactionObserver('incrAllShardsVersion');
+
             return;
         }
 
         /*明确知道修改了哪些分区的数据，则只将这些分区的缓存失效*/
-        foreach($shardKeyValueArr as $shardKeyValue) {
+        foreach ($shardKeyValueArr as $shardKeyValue) {
             $this->incrShardVersion($shardKeyValue);
-            $this->registerTransactionObserver('incrShardVersion', array($shardKeyValue));
+            $this->registerTransactionObserver('incrShardVersion', [$shardKeyValue]);
         }
     }
-
 
     /**
      * 插入一条新数据
@@ -502,7 +515,7 @@ abstract class ModelToRedis extends Model
     {
         $method = __FUNCTION__;
         $args = func_get_args();
-        $result = call_user_func_array(array($this, $method . 'Trait'), $args);
+        $result = call_user_func_array([$this, $method . 'Trait'], $args);
         if (!$result) {
             return $result;
         }
@@ -514,14 +527,16 @@ abstract class ModelToRedis extends Model
 
     /**
      * 插入数据, 必须包含全部字段
+     *
      * @param array $data
+     *
      * @return bool|int
      */
     public function multiInsert($data)
     {
         $method = __FUNCTION__;
         $args = func_get_args();
-        $result = call_user_func_array(array($this, $method . 'Trait'), $args);
+        $result = call_user_func_array([$this, $method . 'Trait'], $args);
         if (!$result) {
             return $result;
         }
@@ -545,13 +560,14 @@ abstract class ModelToRedis extends Model
     {
         $method = __FUNCTION__;
         $args = func_get_args();
-        $result = call_user_func_array(array($this, $method . 'Trait'), $args);
+        $result = call_user_func_array([$this, $method . 'Trait'], $args);
         if (!$result) {
             return $result;
         }
 
         $this->onDataChanged($query, false);
         $this->incrLineVersion();
+
         return $result;
     }
 
@@ -570,12 +586,12 @@ abstract class ModelToRedis extends Model
     {
         $method = __FUNCTION__;
         $args = func_get_args();
-        $result = call_user_func_array(array($this, $method . 'Trait'), $args);
+        $result = call_user_func_array([$this, $method . 'Trait'], $args);
         if (!$result) {
             return $result;
         }
         $changeShardOfItem = false;
-        foreach($this->mShardKeys as $shardKey) {
+        foreach ($this->mShardKeys as $shardKey) {
             if (isset($data[$shardKey])) {
                 $changeShardOfItem = true;
                 break;
@@ -583,12 +599,13 @@ abstract class ModelToRedis extends Model
         }
         if ($changeShardOfItem) {
             /*可能将数据移动到了另一个分区, 需要将旧的分区和新的分区缓存都失效*/
-            $this->onDataChanged(array($data, $query), true);
+            $this->onDataChanged([$data, $query], true);
         } else {
             $this->onDataChanged($query, false);
         }
 
         $this->incrLineVersion();
+
         return $result;
     }
 
@@ -596,7 +613,7 @@ abstract class ModelToRedis extends Model
      * 现网mysql配置的事务类型是READ-COMMITTED.要保证redis的sql缓存正确,需要
      * 在事务提交或回滚后,刷新(失效)涉及的sql缓存.
      */
-    private function registerTransactionObserver($method, $callBackArgs = array())
+    private function registerTransactionObserver($method, $callBackArgs = [])
     {
         $callBack['method'] = $method;
         $callBack['args'] = $callBackArgs;
@@ -609,15 +626,14 @@ abstract class ModelToRedis extends Model
      */
     private function onTransactionFinish()
     {
-        foreach($this->mTransactionObserver as $cb) {
+        foreach ($this->mTransactionObserver as $cb) {
             $method = $cb['method'];
             $args = $cb['args'];
-            call_user_func_array(array($this, $method), $args);
+            call_user_func_array([$this, $method], $args);
         }
 
-        $this->mTransactionObserver = array();
+        $this->mTransactionObserver = [];
     }
-
 
     /**
      * author shyZhen <huaixiu.zhen@gmail.com>
@@ -631,24 +647,28 @@ abstract class ModelToRedis extends Model
     /**
      * 现网mysql配置的事务类型是READ-COMMITTED.要保证redis的sql缓存正确,需要
      * 在事务提交或回滚后,刷新(失效)涉及的sql缓存.
-     * @return boolean
+     *
+     * @return bool
      */
     public function rollBack()
     {
         $result = DB::rollBack();
         $this->onTransactionFinish();
+
         return $result;
     }
 
     /**
      * 现网mysql配置的事务类型是READ-COMMITTED.要保证redis的sql缓存正确,需要
      * 在事务提交或回滚后,刷新(失效)涉及的sql缓存.
-     * @return boolean
+     *
+     * @return bool
      */
     public function commit()
     {
         $result = DB::commit();
         $this->onTransactionFinish();
+
         return $result;
     }
 
@@ -663,12 +683,13 @@ abstract class ModelToRedis extends Model
      *
      * @param $method
      * @param $args
+     *
      * @return mixed
      */
     private function getFromTable($method, $args)
     {
-        if(!$this->mEnableTableCache) {
-            return call_user_func_array(array($this, $method . 'Trait'), $args);
+        if (!$this->mEnableTableCache) {
+            return call_user_func_array([$this, $method . 'Trait'], $args);
         }
 
         $fieldsVersion = $this->onFieldsVersion();
@@ -682,7 +703,7 @@ abstract class ModelToRedis extends Model
             } else {
                 if ($this->getRedis()->lock($key, 3)) {
                     $locked = true;
-                } else if (self::$sAllowOldCache) {
+                } elseif (self::$sAllowOldCache) {
                     //避免集中访问数据库，第2个用户返回旧数据
                     //部分数据有页面缓存，为避免脏数据更新到最新版本的页面缓存中，需使用$sAllowOldCache加以控制
                     return $value[self::TAG_DATA];
@@ -692,12 +713,12 @@ abstract class ModelToRedis extends Model
         if (self::INVALID_VERSION == $tableVersion) {
             $tableVersion = $this->initTableVersion();
         }
-        $dbData = call_user_func_array(array($this, $method . 'Trait'), $args);
-        $value = array(
+        $dbData = call_user_func_array([$this, $method . 'Trait'], $args);
+        $value = [
             self::TAG_FIELDS_VERSION => $fieldsVersion,
             self::TAG_VERSION_TABLE => $tableVersion,
-            self::TAG_DATA => $dbData
-        );
+            self::TAG_DATA => $dbData,
+        ];
         $this->getRedis()->set($key, $value, $this->mTableCacheExpireTime);
         if ($locked) {
             $this->getRedis()->unlock($key);
@@ -709,7 +730,7 @@ abstract class ModelToRedis extends Model
     private function getFromSingleShard($method, $args, $shardKeyValue)
     {
         if (empty($this->mShardKeys)) {
-            return call_user_func_array(array($this, $method . 'Trait'), $args);
+            return call_user_func_array([$this, $method . 'Trait'], $args);
         }
 
         $fieldsVersion = $this->onFieldsVersion();
@@ -727,7 +748,7 @@ abstract class ModelToRedis extends Model
             } else {
                 if ($this->getRedis()->lock($key, 3)) {
                     $locked = true;
-                } else if (self::$sAllowOldCache) {
+                } elseif (self::$sAllowOldCache) {
                     //避免集中访问数据库，第2个用户返回旧数据
                     //部分数据有页面缓存，为避免脏数据更新到最新版本的页面缓存中，需使用$sAllowOldCache加以控制
                     return $value[self::TAG_DATA];
@@ -741,13 +762,13 @@ abstract class ModelToRedis extends Model
         if (self::INVALID_VERSION == $allShardsVersion) {
             $allShardsVersion = $this->initAllShardsVersion();
         }
-        $dbData = call_user_func_array(array($this, $method . 'Trait'), $args);
-        $value = array(
+        $dbData = call_user_func_array([$this, $method . 'Trait'], $args);
+        $value = [
             self::TAG_DATA => $dbData,
             self::TAG_FIELDS_VERSION => $fieldsVersion,
             self::TAG_VERSION_SHARD => $shardVersion,
-            self::TAG_VERSION_ALL_SHARDS => $allShardsVersion
-        );
+            self::TAG_VERSION_ALL_SHARDS => $allShardsVersion,
+        ];
         $this->getRedis()->set($key, $value, $this->mShardCacheExpireTime);
 
         if ($locked) {
@@ -760,7 +781,9 @@ abstract class ModelToRedis extends Model
     private function getLineCacheById($id)
     {
         $version = $this->getLineVersion();
-        if (!$version) return false;
+        if (!$version) {
+            return false;
+        }
         $fieldsVersion = $this->onFieldsVersion();
 
         $key = $this->getPrimaryCacheKey($id);
@@ -768,6 +791,7 @@ abstract class ModelToRedis extends Model
         if ($value[self::TAG_FIELDS_VERSION] == $fieldsVersion && $value[self::TAG_VERSION_LINE] == $version) {
             return $value[self::TAG_DATA];
         }
+
         return false;
     }
 
@@ -780,11 +804,11 @@ abstract class ModelToRedis extends Model
         }
 
         $key = $this->getPrimaryCacheKey($id);
-        $data = array(
+        $data = [
             self::TAG_FIELDS_VERSION => $fieldsVersion,
             self::TAG_VERSION_LINE => $version,
-            self::TAG_DATA => $value
-        );
+            self::TAG_DATA => $value,
+        ];
 
         $this->getRedis()->set($key, $data, $this->mLineCacheExpireTime);
     }
@@ -792,7 +816,9 @@ abstract class ModelToRedis extends Model
     private function getLineCacheByUK($params)
     {
         $version = $this->getLineVersion();
-        if (!$version) return false;
+        if (!$version) {
+            return false;
+        }
         $fieldsVersion = $this->onFieldsVersion();
 
         $key = $this->getUKCacheKey($params);
@@ -800,6 +826,7 @@ abstract class ModelToRedis extends Model
         if ($value[self::TAG_FIELDS_VERSION] == $fieldsVersion && $value[self::TAG_VERSION_LINE] == $version) {
             return $value[self::TAG_DATA];
         }
+
         return false;
     }
 
@@ -812,11 +839,11 @@ abstract class ModelToRedis extends Model
         }
 
         $key = $this->getUKCacheKey($params);
-        $data = array(
+        $data = [
             self::TAG_FIELDS_VERSION => $fieldsVersion,
             self::TAG_VERSION_LINE => $version,
-            self::TAG_DATA => $value
-        );
+            self::TAG_DATA => $value,
+        ];
 
         $this->getRedis()->set($key, $data, $this->mLineCacheExpireTime);
     }
@@ -853,6 +880,7 @@ abstract class ModelToRedis extends Model
     private function getUKCacheKey($args)
     {
         $crcStr = dechex(crc32(json_encode($args)));
+
         return parent::getTable() . ':' . self::TAG_LINE_GET_BY_UK . ':' . $crcStr;
     }
 
@@ -865,7 +893,8 @@ abstract class ModelToRedis extends Model
 
         $crcStr = dechex(crc32(json_encode($args)));
 
-        $key =  parent::getTable() . ':' . $methodName . ':' . $crcStr;
+        $key = parent::getTable() . ':' . $methodName . ':' . $crcStr;
+
         return $key;
     }
 
@@ -881,6 +910,7 @@ abstract class ModelToRedis extends Model
         if ($ver) {
             return $ver;
         }
+
         return self::INVALID_VERSION;
     }
 
@@ -889,6 +919,7 @@ abstract class ModelToRedis extends Model
         $key = $this->getLineVersionKey();
         $version = rand(self::MIN_VERSION, self::MAX_VERSION);
         $this->getRedis()->set($key, $version, $this->mLineCacheVerExpireTime);
+
         return $version;
     }
 
@@ -902,6 +933,7 @@ abstract class ModelToRedis extends Model
         }
 
         $this->getRedis()->expire($key, $this->mLineCacheVerExpireTime);
+
         return $ver;
     }
 
@@ -917,6 +949,7 @@ abstract class ModelToRedis extends Model
         if ($ver) {
             return $ver;
         }
+
         return self::INVALID_VERSION;
     }
 
@@ -925,6 +958,7 @@ abstract class ModelToRedis extends Model
         $key = $this->getTableVersionKey();
         $version = rand(self::MIN_VERSION, self::MAX_VERSION);
         $this->getRedis()->set($key, $version, $this->mTableCacheVerExpireTime);
+
         return $version;
     }
 
@@ -938,16 +972,17 @@ abstract class ModelToRedis extends Model
         }
 
         $this->getRedis()->expire($key, $this->mTableCacheVerExpireTime);
+
         return $ver;
     }
 
     private function getShardVersionKey($shardKeyValue)
     {
         $shardTag = '';
-        foreach($shardKeyValue as $key => $value) {
+        foreach ($shardKeyValue as $key => $value) {
             $shardTag = $shardTag . ':' . $key . ':' . $value;
         }
-        if(strlen($shardTag) > 32) {
+        if (strlen($shardTag) > 32) {
             $shardTag = md5($shardKeyValue);
         }
 
@@ -959,6 +994,7 @@ abstract class ModelToRedis extends Model
         $key = $this->getShardVersionKey($shardKeyValue);
         $version = rand(self::MIN_VERSION, self::MAX_VERSION);
         $this->getRedis()->set($key, $version, $this->mShardCacheVerExpireTime);
+
         return $version;
     }
 
@@ -969,6 +1005,7 @@ abstract class ModelToRedis extends Model
         if ($ver) {
             return $ver;
         }
+
         return self::INVALID_VERSION;
     }
 
@@ -982,6 +1019,7 @@ abstract class ModelToRedis extends Model
         }
 
         $this->getRedis()->expire($key, $this->mShardCacheVerExpireTime);
+
         return $ver;
     }
 
@@ -995,6 +1033,7 @@ abstract class ModelToRedis extends Model
         $key = $this->getAllShardsVersionKey();
         $version = rand(self::MIN_VERSION, self::MAX_VERSION);
         $this->getRedis()->set($key, $version, $this->mAllShardsCacheVerExpireTime);
+
         return $version;
     }
 
@@ -1005,6 +1044,7 @@ abstract class ModelToRedis extends Model
         if ($ver) {
             return $ver;
         }
+
         return self::INVALID_VERSION;
     }
 
@@ -1018,6 +1058,7 @@ abstract class ModelToRedis extends Model
         }
 
         $this->getRedis()->expire($key, $this->mAllShardsCacheVerExpireTime);
+
         return $ver;
     }
 
@@ -1047,9 +1088,9 @@ abstract class ModelToRedis extends Model
     private function orderBySql($orderBy)
     {
         $orders = [];
-        foreach($orderBy as $key => $value) {
+        foreach ($orderBy as $key => $value) {
             if ($key == 'FIELD') {
-                $orders[] = 'FIELD (`' . $value[0] . '`,' . implode(',',  $value[1]) . ')';
+                $orders[] = 'FIELD (`' . $value[0] . '`,' . implode(',', $value[1]) . ')';
             } else {
                 $orders[] = '`' . $key . '`' . ' ' . $value;
             }

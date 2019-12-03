@@ -12,7 +12,7 @@ return [
 
     // 集群配置
     'elasticsearch_host_node' => [
-        '127.0.0.1:9200'
+        '127.0.0.1:9200',
     ],
 
     // 文章index
@@ -37,6 +37,6 @@ return [
     'selector' => [
         'round_robin' => '\Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector',
         'sticky_round_robin' => '\Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector',
-        'random' => '\Elasticsearch\ConnectionPool\Selectors\RandomSelector'
+        'random' => '\Elasticsearch\ConnectionPool\Selectors\RandomSelector',
     ],
 ];
