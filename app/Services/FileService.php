@@ -181,7 +181,7 @@ class FileService extends Service
     {
         if ($file->isValid()) {
             $imageName = self::uuid($prefix) . '.' . $file->extension();
-            $fullName = $savePath . '/' . date('Y-m-d') . '/' . $imageName;
+            $fullName = $savePath . '/' . date('Y/m') . '/' . $imageName;
 
             $result = $this->qiniuService->uploadFile($file->path(), $fullName);
 
@@ -231,7 +231,7 @@ class FileService extends Service
             // 头像名与用户uuid一致
             $imageName = $user->uuid . '.' . $file->extension();
 
-            $fullName = $savePath . '/' . date('Y-m-d') . '/' . $imageName;
+            $fullName = $savePath . '/' . date('Y/m') . '/' . $imageName;
             $result = $this->qiniuService->uploadFile($file->path(), $fullName);
 
             if ($result['code'] === 0) {
