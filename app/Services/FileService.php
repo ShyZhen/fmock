@@ -325,9 +325,10 @@ class FileService extends Service
      * @param $file
      * @param $savePath
      * @param string $prefix
-     * @return \Illuminate\Http\JsonResponse
      *
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function uploadVideoToQiniu($file, $savePath, $prefix = '')
     {
@@ -338,7 +339,6 @@ class FileService extends Service
             $result = $this->qiniuService->uploadVideo($file->path(), $fullName);
 
             if ($result['code'] === 0) {
-
                 $videoUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['data']['key'];
                 $videoM3u8Url = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['m3u8'];
 
