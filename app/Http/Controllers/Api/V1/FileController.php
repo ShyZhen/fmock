@@ -106,4 +106,44 @@ class FileController extends Controller
             return $res;
         }
     }
+
+    /**
+     * 上传视频 限制最大500M
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param Request $request
+     *
+     * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function uploadVideo(Request $request)
+    {
+        $mimeTypes = 'video/avi,video/mpeg,video/quicktime,video/x-flv,video/mp4,application/x-mpegURL,video/3gpp,video/x-msvideo,video/x-ms-wmv,video/MP2T';
+        $validator = Validator::make($request->all(), [
+            'video' => 'required|mimetypes:' . $mimeTypes . '|max:512000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                ['message' => $validator->errors()->first()],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $file = $request->file('video');
+
+            if (env('QiniuService')) {
+
+                // 上传视频到七牛
+                $res = $this->fileService->uploadVideoToQiniu($file, 'video', 'video-');
+            } else {
+                // 上传视频到本地
+                $res = $this->fileService->uploadVideo($file, 'video', 'video-');
+            }
+
+            return $res;
+        }
+    }
 }

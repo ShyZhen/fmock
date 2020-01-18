@@ -69,6 +69,11 @@ return [
         'secretKey' => env('SecretKey', ''),
         'bucket' => env('Bucket', ''),
         'cdnUrl' => env('CdnUrl', ''),
+        'bucketVideo' => env('BucketVideo', ''),
+        'cdnUrlVideo' => env('CdnUrlVideo', ''),
+        'watermarkImg' => env('WatermarkImg', ''),
+        'videoPipeline' => env('VideoPipeline', 'fmock-video'),    // 多媒体队列 用来处理hls
+        'm3u8Fops' => env('M3u8Fops', 'avthumb/m3u8/noDomain/1/segtime/60/ab/128k/ar/44100/acodec/libfaac/r/30/vb/128k/stripmeta/1')
     ],
 
 ];

@@ -47,7 +47,7 @@ class FileService extends Service
 
     /**
      * 上传图片服务 存入绝对路径 (文章)
-     * $path = $file->storeAs($savePath, date('Y-m-d') . '/' . $this->uuid($prefix) . '.' . $fileExt, 'public');
+     * $path = $file->storeAs($savePath, date('Y/m/') . $this->uuid($prefix) . '.' . $fileExt, 'public');
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -62,7 +62,7 @@ class FileService extends Service
     {
         if ($file->isValid()) {
             $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
-            $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
+            $tmpPath = $savePath . '/' . date('Y/m/');
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
             $imageName = self::uuid($prefix) . '.' . $fileExt;                            // 定义唯一文件名
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
@@ -111,7 +111,7 @@ class FileService extends Service
     {
         if ($file->isValid()) {
             $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
-            $tmpPath = $savePath . '/' . date('Y-m-d') . '/';
+            $tmpPath = $savePath . '/' . date('Y/m/');
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
             $user = Auth::user();
             ;
@@ -124,12 +124,65 @@ class FileService extends Service
             $fullName = $storagePath . $imageName;
 
             if ($this->imageService->saveImg($file, $fullName)) {
-                $imageUrl = url('/storage/' . $tmpPath . $imageName);
+
+                // 刷新本地缓存
+                $flushCdn = '?v=' . time();
+
+                $imageUrl = url('/storage/' . $tmpPath . $imageName . $flushCdn);
                 // 存储绝对路径入库
                 $this->userRepository->update(['avatar' => $imageUrl], $user->id);
 
                 return response()->json(
                     ['data' => $imageUrl],
+                    Response::HTTP_CREATED
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.unknown') . __('app.error')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.upload_file_valida_fail')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+    }
+
+    /**
+     * 本地不支持视频转码、切片等
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $file
+     * @param $savePath
+     * @param string $prefix
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function uploadVideo($file, $savePath, $prefix = '')
+    {
+        if ($file->isValid()) {
+            $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
+            $tmpPath = $savePath . '/' . date('Y/m/');
+            $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
+            $videoName = self::uuid($prefix) . '.' . $fileExt;                            // 定义唯一文件名
+            $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
+
+            if (!file_exists($storagePath)) {
+                mkdir($storagePath, 0666, true);
+            }
+            $fullName = $storagePath . $videoName;
+
+            if ($this->imageService->saveVideo($file, $fullName)) {
+                $videoUrl = url('/storage/' . $tmpPath . $videoName);
+
+                // TODO 保存数据入库
+
+                return response()->json(
+                    ['data' => $videoUrl],
                     Response::HTTP_CREATED
                 );
             }
@@ -165,6 +218,7 @@ class FileService extends Service
 
     /**
      * 上传图片到七牛服务
+     * 直接返回url，跟内容一并保存
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -181,14 +235,15 @@ class FileService extends Service
     {
         if ($file->isValid()) {
             $imageName = self::uuid($prefix) . '.' . $file->extension();
-            $fullName = $savePath . '/' . date('Y/m') . '/' . $imageName;
+            $fullName = $savePath . '/' . date('Y/m/') . $imageName;
 
             $result = $this->qiniuService->uploadFile($file->path(), $fullName);
 
             if ($result['code'] === 0) {
-                // 由于是覆盖上传,刷新七牛cdn缓存，在文件url后加版本号。(不像头像，这里一般不会重复与覆盖)
-                $flushCdn = '?v=' . time();
-                $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $flushCdn;
+
+                // 七牛设置的图片样式（加水印等其他操作）
+                $imageProcess = '_fmock';
+                $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $imageProcess;
 
                 // 记录用户上传的文件,便于后台管理
                 $this->uploadLog(Auth::id(), $imageUrl);
@@ -231,13 +286,15 @@ class FileService extends Service
             // 头像名与用户uuid一致
             $imageName = $user->uuid . '.' . $file->extension();
 
-            $fullName = $savePath . '/' . date('Y/m') . '/' . $imageName;
+            $fullName = $savePath . '/' . date('Y/m/') . $imageName;
             $result = $this->qiniuService->uploadFile($file->path(), $fullName);
 
             if ($result['code'] === 0) {
-                // 由于是覆盖上传,刷新七牛cdn缓存，在文件url后加版本号。
+
+                // 覆盖上传,刷新七牛cdn缓存及时更新
                 $flushCdn = '?v=' . time();
                 $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $flushCdn;
+
                 // 存储绝对路径入库
                 $this->userRepository->update(['avatar' => $imageUrl], $user->id);
 
@@ -260,7 +317,56 @@ class FileService extends Service
     }
 
     /**
-     * 上传记录
+     * 上传视频到七牛 切片
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $file
+     * @param $savePath
+     * @param string $prefix
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function uploadVideoToQiniu($file, $savePath, $prefix = '')
+    {
+        if ($file->isValid()) {
+            $videoName = self::uuid($prefix) . '.' . $file->extension();
+            $fullName = $savePath . '/' . date('Y/m/') . $videoName;
+
+            $result = $this->qiniuService->uploadVideo($file->path(), $fullName);
+
+            if ($result['code'] === 0) {
+
+                $videoUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['data']['key'];
+                $videoM3u8Url = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['m3u8'];
+
+                // 第一秒缩略图
+                $vframe = $videoM3u8Url . $this->qiniuService->videoVframe(1);
+
+                // TODO 保存数据入库
+
+                return response()->json(
+                    ['data' => $videoM3u8Url],
+                    Response::HTTP_CREATED
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.upload_file_qiniu_fail')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        } else {
+            return response()->json(
+                ['message' => __('app.upload_file_valida_fail')],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+    }
+
+    /**
+     * 图片上传记录
      *
      * @Author huaixiu.zhen
      * http://litblc.com

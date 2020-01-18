@@ -20,8 +20,6 @@ class Kernel extends HttpKernel
         // 将空字符串变成null
         //\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-        // 需要全局注册跨域中间件 MDBUG
-        \Barryvdh\Cors\HandleCors::class,
     ];
 
     /**
@@ -43,8 +41,8 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
-            // 跨域路由中间件 需要全局注册才起作用
-            // \Barryvdh\Cors\HandleCors::class,
+            // 跨域路由中间件
+             \Barryvdh\Cors\HandleCors::class,
             // \App\Http\Middleware\Cors::class,
         ],
     ];

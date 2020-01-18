@@ -59,6 +59,26 @@ class ImageService extends Service
     }
 
     /**
+     * 推荐视频一律上传至七牛压缩切片
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $file
+     * @param $name
+     *
+     * @return bool
+     */
+    public function saveVideo($file, $name)
+    {
+        if (move_uploaded_file($file, $name)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 设置缩放比例
      *
      * @Author huaixiu.zhen
