@@ -53,6 +53,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     // 上传文件
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
+    Route::post('file/video', 'FileController@uploadVideo');
 
     // 关注（搜藏、点红心）的文章、回答 入口在个人中心九宫格中
     Route::get('collection/{type}', 'ActionController@getMyFollowed');
