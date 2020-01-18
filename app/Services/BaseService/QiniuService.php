@@ -84,9 +84,9 @@ class QiniuService extends Service
      * @param $key
      * @param string $bucket
      *
-     * @return array
-     *
      * @throws \Exception
+     *
+     * @return array
      */
     public function uploadVideo($filePath, $key, $bucket = '')
     {
@@ -131,6 +131,7 @@ class QiniuService extends Service
      * https://www.litblc.com
      *
      * @param $offset
+     *
      * @return string
      */
     public function videoVframe($offset)
@@ -145,6 +146,7 @@ class QiniuService extends Service
      * https://www.litblc.com
      *
      * @param $key
+     *
      * @return string
      */
     private function hlsM3u8Name($key)
@@ -186,5 +188,4 @@ class QiniuService extends Service
 
         return $watermarkImg . $watermarkText;
     }
-
 }
