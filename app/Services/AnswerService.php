@@ -71,7 +71,7 @@ class AnswerService extends Service
             // 处理预加载的用户信息
             if ($answers->count()) {
                 foreach ($answers as $answer) {
-                    $answer->user_info = $this->postRepository->handleUserInfo($answer->user);
+                    $answer->user_info = $this->handleUserInfo($answer->user);
                     unset($answer->user);
                     unset($answer->user_id);
                 }
@@ -106,7 +106,7 @@ class AnswerService extends Service
 
         if ($answer) {
             if ($answer->deleted == 'none' || $answer->user_id == Auth::id()) {
-                $answer->user_info = $this->postRepository->handleUserInfo($answer->user);
+                $answer->user_info = $this->handleUserInfo($answer->user);
                 unset($answer->user);
                 unset($answer->user_id);
 
@@ -212,7 +212,7 @@ class AnswerService extends Service
             }
 
             if ($answer->save()) {
-                $answer->user_info = $this->postRepository->handleUserInfo($answer->user);
+                $answer->user_info = $this->handleUserInfo($answer->user);
                 unset($answer->user);
                 unset($answer->user_id);
 
@@ -287,7 +287,7 @@ class AnswerService extends Service
 
             if ($answers->count()) {
                 foreach ($answers as $answer) {
-                    $answer->user_info = $this->postRepository->handleUserInfo($answer->user);
+                    $answer->user_info = $this->handleUserInfo($answer->user);
                     unset($answer->user);
                 }
             }

@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateVideoCollectionsTable extends Migration
+{
+    /**
+     * 视频集
+     *
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('video_collections', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('uuid', 64)->index();
+            $table->unsignedInteger('user_id')->index();
+            $table->string('title', 128)->defult('');
+            $table->string('summary', 128)->defult('');                    // 摘要
+            $table->string('poster', 128)->defult('');                     // 视频集封面
+            $table->enum('is_free', ['yes', 'none'])->default('yes');      // 是否免费，只有视频集收费才判断素材是否免费(试看状态)；如果视频集免费，那么不判断素材的状态，全部免费
+            $table->enum('is_release', ['yes', 'none'])->default('none');  // 上线后可观看、购买
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('video_collections');
+    }
+}

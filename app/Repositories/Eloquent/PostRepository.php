@@ -97,33 +97,6 @@ class PostRepository extends Repository
     }
 
     /**
-     * 处理预加载用户信息
-     *
-     * @Author huaixiu.zhen
-     * http://litblc.com
-     *
-     * @param $user
-     *
-     * @return mixed
-     */
-    public function handleUserInfo($user)
-    {
-        if ($user) {
-            $userInfo['uuid'] = $user->uuid;
-            $userInfo['username'] = $user->name;
-            $userInfo['avatar'] = $user->avatar ?: url('/static/defaultAvatar.jpg');
-            $userInfo['bio'] = $user->bio;
-        } else {
-            $userInfo['uuid'] = 'user-anonymous';
-            $userInfo['username'] = __('app.anonymous');
-            $userInfo['avatar'] = url('/static/anonymousAvatar.jpg');
-            $userInfo['bio'] = __('app.default_bio');
-        }
-
-        return $userInfo;
-    }
-
-    /**
      * 获取某个用户的所有文章列表
      *
      * @Author huaixiu.zhen
