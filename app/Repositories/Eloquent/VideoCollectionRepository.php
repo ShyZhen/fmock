@@ -22,5 +22,4 @@ class VideoCollectionRepository extends Repository
     {
         return 'App\Models\VideoCollection';
     }
-
 }
