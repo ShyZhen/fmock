@@ -65,7 +65,7 @@ class PostService extends Service
 
         if ($posts->count()) {
             foreach ($posts as $post) {
-                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->handleUserInfo($post->user);
                 unset($post->user);
                 unset($post->user_id);
             }
@@ -94,7 +94,7 @@ class PostService extends Service
 
         if ($post) {
             if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
-                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->handleUserInfo($post->user);
                 unset($post->user);
                 unset($post->user_id);
 
@@ -193,7 +193,7 @@ class PostService extends Service
             }
 
             if ($post->save()) {
-                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->handleUserInfo($post->user);
                 unset($post->user);
                 unset($post->user_id);
 
@@ -270,7 +270,7 @@ class PostService extends Service
 
             if ($posts->count()) {
                 foreach ($posts as $post) {
-                    $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                    $post->user_info = $this->handleUserInfo($post->user);
                     unset($post->user);
                 }
             }

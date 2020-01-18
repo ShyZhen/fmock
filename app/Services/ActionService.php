@@ -69,7 +69,7 @@ class ActionService extends Service
                 unset($post->content);
                 unset($post->pivot);
 
-                $post->user_info = $this->postRepository->handleUserInfo($post->user);
+                $post->user_info = $this->handleUserInfo($post->user);
                 unset($post->user);
             }
         }

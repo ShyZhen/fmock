@@ -64,7 +64,7 @@ class CommentService extends Service
     private function handleComments($comments)
     {
         foreach ($comments as $comment) {
-            $comment->user_info = $this->postRepository->handleUserInfo($comment->user);
+            $comment->user_info = $this->handleUserInfo($comment->user);
             unset($comment->user);
 
             // 处理已经删除的评论
@@ -78,7 +78,7 @@ class CommentService extends Service
                 $comment->parent_info = $this->commentRepository->getParentComment($comment->parent_id);
 
                 // 处理父级预加载用户信息
-                $comment->parent_info->user_info = $this->postRepository->handleUserInfo($comment->parent_info->user);
+                $comment->parent_info->user_info = $this->handleUserInfo($comment->parent_info->user);
                 unset($comment->parent_info->user);
 
                 // 处理父级已经删除的评论
@@ -178,7 +178,7 @@ class CommentService extends Service
                 if ($comment) {
                     // 写入限制 1分钟一次
                     $this->redisService->setRedis('comment:user:' . $userId, 'create', 'EX', 60);
-                    $comment->user_info = $this->postRepository->handleUserInfo($comment->user);
+                    $comment->user_info = $this->handleUserInfo($comment->user);
                     unset($comment->user);
 
                     // 更新评论数量,回复也算在内
