@@ -26,5 +26,4 @@ class VideoCollection extends Model
         return $this->belongsTo('App\Models\User', 'user_id', 'id')
             ->select(['id', 'uuid', 'name', 'avatar', 'bio']);
     }
-
 }
