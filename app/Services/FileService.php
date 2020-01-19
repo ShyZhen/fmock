@@ -12,36 +12,53 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\ImageService;
 use App\Services\BaseService\QiniuService;
+use App\Services\BaseService\RedisService;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\VideoRepository;
 use App\Repositories\Eloquent\UserUploadImageRepository;
 
 class FileService extends Service
 {
+    private $userId;
+
+    private $redisService;
+
     private $imageService;
 
     private $userRepository;
 
     private $qiniuService;
 
+    private $videoRepository;
+
     private $userUploadImageRepository;
+
+    private $uploadVideoRedisKey = 'upload-video:user:';
 
     /**
      * FileService constructor.
      *
+     * @param RedisService              $redisService
      * @param ImageService              $imageService
      * @param UserRepository            $userRepository
      * @param QiniuService              $qiniuService
+     * @param VideoRepository           $videoRepository
      * @param UserUploadImageRepository $userUploadImageRepository
      */
     public function __construct(
+        RedisService $redisService,
         ImageService $imageService,
         UserRepository $userRepository,
         QiniuService $qiniuService,
+        VideoRepository $videoRepository,
         UserUploadImageRepository $userUploadImageRepository
     ) {
+        $this->userId = Auth::id();
+        $this->redisService = $redisService;
         $this->imageService = $imageService;
         $this->userRepository = $userRepository;
         $this->qiniuService = $qiniuService;
+        $this->videoRepository = $videoRepository;
         $this->userUploadImageRepository = $userUploadImageRepository;
     }
 
@@ -76,7 +93,7 @@ class FileService extends Service
                 $imageUrl = url('/storage/' . $tmpPath . $imageName);
 
                 // 记录用户上传的文件,便于后台管理
-                $this->uploadLog(Auth::id(), $imageUrl);
+                $this->uploadLog($this->userId, $imageUrl);
 
                 return response()->json(
                     ['data' => $imageUrl],
@@ -174,17 +191,39 @@ class FileService extends Service
             if (!file_exists($storagePath)) {
                 mkdir($storagePath, 0666, true);
             }
+
             $fullName = $storagePath . $videoName;
 
-            if ($this->imageService->saveVideo($file, $fullName)) {
-                $videoUrl = url('/storage/' . $tmpPath . $videoName);
-
-                // TODO 保存数据入库
-
+            // 频率限制
+            if ($this->redisService->isRedisExists($this->uploadVideoRedisKey . $this->userId)) {
                 return response()->json(
-                    ['data' => $videoUrl],
-                    Response::HTTP_CREATED
+                    ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl($this->uploadVideoRedisKey . $this->userId) . 's'],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
                 );
+            }
+
+            // 上传操作
+            if ($this->imageService->saveVideo($file, $fullName)) {
+
+                // 添加频率限制key
+                $this->redisService->setRedis($this->uploadVideoRedisKey . $this->userId, 'create', 'EX', 90);
+
+                $videoUrl = url('/storage/' . $tmpPath . $videoName);
+                $videoHlsUrl = '';
+
+                // 保存数据入库
+                $video = $this->saveVideo($videoUrl, $videoHlsUrl);
+                if ($video) {
+                    return response()->json(
+                        ['data' => $video->uuid],
+                        Response::HTTP_CREATED
+                    );
+                } else {
+                    return response()->json(
+                        ['message' => __('app.try_again')],
+                        Response::HTTP_INTERNAL_SERVER_ERROR
+                    );
+                }
             }
 
             return response()->json(
@@ -246,7 +285,7 @@ class FileService extends Service
                 $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $imageProcess;
 
                 // 记录用户上传的文件,便于后台管理
-                $this->uploadLog(Auth::id(), $imageUrl);
+                $this->uploadLog($this->userId, $imageUrl);
 
                 return response()->json(
                     ['data' => $imageUrl],
@@ -336,21 +375,38 @@ class FileService extends Service
             $videoName = self::uuid($prefix) . '.' . $file->extension();
             $fullName = $savePath . '/' . date('Y/m/') . $videoName;
 
+            // 频率限制
+            if ($this->redisService->isRedisExists($this->uploadVideoRedisKey . $this->userId)) {
+                return response()->json(
+                    ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl($this->uploadVideoRedisKey . $this->userId) . 's'],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+
             $result = $this->qiniuService->uploadVideo($file->path(), $fullName);
 
             if ($result['code'] === 0) {
+
+                // 添加频率限制key
+                $this->redisService->setRedis($this->uploadVideoRedisKey . $this->userId, 'create', 'EX', 90);
+
                 $videoUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['data']['key'];
-                $videoM3u8Url = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['m3u8'];
+                $videoHlsUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['m3u8'];
 
-                // 第一秒缩略图
-                $vframe = $videoM3u8Url . $this->qiniuService->videoVframe(1);
+                // 保存数据入库
+                $video = $this->saveVideo($videoUrl, $videoHlsUrl);
 
-                // TODO 保存数据入库
-
-                return response()->json(
-                    ['data' => $videoM3u8Url],
-                    Response::HTTP_CREATED
-                );
+                if ($video) {
+                    return response()->json(
+                        ['data' => $video->uuid],
+                        Response::HTTP_CREATED
+                    );
+                } else {
+                    return response()->json(
+                        ['message' => __('app.try_again')],
+                        Response::HTTP_INTERNAL_SERVER_ERROR
+                    );
+                }
             }
 
             return response()->json(
@@ -380,5 +436,28 @@ class FileService extends Service
             'user_id' => $userId,
             'url' => $imageUrl,
         ]);
+    }
+
+    /**
+     * 保存上传的视频 url 入库
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $videoUrl
+     * @param $videoHlsUrl
+     *
+     * @return mixed
+     */
+    private function saveVideo($videoUrl, $videoHlsUrl)
+    {
+        $video = $this->videoRepository->create([
+            'uuid' => self::uuid('video-'),  // 禁止使用同样的uuid，防止被人猜到暴露
+            'user_id' => $this->userId,
+            'url' => $videoUrl,
+            'hls_url' => $videoHlsUrl,
+        ]);
+
+        return $video;
     }
 }

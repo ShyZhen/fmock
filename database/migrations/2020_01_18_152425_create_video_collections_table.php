@@ -19,11 +19,11 @@ class CreateVideoCollectionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('uuid', 64)->index();
             $table->unsignedInteger('user_id')->index();
-            $table->string('title', 128)->defult('');
-            $table->string('summary', 128)->defult('');                    // 摘要
-            $table->string('poster', 128)->defult('');                     // 视频集封面
-            $table->enum('is_free', ['yes', 'none'])->default('yes');      // 是否免费，只有视频集收费才判断素材是否免费(试看状态)；如果视频集免费，那么不判断素材的状态，全部免费
-            $table->enum('is_release', ['yes', 'none'])->default('none');  // 上线后可观看、购买
+            $table->string('title', 128)->default('');
+            $table->string('summary', 128)->default('');                    // 摘要
+            $table->string('poster', 128)->default('');                     // 视频集封面
+            $table->enum('is_free', ['yes', 'none'])->default('yes');       // 是否免费，只有视频集收费才判断素材是否免费(试看状态)；如果视频集免费，那么不判断素材的状态，全部免费
+            $table->enum('is_release', ['yes', 'none', 'review'])->default('none');  // 上线后可观看、购买;上线流程：提交审核 -> 审核通过 -> 上线
             $table->timestamps();
         });
     }
