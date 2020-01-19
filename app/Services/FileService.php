@@ -446,6 +446,7 @@ class FileService extends Service
      *
      * @param $videoUrl
      * @param $videoHlsUrl
+     *
      * @return mixed
      */
     private function saveVideo($videoUrl, $videoHlsUrl)
@@ -454,7 +455,7 @@ class FileService extends Service
             'uuid' => self::uuid('video-'),  // 禁止使用同样的uuid，防止被人猜到暴露
             'user_id' => $this->userId,
             'url' => $videoUrl,
-            'hls_url' => $videoHlsUrl
+            'hls_url' => $videoHlsUrl,
         ]);
 
         return $video;
