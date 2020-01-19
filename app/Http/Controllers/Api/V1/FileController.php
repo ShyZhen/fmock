@@ -1,5 +1,6 @@
 <?php
 /**
+ * 上传文件类
  * @Author huaixiu.zhen
  * http://litblc.com
  * User: z00455118

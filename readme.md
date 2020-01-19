@@ -96,6 +96,8 @@ FMock墨客社区。
  - [uploadAvatar](#upload-avatar) | 更换用户头像
  - [logout](#logout) | 登出
  
+  - [uploadVideo](#upload-video) | 上传视频并入库
+ 
  - [getAllPosts](#posts) | 获取首页文章列表
  - [getPostByUuid](#post) | 获取指定文章
  - [createPost](#create-post) | 新建文章
@@ -363,6 +365,22 @@ FMock墨客社区。
  - 返回值
  > HTTP/1.1 200 OK
  {"message" : <"message">}
+ 
+#### upload-video
+ - POST `server_url/V1/file/video`
+ - 上传视频，返回uuid
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `video` | Y | File | Y | &lt;500M |  |
+
+ - 返回值
+ > HTTP/1.1 201 OK
+ {"data" : <"uuid">}
+ 
+ > HTTP/1.1 400、422
+ {"message" : <"message">}
+
  
 #### posts
  - GET `server_url/V1/posts`

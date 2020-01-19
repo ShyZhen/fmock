@@ -19,9 +19,9 @@ class CreateAnswersTable extends Migration
             $table->char('uuid', 64)->index();                                             // 代替id暴露在外
             $table->unsignedInteger('user_id')->index();
             $table->unsignedInteger('post_id')->index();                                   // 关联文章ID 一对多
-            $table->string('title', 128)->defult('');
-            $table->string('summary', 128)->defult('');                                    // 摘要
-            $table->string('poster', 128)->defult('');                                     // 第一幅海报图片
+            $table->string('title', 128)->default('');
+            $table->string('summary', 128)->default('');                                    // 摘要
+            $table->string('poster', 128)->default('');                                     // 第一幅海报图片
             $table->text('content');
             $table->unsignedInteger('follow_num')->default(0);                             // 被收藏数量
             $table->unsignedInteger('comment_num')->default(0);                            // 被评论数量
