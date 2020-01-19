@@ -46,6 +46,12 @@ return [
             'driver' => 'passport',
             'provider' => 'users',
         ],
+
+        // 管理后台
+        'admin' => [
+            'driver'   => 'session',
+            'provider' => 'admin',
+        ],
     ],
 
     /*
@@ -75,6 +81,11 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        'admin' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\AdminUser::class,
+        ],
     ],
 
     /*

@@ -33,20 +33,22 @@ FMock墨客社区。
 
 
 ## Installation
+
+ #### 下载代码安装依赖
  - `git clone https://github.com/ShyZhen/fmock.git`
  - `copy .env.example .env` and edit .env (生产环境记得修改env中APP_ENV=production)
  > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
  如果想上传文件到七牛，需要开启`.env`中的`QiniuService=true`,并配置好七牛的各项参数。
  - composer 全量镜像不稳定，推荐更换`composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/`
- - `composer self-update`
- - `composer install`
- - `php artisan key:generate`
- - `php artisan storage:link`
- - `chmod -R 766 storage/` and `chmod -R 766 bootstrap/cache/`
- - `php artisan migrate`
- - `php artisan passport:install`
- - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
+ - `composer self-update` && `composer install`
  
+ #### 执行初始化安装
+ - `php artisan fmock:install`
+ 
+ #### 权限设置
+ - `chmod -R 766 storage/` and `chmod -R 766 bootstrap/cache/`
+ - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
+
  
 ## ES Quick Use
  - 新建es类并继承抽象类`Base/ElasticSearch`，例如PostElasticSearch
