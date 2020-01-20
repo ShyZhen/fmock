@@ -27,6 +27,7 @@ return [
     'request_too_much' => '您请求次数过多，请稍后重试',
     'user_is_closure' => '用户不存在或者已冻结',
     'change' => '修改',
+    'login' => '登录',
     'logout' => '登出',
     'no_posts' => '没有相关文章',
     'action_ttl' => '您的操作太频繁，距离下一次请求时间为',

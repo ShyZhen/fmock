@@ -3,17 +3,37 @@
  * @Author huaixiu.zhen
  * http://litblc.com
  * User: z00455118
- * Date: 2018/8/21
+ * Date: 2020/1/20
  * Time: 12:53
  */
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\Base\AdminBaseController;
 
-class IndexController extends Controller
+class IndexController extends AdminBaseController
 {
+    /**
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @return string
+     */
     public function index()
     {
         return 'hello admin';
+    }
+
+    /**
+     * 管理员 首页
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @return mixed
+     */
+    public function dashboard()
+    {
+        return Auth::guard('admin')->user();
     }
 }
