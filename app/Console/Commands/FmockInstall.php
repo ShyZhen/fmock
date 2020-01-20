@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AdminUser;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
 
 class FmockInstall extends Command
 {
@@ -40,7 +40,9 @@ class FmockInstall extends Command
      */
     public function handle()
     {
-        if (!$this->getAdminUserCount()) {
+        if (Schema::hasTable('admin_users')) {
+            $this->error('===== ERROR: You had installed! =====');
+        } else {
             $this->info('===== FMock Install Start =====');
             $this->call('key:generate');
             $this->call('storage:link');
@@ -48,19 +50,7 @@ class FmockInstall extends Command
             $this->call('passport:install');
             $this->call('db:seed');
             $this->info('===== FMock Install End =====');
-        } else {
-            $this->error('===== ERROR: You had installed! =====');
         }
     }
 
-    /**
-     * author shyZhen <huaixiu.zhen@gmail.com>
-     * https://www.litblc.com
-     *
-     * @return int
-     */
-    private function getAdminUserCount()
-    {
-        return AdminUser::all()->count();
-    }
 }
