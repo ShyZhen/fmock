@@ -5,7 +5,6 @@
  * Date: 2020/1/20
  * Time: 9:11
  */
-
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
@@ -20,6 +19,7 @@ class AuthController extends AdminBaseController
 
     /**
      * AuthController constructor.
+     *
      * @param AdminUserRepository $adminUserRepository
      */
     public function __construct(AdminUserRepository $adminUserRepository)
@@ -44,7 +44,6 @@ class AuthController extends AdminBaseController
 
         // 判断请求方法
         if ($request->isMethod('post')) {
-
             $validator = Validator::make($request->all(), [
                 'account' => 'required|max:255',
                 'password' => 'required|min:6|max:255',
@@ -70,9 +69,7 @@ class AuthController extends AdminBaseController
                 }
             }
         } else {
-             return view('admin.auth.login');
+            return view('admin.auth.login');
         }
     }
-
-
 }

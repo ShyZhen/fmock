@@ -52,5 +52,4 @@ class FmockInstall extends Command
             $this->info('===== FMock Install End =====');
         }
     }
-
 }
