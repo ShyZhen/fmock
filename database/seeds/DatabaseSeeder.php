@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         AdminUser::create([
             'username' => env('APP_NAME', 'fmock'),
             'password' => bcrypt('fmock'),
-            'name'     => 'Administrator',
+            'name' => 'Administrator',
         ]);
     }
 }
