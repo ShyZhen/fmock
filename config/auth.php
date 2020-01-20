@@ -49,7 +49,7 @@ return [
 
         // 管理后台
         'admin' => [
-            'driver'   => 'session',
+            'driver' => 'session',
             'provider' => 'admin',
         ],
     ],
@@ -84,7 +84,7 @@ return [
 
         'admin' => [
             'driver' => 'eloquent',
-            'model'  => App\Models\AdminUser::class,
+            'model' => App\Models\AdminUser::class,
         ],
     ],
 
