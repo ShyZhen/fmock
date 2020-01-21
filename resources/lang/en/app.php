@@ -54,5 +54,4 @@ return [
     'submit' => 'Submit',
     'account' => 'Account',
 
-
 ];
