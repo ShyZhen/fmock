@@ -8,7 +8,6 @@
  */
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\Base\AdminBaseController;
 
 class IndexController extends AdminBaseController
@@ -34,6 +33,6 @@ class IndexController extends AdminBaseController
      */
     public function dashboard()
     {
-        return Auth::guard('admin')->user();
+        return view('admin.dashboard.index');
     }
 }
