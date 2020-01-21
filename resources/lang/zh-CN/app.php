@@ -51,5 +51,7 @@ return [
     'already' => '已',
     'cant_exceed_max_follow' => '您已达到关注上限',
     'exceed_day_max_follow' => '已超过每日关注上限',
+    'submit' => '提交',
+    'account' => '账号',
 
 ];

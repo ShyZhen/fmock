@@ -1,0 +1,31 @@
+
+/*toast样式*/
+#toastWaka {
+    padding: 0 15px 0 15px;
+    position: absolute;
+    display: none;
+    left: 50%;
+    bottom: 50%;
+    z-index: 99999;
+    margin: 0 auto;
+    -webkit-transform: translate(-50%);
+    transform: translate(-50%);
+    max-width: 100%;
+    height:40px;
+    line-height: 40px;
+    border-radius: 5px;
+    text-align: center;
+    color: #fff;
+    background-color: rgba(000,000,000,0.5);
+}
+
+#toastWaka .text{
+    color: #fff;
+    display: inline-block;
+    font-size: 14px;
+    position: absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+}

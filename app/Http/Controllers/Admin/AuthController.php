@@ -47,7 +47,7 @@ class AuthController extends AdminBaseController
 
             $validator = Validator::make($request->all(), [
                 'account' => 'required|max:255',
-                'password' => 'required|min:6|max:255',
+                'password' => 'required|min:5|max:255',
             ]);
 
             if ($validator->fails()) {
