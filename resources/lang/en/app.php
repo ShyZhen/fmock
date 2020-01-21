@@ -51,5 +51,7 @@ return [
     'already' => 'Has ',
     'cant_exceed_max_follow' => 'You have exceeded your maximum attention limit. ',
     'exceed_day_max_follow' => 'You have exceeded the daily attention limit. ',
+    'submit' => 'Submit',
+    'account' => 'Account',
 
 ];

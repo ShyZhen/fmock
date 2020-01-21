@@ -80,12 +80,12 @@ class Service
         if ($user) {
             $userInfo['uuid'] = $user->uuid;
             $userInfo['username'] = $user->name;
-            $userInfo['avatar'] = $user->avatar ?: url('/static/defaultAvatar.jpg');
+            $userInfo['avatar'] = $user->avatar ?: url('/static/image/defaultAvatar.jpg');
             $userInfo['bio'] = $user->bio;
         } else {
             $userInfo['uuid'] = 'user-anonymous';
             $userInfo['username'] = __('app.anonymous');
-            $userInfo['avatar'] = url('/static/anonymousAvatar.jpg');
+            $userInfo['avatar'] = url('/static/image/anonymousAvatar.jpg');
             $userInfo['bio'] = __('app.default_bio');
         }
 

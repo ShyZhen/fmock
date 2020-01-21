@@ -1,29 +1,17 @@
-<p align="center"><img src="https://www.litblc.com/usr/themes/pinghsu/images/favicon.ico"></p>
-<p align="center">
-	<a href="https://github.styleci.io/repos/145133991">
-        <img src="https://github.styleci.io/repos/145133991/shield" alt="StyleCI">
-    </a>
-    <a href="https://travis-ci.org/ShyZhen/fmock">
-        <img src="https://travis-ci.org/ShyZhen/fmock.svg?branch=master" alt="Build Status">
-    </a>
-    <a href="#">
-        <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="License">
-    </a>
-    <a href="https://github.com/laravel/laravel">
-        <img src="https://img.shields.io/badge/awesome-laravel-ff69b4.svg" alt="License">
-    </a>
-</p>
-
-
 ## About FMock Admin
 A forums build with laravel.
 
 FMock墨客社区后台管理。
 
-
 ## Install
-
-
+ - 当执行完`fmock:install`后，会自动创建管理员账号: 默认账号 `env('APP_NAME', 'fmock')`, 默认密码 `fmock`
+ - 登录地址`env(ADMIN_URL) . '/login'`
+ 
+## Develop
+ > 后台开发一切从简，安全、性能至上
+ - 不使用webpack、gulp、vue等编译sass、js等，所有静态资源放到public中
+ - layout已经引入bootstrap,jquery,以及公共的js,css; 需要单独的静态文件在单页面自行引入
+ 
 
 ## Security Vulnerabilities
 
