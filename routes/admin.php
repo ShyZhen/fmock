@@ -13,5 +13,4 @@ Route::namespace('Admin')->group(function () {
 Route::namespace('Admin')->middleware(['admin.auth'])->group(function () {
     Route::get('users', 'UserController@list');
     Route::get('dashboard', 'IndexController@dashboard');
-
 });

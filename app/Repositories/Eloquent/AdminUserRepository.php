@@ -22,5 +22,4 @@ class AdminUserRepository extends Repository
     {
         return 'App\Models\AdminUser';
     }
-
 }

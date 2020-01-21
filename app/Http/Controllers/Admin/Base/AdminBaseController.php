@@ -5,7 +5,6 @@
  * Date: 2020/1/20
  * Time: 15:06
  */
-
 namespace App\Http\Controllers\Admin\Base;
 
 use App\Http\Controllers\Controller;
