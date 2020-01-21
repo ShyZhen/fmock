@@ -82,6 +82,7 @@ class AuthController extends AdminBaseController
     public function logout()
     {
         Auth::guard('admin')->logout();
+
         return redirect('/login');
     }
 
@@ -90,6 +91,7 @@ class AuthController extends AdminBaseController
      * https://www.litblc.com
      *
      * @param Request $request
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
      */
     public function password(Request $request)
