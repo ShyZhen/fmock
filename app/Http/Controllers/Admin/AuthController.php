@@ -72,4 +72,57 @@ class AuthController extends AdminBaseController
             return view('admin.auth.login');
         }
     }
+
+    /**
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function logout()
+    {
+        Auth::guard('admin')->logout();
+        return redirect('/login');
+    }
+
+    /**
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     */
+    public function password(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|min:5|max:255|confirmed',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'code' => self::ERROR_CODE,
+                    'message' => $validator->errors()->first(),
+                ]);
+            } else {
+                $user = $this->adminUserRepository->find(Auth::guard('admin')->id());
+                $user->password = bcrypt($request->get('password'));
+                if ($user->save()) {
+                    Auth::guard('admin')->logout();
+
+                    return response()->json([
+                        'code' => self::SUCCESS_CODE,
+                        'message' => '',
+                    ]);
+                } else {
+                    return response()->json([
+                        'code' => self::ERROR_CODE,
+                        'message' => __('app.try_again'),
+                    ]);
+                }
+            }
+        } else {
+            return view('admin.auth.password');
+        }
+    }
 }

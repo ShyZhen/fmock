@@ -21,20 +21,17 @@
 
     <div id="sidebar" class="sidebar">
         @section('sidebar')
-            layout sidebar
         @show
     </div>
 
     <div id="container" class="container">
         {{--@yield('content')--}}    {{--  占位符，@section完全覆盖  --}}
         @section('content')          {{--  @section完全覆盖，如果有@parent则是追加  --}}
-            layout content
         @show
     </div>
 
     <div id="footer" class="footer">
         @section('footer')
-            layout footer
         @show
     </div>
 </div>
