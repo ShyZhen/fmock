@@ -20,5 +20,4 @@ Route::namespace('Admin')->middleware(['admin.auth'])->group(function () {
     Route::get('posts', 'IndexController@posts');
     Route::get('videos', 'IndexController@videos');
     Route::get('orders', 'IndexController@orders');
-
 });
