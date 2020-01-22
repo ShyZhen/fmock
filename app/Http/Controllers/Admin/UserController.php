@@ -18,5 +18,4 @@ class UserController extends AdminBaseController
     {
         $this->userRepository = $userRepository;
     }
-
 }
