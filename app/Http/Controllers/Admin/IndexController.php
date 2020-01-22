@@ -1,5 +1,7 @@
 <?php
 /**
+ * 首页的一些视图渲染
+ *
  * @Author huaixiu.zhen
  * http://litblc.com
  * User: z00455118
@@ -34,5 +36,25 @@ class IndexController extends AdminBaseController
     public function dashboard()
     {
         return view('admin.dashboard.index');
+    }
+
+    public function users()
+    {
+        return view('admin.users.index');
+    }
+
+    public function posts()
+    {
+        return view('admin.posts.index');
+    }
+
+    public function videos()
+    {
+        return view('admin.videos.index');
+    }
+
+    public function orders()
+    {
+        return view('admin.orders.index');
     }
 }

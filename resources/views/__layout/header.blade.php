@@ -3,32 +3,32 @@
         <div class="container">
             <div class="navbar-header">
                 <!-- Branding Image -->
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'FMock') }}
+                <a href="{{ url('/') }}" style="float: left;padding-right: 15px;height: 50px;">
+                    <img src="{{asset('static/image/logo.png')}}" alt="" style="height: inherit;"/>
                 </a>
             </div>
 
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav" id="app-left-nav">
                     <li>
-                        <a href="javascript:void(0)">
+                        <a href="/users">
                             用户管理
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)">
+                        <a href="/posts">
                             文章管理
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)">
+                        <a href="/videos">
                             视频管理
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)">
-                            资金管理
+                        <a href="/orders">
+                            订单管理
                         </a>
                     </li>
                 </ul>
@@ -52,8 +52,8 @@
                                 </li>
                                 <li>
                                     <a href="{{ url('/logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                        onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
                                         @lang('app.logout')
                                     </a>
 

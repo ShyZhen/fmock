@@ -142,3 +142,26 @@ var $Global = {
         return document.querySelector('#csrfToken').getAttribute('content')
     }
 }
+
+/**
+ * 所有需要提前加载的、不需要触发的函数
+ * @type {{init: $FMock.init, headerInit: $FMock.headerInit}}
+ */
+var $FMock = {
+    // 所有项目初始化时需要默认加载的方法
+    init: function() {
+        this.headerInit()
+    },
+
+    // 处理header的active状态
+    headerInit: function() {
+        $("#app-navbar-collapse #app-left-nav").find("li").each(function () {
+            var a = $(this).find("a:first")[0];
+            if ($(a).attr('href') === location.pathname) {
+                $(this).addClass('active');
+            } else {
+                $(this).removeClass('active');
+            }
+        });
+    }
+}
