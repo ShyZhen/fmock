@@ -5,11 +5,11 @@
     <meta name="csrf-token" id="csrfToken" content="{{ csrf_token() }}">
     <title>@yield('title')</title>
     <meta charset="utf-8">
+
     {{--  公共css  --}}
-    {{--<link rel="stylesheet" href="{{elixir('css/app.css')}}">--}}
     <link rel="stylesheet" href="{{asset('css/bootstrap.css')}}">
-    <link rel="stylesheet" href="{{asset('css/common.css')}}">
     <link rel="stylesheet" href="{{asset('static/iconfont/iconfont.css')}}">
+    <link rel="stylesheet" href="{{asset('css/common.css')}}">
 
     {{--占位符,单页面js--}}
     @yield('css')
@@ -40,7 +40,12 @@
 <script src="{{asset('js/jquery.js')}}"></script>
 <script src="{{asset('js/common.js')}}"></script>
 
-{{--占位符,单页面js--}}
+{{--  执行初始化js  --}}
+<script>
+    $FMock.init()
+</script>
+
+{{-- 占位符,单页面js --}}
 @yield('js')
 
 </body>

@@ -18,9 +18,4 @@ class UserController extends AdminBaseController
     {
         $this->userRepository = $userRepository;
     }
-
-    public function list()
-    {
-        return $this->userRepository->all();
-    }
 }

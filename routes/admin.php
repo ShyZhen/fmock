@@ -13,6 +13,11 @@ Route::namespace('Admin')->group(function () {
 Route::namespace('Admin')->middleware(['admin.auth'])->group(function () {
     Route::post('logout', 'AuthController@logout');
     Route::match(['get', 'post'], 'password', 'AuthController@password');    // 修改密码
-    Route::get('users', 'UserController@list');
+
+    // header 空页面
     Route::get('dashboard', 'IndexController@dashboard');
+    Route::get('users', 'IndexController@users');
+    Route::get('posts', 'IndexController@posts');
+    Route::get('videos', 'IndexController@videos');
+    Route::get('orders', 'IndexController@orders');
 });
