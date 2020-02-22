@@ -3,7 +3,7 @@
         <div class="container">
             <div class="navbar-header">
                 <!-- Branding Image -->
-                <a href="{{ url('/') }}" style="float: left;padding-right: 15px;height: 50px;">
+                <a href="{{ url('/dashboard') }}" style="float: left;padding-right: 15px;height: 50px;">
                     <img src="{{asset('static/image/logo.png')}}" alt="" style="height: inherit;"/>
                 </a>
             </div>
