@@ -1,6 +1,6 @@
 @extends('__layout.layout')
 
-@section('title', 'dashboard')
+@section('title', 'Dashboard')
 
 @section('css')
 @endsection
