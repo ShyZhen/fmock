@@ -19,8 +19,6 @@ use App\Repositories\Eloquent\UserUploadImageRepository;
 
 class FileService extends Service
 {
-    private $userId;
-
     private $redisService;
 
     private $imageService;
@@ -53,7 +51,6 @@ class FileService extends Service
         VideoRepository $videoRepository,
         UserUploadImageRepository $userUploadImageRepository
     ) {
-        $this->userId = Auth::id();
         $this->redisService = $redisService;
         $this->imageService = $imageService;
         $this->userRepository = $userRepository;
@@ -78,6 +75,8 @@ class FileService extends Service
     public function uploadImg($file, $savePath, $prefix = '')
     {
         if ($file->isValid()) {
+            $userId = Auth::id();
+
             $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
             $tmpPath = $savePath . '/' . date('Y/m/');
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
@@ -93,7 +92,7 @@ class FileService extends Service
                 $imageUrl = url('/storage/' . $tmpPath . $imageName);
 
                 // 记录用户上传的文件,便于后台管理
-                $this->uploadLog($this->userId, $imageUrl);
+                $this->uploadLog($userId, $imageUrl);
 
                 return response()->json(
                     ['data' => $imageUrl],
@@ -127,11 +126,12 @@ class FileService extends Service
     public function uploadAva($file, $savePath)
     {
         if ($file->isValid()) {
+            $user = Auth::user();
+
             $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
             $tmpPath = $savePath . '/' . date('Y/m/');
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
-            $user = Auth::user();
-            ;
+
             $imageName = $user->uuid . '.' . $fileExt;                                     // 头像名与用户uuid一致
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
@@ -182,6 +182,8 @@ class FileService extends Service
     public function uploadVideo($file, $savePath, $prefix = '')
     {
         if ($file->isValid()) {
+            $userId = Auth::id();
+
             $fileExt = $file->extension();                                                 // $fileExt = 'jpg';
             $tmpPath = $savePath . '/' . date('Y/m/');
             $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
@@ -195,9 +197,9 @@ class FileService extends Service
             $fullName = $storagePath . $videoName;
 
             // 频率限制
-            if ($this->redisService->isRedisExists($this->uploadVideoRedisKey . $this->userId)) {
+            if ($this->redisService->isRedisExists($this->uploadVideoRedisKey . $userId)) {
                 return response()->json(
-                    ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl($this->uploadVideoRedisKey . $this->userId) . 's'],
+                    ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl($this->uploadVideoRedisKey . $userId) . 's'],
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
@@ -206,7 +208,7 @@ class FileService extends Service
             if ($this->imageService->saveVideo($file, $fullName)) {
 
                 // 添加频率限制key
-                $this->redisService->setRedis($this->uploadVideoRedisKey . $this->userId, 'create', 'EX', 90);
+                $this->redisService->setRedis($this->uploadVideoRedisKey . $userId, 'create', 'EX', 90);
 
                 $videoUrl = url('/storage/' . $tmpPath . $videoName);
                 $videoHlsUrl = '';
@@ -273,6 +275,8 @@ class FileService extends Service
     public function uploadImgToQiniu($file, $savePath, $prefix = '')
     {
         if ($file->isValid()) {
+            $userId = Auth::id();
+
             $imageName = self::uuid($prefix) . '.' . $file->extension();
             $fullName = $savePath . '/' . date('Y/m/') . $imageName;
 
@@ -285,7 +289,7 @@ class FileService extends Service
                 $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $imageProcess;
 
                 // 记录用户上传的文件,便于后台管理
-                $this->uploadLog($this->userId, $imageUrl);
+                $this->uploadLog($userId, $imageUrl);
 
                 return response()->json(
                     ['data' => $imageUrl],
@@ -322,6 +326,7 @@ class FileService extends Service
     {
         if ($file->isValid()) {
             $user = Auth::user();
+
             // 头像名与用户uuid一致
             $imageName = $user->uuid . '.' . $file->extension();
 
@@ -372,13 +377,15 @@ class FileService extends Service
     public function uploadVideoToQiniu($file, $savePath, $prefix = '')
     {
         if ($file->isValid()) {
+            $userId = Auth::id();
+
             $videoName = self::uuid($prefix) . '.' . $file->extension();
             $fullName = $savePath . '/' . date('Y/m/') . $videoName;
 
             // 频率限制
-            if ($this->redisService->isRedisExists($this->uploadVideoRedisKey . $this->userId)) {
+            if ($this->redisService->isRedisExists($this->uploadVideoRedisKey . $userId)) {
                 return response()->json(
-                    ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl($this->uploadVideoRedisKey . $this->userId) . 's'],
+                    ['message' => __('app.action_ttl') . $this->redisService->getRedisTtl($this->uploadVideoRedisKey . $userId) . 's'],
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
@@ -388,7 +395,7 @@ class FileService extends Service
             if ($result['code'] === 0) {
 
                 // 添加频率限制key
-                $this->redisService->setRedis($this->uploadVideoRedisKey . $this->userId, 'create', 'EX', 90);
+                $this->redisService->setRedis($this->uploadVideoRedisKey . $userId, 'create', 'EX', 90);
 
                 $videoUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['data']['key'];
                 $videoHlsUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['m3u8'];
@@ -453,7 +460,7 @@ class FileService extends Service
     {
         $video = $this->videoRepository->create([
             'uuid' => self::uuid('video-'),  // 禁止使用同样的uuid，防止被人猜到暴露
-            'user_id' => $this->userId,
+            'user_id' => Auth::id(),
             'url' => $videoUrl,
             'hls_url' => $videoHlsUrl,
         ]);
