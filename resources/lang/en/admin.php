@@ -24,5 +24,4 @@ return [
     'password' => 'Password',
     'submit' => 'Submit',
 
-
 ];
