@@ -1,6 +1,6 @@
 @extends('__layout.layout')
 
-@section('title', '视频管理')
+@section('title', 'Videos Manage')
 
 @section('css')
 @endsection

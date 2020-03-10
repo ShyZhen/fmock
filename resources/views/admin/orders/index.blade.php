@@ -1,6 +1,6 @@
 @extends('__layout.layout')
 
-@section('title', '订单管理')
+@section('title', 'Orders Manage')
 
 @section('css')
 @endsection

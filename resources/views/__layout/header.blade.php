@@ -3,7 +3,7 @@
         <div class="container">
             <div class="navbar-header">
                 <!-- Branding Image -->
-                <a href="{{ url('/') }}" style="float: left;padding-right: 15px;height: 50px;">
+                <a href="{{ url('/dashboard') }}" style="float: left;padding-right: 15px;height: 50px;">
                     <img src="{{asset('static/image/logo.png')}}" alt="" style="height: inherit;"/>
                 </a>
             </div>
@@ -13,22 +13,22 @@
                 <ul class="nav navbar-nav" id="app-left-nav">
                     <li>
                         <a href="/users">
-                            用户管理
+                            @lang('admin.users')@lang('admin.manage')
                         </a>
                     </li>
                     <li>
                         <a href="/posts">
-                            文章管理
+                            @lang('admin.posts')@lang('admin.manage')
                         </a>
                     </li>
                     <li>
                         <a href="/videos">
-                            视频管理
+                            @lang('admin.videos')@lang('admin.manage')
                         </a>
                     </li>
                     <li>
                         <a href="/orders">
-                            订单管理
+                            @lang('admin.orders')@lang('admin.manage')
                         </a>
                     </li>
                 </ul>
@@ -37,7 +37,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
                     @if (Auth::guard('admin')->guest())
-                        <li><a href="{{ url('/login') }}">@lang('app.login')</a></li>
+                        <li><a href="{{ url('/login') }}">@lang('admin.login')</a></li>
                     @else
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -47,14 +47,14 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li>
                                     <a href="/password">
-                                        @lang('app.change') @lang('app.password')
+                                        @lang('admin.reset') @lang('admin.password')
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{ url('/logout') }}"
                                         onclick="event.preventDefault();
                                         document.getElementById('logout-form').submit();">
-                                        @lang('app.logout')
+                                        @lang('admin.logout')
                                     </a>
 
                                     <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">

@@ -8,7 +8,7 @@
     <title>oauth github</title>
 </head>
 <body>
-登陆中...
+Login...
 <script>
 
     window.onload = function () {
