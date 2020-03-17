@@ -9,6 +9,7 @@ namespace App\Services;
 use Illuminate\Http\Response;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\VideoRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
@@ -18,6 +19,8 @@ class ActionService extends Service
     private $userRepository;
 
     private $postRepository;
+
+    private $videoRepository;
 
     private $answerRepository;
 
@@ -30,6 +33,7 @@ class ActionService extends Service
      *
      * @param UserRepository              $userRepository
      * @param PostRepository              $postRepository
+     * @param VideoRepository             $videoRepository
      * @param AnswerRepository            $answerRepository
      * @param CommentRepository           $commentRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
@@ -37,19 +41,21 @@ class ActionService extends Service
     public function __construct(
         UserRepository $userRepository,
         PostRepository $postRepository,
+        VideoRepository $videoRepository,
         AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
         PostsCommentsLikeRepository $postsCommentsLikeRepository
     ) {
         $this->userRepository = $userRepository;
         $this->postRepository = $postRepository;
+        $this->videoRepository = $videoRepository;
         $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
         $this->postsCommentsLikeRepository = $postsCommentsLikeRepository;
     }
 
     /**
-     * 获取我关注的所有文章
+     * 获取我关注的所有文章、回答、视频
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -60,10 +66,10 @@ class ActionService extends Service
      */
     public function getMyFollowed($type)
     {
-        $posts = $this->userRepository->getMyFollowed($type);
+        $responses = $this->userRepository->getMyFollowed($type);
 
-        if ($posts->count()) {
-            foreach ($posts as $post) {
+        if ($responses->count()) {
+            foreach ($responses as $post) {
 
                 // 文章列表不需要如下字段
                 unset($post->content);
@@ -75,13 +81,13 @@ class ActionService extends Service
         }
 
         return response()->json(
-            ['data' => $posts],
+            ['data' => $responses],
             Response::HTTP_OK
         );
     }
 
     /**
-     * 关注文章操作 并更新follow_num 表字段
+     * 关注操作 并更新follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -93,7 +99,7 @@ class ActionService extends Service
      */
     public function follow($type, $uuid)
     {
-        // postRepository or answerRepository
+        // postRepository or answerRepository、videoRepository
         $repository = $type . 'Repository';
 
         $post = $this->$repository->findBy('uuid', $uuid);
@@ -131,7 +137,7 @@ class ActionService extends Service
      */
     public function unFollow($type, $uuid)
     {
-        // postRepository or answerRepository
+        // postRepository or answerRepository、videoRepository
         $repository = $type . 'Repository';
 
         $post = $this->$repository->findBy('uuid', $uuid);

@@ -558,12 +558,12 @@ FMock墨客社区。
 
 #### collections
  - GET `server_url/V1/collection/{type}`
- - 获取我收藏的文章、回答
+ - 获取我收藏的文章、回答、视频
  - 支持分页操作
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer` |
+| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer`/`video` |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -579,7 +579,7 @@ FMock墨客社区。
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `resource_uuid` | Y | String | Y |  | 文章或回答的`uuid` |
-| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer` |
+| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer`/`video` |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -594,7 +594,7 @@ FMock墨客社区。
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `type` | Y | Enum | Y |  | 区分类型`post`/`answer` |
+| `type` | Y | Enum | Y |  | 区分类型`post`/`answer`/`video` |
 | `uuid` | Y | String | Y |  | 该文章、回答的`uuid` |
 
  - 返回值

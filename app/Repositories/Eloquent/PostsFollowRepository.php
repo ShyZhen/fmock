@@ -6,7 +6,7 @@
  */
 namespace App\Repositories\Eloquent;
 
-class UsersPostsFollowRepository extends Repository
+class PostsFollowRepository extends Repository
 {
     /**
      * 实现抽象函数获取模型
@@ -18,6 +18,6 @@ class UsersPostsFollowRepository extends Repository
      */
     public function model()
     {
-        return 'App\Models\UsersPostsFollow';
+        return 'App\Models\PostsFollow';
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersPostsFollowTable extends Migration
+class CreateVideosFollowTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,11 @@ class CreateUsersPostsFollowTable extends Migration
     public function up()
     {
         // 用户收藏的文章、回答表
-        Schema::create('users_posts_follow', function (Blueprint $table) {
+        Schema::create('videos_follow', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('resource_id')->index();
-            $table->enum('type', ['post', 'answer']);        // 区分文章、回答
+//            $table->enum('type', ['post', 'answer']);        // 区分文章、回答
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateUsersPostsFollowTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users_posts_follow');
+        Schema::dropIfExists('videos_follow');
     }
 }
