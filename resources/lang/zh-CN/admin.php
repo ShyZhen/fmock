@@ -24,5 +24,4 @@ return [
     'password' => '密码',
     'submit' => '提交',
 
-
 ];
