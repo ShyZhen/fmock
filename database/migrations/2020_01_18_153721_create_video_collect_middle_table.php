@@ -18,7 +18,7 @@ class CreateVideoCollectMiddleTable extends Migration
         Schema::create('video_collect_middle', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('video_id');
-            $table->unsignedInteger('video_collection_id');
+            $table->unsignedInteger('video_item_id');
             $table->integer('sort_index')->default(1);    // 用户自行输入，自行控制
             $table->timestamps();
         });

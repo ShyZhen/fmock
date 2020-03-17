@@ -14,7 +14,7 @@ use App\Services\BaseService\ImageService;
 use App\Services\BaseService\QiniuService;
 use App\Services\BaseService\RedisService;
 use App\Repositories\Eloquent\UserRepository;
-use App\Repositories\Eloquent\VideoRepository;
+use App\Repositories\Eloquent\VideoItemRepository;
 use App\Repositories\Eloquent\UserUploadImageRepository;
 
 class FileService extends Service
@@ -27,7 +27,7 @@ class FileService extends Service
 
     private $qiniuService;
 
-    private $videoRepository;
+    private $videoItemRepository;
 
     private $userUploadImageRepository;
 
@@ -40,7 +40,7 @@ class FileService extends Service
      * @param ImageService              $imageService
      * @param UserRepository            $userRepository
      * @param QiniuService              $qiniuService
-     * @param VideoRepository           $videoRepository
+     * @param VideoItemRepository       $videoItemRepository
      * @param UserUploadImageRepository $userUploadImageRepository
      */
     public function __construct(
@@ -48,14 +48,14 @@ class FileService extends Service
         ImageService $imageService,
         UserRepository $userRepository,
         QiniuService $qiniuService,
-        VideoRepository $videoRepository,
+        VideoItemRepository $videoItemRepository,
         UserUploadImageRepository $userUploadImageRepository
     ) {
         $this->redisService = $redisService;
         $this->imageService = $imageService;
         $this->userRepository = $userRepository;
         $this->qiniuService = $qiniuService;
-        $this->videoRepository = $videoRepository;
+        $this->videoItemRepository = $videoItemRepository;
         $this->userUploadImageRepository = $userUploadImageRepository;
     }
 
@@ -458,7 +458,7 @@ class FileService extends Service
      */
     private function saveVideo($videoUrl, $videoHlsUrl)
     {
-        $video = $this->videoRepository->create([
+        $video = $this->videoItemRepository->create([
             'uuid' => self::uuid('video-'),  // 禁止使用同样的uuid，防止被人猜到暴露
             'user_id' => Auth::id(),
             'url' => $videoUrl,

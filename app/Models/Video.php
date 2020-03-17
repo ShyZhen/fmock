@@ -10,11 +10,11 @@ class Video extends Model
     protected $table = 'videos';
 
     protected $fillable = [
-        'uuid', 'user_id', 'title', 'summary', 'poster', 'url', 'hls_url', 'is_free', 'is_publish',
+        'uuid', 'user_id', 'title', 'summary', 'poster', 'is_free', 'is_release',
     ];
 
     /**
-     * 视频预加载用户信息
+     * 视频集预加载用户信息
      *
      * @Author huaixiu.zhen
      * http://litblc.com

@@ -4,17 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VideoCollection extends Model
+class VideoItem extends Model
 {
     //
-    protected $table = 'video_collections';
+    protected $table = 'video_items';
 
     protected $fillable = [
-        'uuid', 'user_id', 'title', 'summary', 'poster', 'is_free', 'is_release',
+        'uuid', 'user_id', 'title', 'summary', 'poster', 'url', 'hls_url', 'is_free', 'is_publish',
     ];
 
     /**
-     * 视频集预加载用户信息
+     * 视频预加载用户信息
      *
      * @Author huaixiu.zhen
      * http://litblc.com
