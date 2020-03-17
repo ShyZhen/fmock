@@ -101,5 +101,4 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
 
     // 我的关注（与我相关），我关注的朋友发的动态
     Route::post('track/{type}', 'ActionController@getTrack');
-
 });
