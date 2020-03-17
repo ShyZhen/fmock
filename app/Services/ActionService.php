@@ -7,11 +7,13 @@
 namespace App\Services;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\VideoRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
+use App\Repositories\Eloquent\UsersFollowRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
 
 class ActionService extends Service
@@ -26,6 +28,8 @@ class ActionService extends Service
 
     private $commentRepository;
 
+    private $usersFollowRepository;
+
     private $postsCommentsLikeRepository;
 
     /**
@@ -36,6 +40,7 @@ class ActionService extends Service
      * @param VideoRepository             $videoRepository
      * @param AnswerRepository            $answerRepository
      * @param CommentRepository           $commentRepository
+     * @param UsersFollowRepository       $usersFollowRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(
@@ -44,6 +49,7 @@ class ActionService extends Service
         VideoRepository $videoRepository,
         AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
+        UsersFollowRepository $usersFollowRepository,
         PostsCommentsLikeRepository $postsCommentsLikeRepository
     ) {
         $this->userRepository = $userRepository;
@@ -51,6 +57,7 @@ class ActionService extends Service
         $this->videoRepository = $videoRepository;
         $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
+        $this->usersFollowRepository = $usersFollowRepository;
         $this->postsCommentsLikeRepository = $postsCommentsLikeRepository;
     }
 
@@ -251,5 +258,41 @@ class ActionService extends Service
                 Response::HTTP_NOT_FOUND
             );
         }
+    }
+
+    /**
+     * 获取我关注的用户发的 文章、视频、回答
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $type
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTrack($type)
+    {
+        // 先获取我所有关注者的ID
+        $userId = Auth::id();
+        $myFollowIds = $this->usersFollowRepository->getAllFollowIds($userId);
+
+        $repository = $type . 'Repository';
+        $responses = $this->$repository->getResourcesByUserIdArr($myFollowIds);
+
+        if ($responses->count()) {
+            foreach ($responses as $response) {
+
+                // 文章列表不需要如下字段
+                unset($response->content);
+                unset($response->pivot);
+
+                $response->user_info = $this->handleUserInfo($response->user);
+                unset($response->user);
+            }
+        }
+
+        return response()->json(
+            ['data' => $responses],
+            Response::HTTP_OK
+        );
     }
 }

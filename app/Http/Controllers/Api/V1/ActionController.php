@@ -244,8 +244,24 @@ class ActionController extends Controller
         return $this->actionService->status($uuid, 'answer');
     }
 
+    /**
+     * 查看我关注的用户们最新发布的文章、回答、视频
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $type
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getTrack($type)
     {
-        
+        if (in_array($type, $this->type)) {
+            return $this->actionService->getTrack($type);
+        } else {
+            return response()->json(
+                ['message' => __('app.normal_param_err')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 }
