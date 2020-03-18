@@ -79,6 +79,23 @@ class UsersFollowRepository extends Repository
     }
 
     /**
+     * 获取我关注的所有用户ID
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $userId
+     *
+     * @return mixed
+     */
+    public function getAllFollowIds($userId)
+    {
+        return $this->model::where([
+            'following_user_id' => $userId,
+        ])->pluck('master_user_id');
+    }
+
+    /**
      * 获取某个用户的粉丝
      *
      * @author z00455118 <zhenhuaixiu@huawei.com>

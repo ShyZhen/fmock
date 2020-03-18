@@ -103,7 +103,8 @@ class UserRepository extends Repository
         // myFollowedPosts or myFollowedAnswers
         $func = 'myFollowed' . ucfirst($type) . 's';
 
-        return Auth::user()->$func()->syncWithoutDetaching([$postId => ['type' => $type]]);
+        return Auth::user()->$func()->syncWithoutDetaching($postId);
+//        return Auth::user()->$func()->syncWithoutDetaching([$postId => ['type' => $type]]);
     }
 
     /**

@@ -21,7 +21,7 @@ class ActionController extends Controller
     private $actionService;
 
     // 收藏的主体 是文章还是回答
-    private $type = ['post', 'answer'];
+    private $type = ['post', 'answer', 'video'];
 
     /**
      * ActionController constructor.
@@ -34,7 +34,7 @@ class ActionController extends Controller
     }
 
     /**
-     * 获取我关注(收藏)的所有文章
+     * 获取我收藏的所有文章、视频、回答(个人中心)
      *
      * @author z00455118 <zhenhuaixiu@huawei.com>
      *
@@ -55,7 +55,7 @@ class ActionController extends Controller
     }
 
     /**
-     * 关注文章、回答
+     * 关注文章、回答、视频
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -242,5 +242,27 @@ class ActionController extends Controller
     public function statusAnswer($uuid)
     {
         return $this->actionService->status($uuid, 'answer');
+    }
+
+    /**
+     * 查看我关注的用户们最新发布的文章、回答、视频
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $type
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTrack($type)
+    {
+        if (in_array($type, $this->type)) {
+            return $this->actionService->getTrack($type);
+        } else {
+            return response()->json(
+                ['message' => __('app.normal_param_err')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 }

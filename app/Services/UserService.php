@@ -29,23 +29,23 @@ class UserService extends Service
 
     private $userRepository;
 
-    private $userFollowRepository;
+    private $usersFollowRepository;
 
     /**
      * ActionService constructor.
      *
      * @param RedisService          $redisService
      * @param UserRepository        $userRepository
-     * @param UsersFollowRepository $userFollowRepository
+     * @param UsersFollowRepository $usersFollowRepository
      */
     public function __construct(
         RedisService $redisService,
         UserRepository $userRepository,
-        UsersFollowRepository $userFollowRepository
+        UsersFollowRepository $usersFollowRepository
     ) {
         $this->redisService = $redisService;
         $this->userRepository = $userRepository;
-        $this->userFollowRepository = $userFollowRepository;
+        $this->usersFollowRepository = $usersFollowRepository;
     }
 
     /**
@@ -306,13 +306,13 @@ class UserService extends Service
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             } else {
-                $follow = $this->userFollowRepository->isFollowed($currId, $user->id);
+                $follow = $this->usersFollowRepository->isFollowed($currId, $user->id);
 
                 // 取关操作
                 if ($follow) {
                     // 查看是否互关状态
                     if ($follow->both_status == 'yes') {
-                        $this->userFollowRepository->updateFollowStatus($user->id, $currId, 'none');
+                        $this->usersFollowRepository->updateFollowStatus($user->id, $currId, 'none');
                     }
 
                     $follow->delete();
@@ -337,10 +337,10 @@ class UserService extends Service
                         );
                     } else {
                         // 查看他是否已经关注了我
-                        $youFollowedMe = $this->userFollowRepository->isFollowed($user->id, $currId);
+                        $youFollowedMe = $this->usersFollowRepository->isFollowed($user->id, $currId);
 
                         $bothStatus = $youFollowedMe ? 'yes' : 'none';
-                        $createFollow = $this->userFollowRepository->create([
+                        $createFollow = $this->usersFollowRepository->create([
                             'master_user_id' => $user->id,
                             'following_user_id' => $currId,
                             'both_status' => $bothStatus,
@@ -391,8 +391,8 @@ class UserService extends Service
         $user = $this->userRepository->findBy('uuid', $userUuid);
 
         if ($user) {
-            $iFollowedYou = (bool) $this->userFollowRepository->isFollowed($currId, $user->id);
-            $youFollowMe = (bool) $this->userFollowRepository->isFollowed($user->id, $currId);
+            $iFollowedYou = (bool) $this->usersFollowRepository->isFollowed($currId, $user->id);
+            $youFollowMe = (bool) $this->usersFollowRepository->isFollowed($user->id, $currId);
 
             return response()->json(
                 ['data' => ['inMyFollows' => $iFollowedYou, 'inMyFans' => $youFollowMe]],
@@ -429,7 +429,7 @@ class UserService extends Service
             $start = ($page - 1) * $this->pageSize;
 
             // 目标用户的关注列表
-            $userFollows = $this->userFollowRepository->getSomeoneFollows($user->id, $start, $this->pageSize);
+            $userFollows = $this->usersFollowRepository->getSomeoneFollows($user->id, $start, $this->pageSize);
             $userFollowsIdArr = $userFollows->pluck('master_user_id');
             $userFollowsList = $this->userRepository->getUsersByIdArr($userFollowsIdArr);
 
@@ -437,9 +437,9 @@ class UserService extends Service
             if ($user->id != $currId) {
 
                 // 找到这些人中 也同时关注了我的
-                $myFansArr = $this->userFollowRepository->getSomeoneFansByIdArr($currId, $userFollowsIdArr);
+                $myFansArr = $this->usersFollowRepository->getSomeoneFansByIdArr($currId, $userFollowsIdArr);
                 // 找到这些人中 我同时关注了的
-                $myFollowedArr = $this->userFollowRepository->getSomeoneFollowsByIdArr($currId, $userFollowsIdArr);
+                $myFollowedArr = $this->usersFollowRepository->getSomeoneFollowsByIdArr($currId, $userFollowsIdArr);
 
                 foreach ($userFollowsList as &$userFollow) {
                     $userFollow->inMyFans = (bool) false;
@@ -516,7 +516,7 @@ class UserService extends Service
             $start = ($page - 1) * $this->pageSize;
 
             // 目标用户的粉丝列表
-            $userFans = $this->userFollowRepository->getSomeoneFans($user->id, $start, $this->pageSize);
+            $userFans = $this->usersFollowRepository->getSomeoneFans($user->id, $start, $this->pageSize);
             $userFansIdArr = $userFans->pluck('following_user_id');
             $userFansList = $this->userRepository->getUsersByIdArr($userFansIdArr);
 
@@ -524,9 +524,9 @@ class UserService extends Service
             if ($user->id != $currId) {
 
                 // 找到这些人中 也同时关注了我的
-                $myFansArr = $this->userFollowRepository->getSomeoneFansByIdArr($currId, $userFansIdArr);
+                $myFansArr = $this->usersFollowRepository->getSomeoneFansByIdArr($currId, $userFansIdArr);
                 // 找到这些人中 我同时关注了的
-                $myFollowedArr = $this->userFollowRepository->getSomeoneFollowsByIdArr($currId, $userFansIdArr);
+                $myFollowedArr = $this->usersFollowRepository->getSomeoneFollowsByIdArr($currId, $userFansIdArr);
 
                 foreach ($userFansList as &$userFan) {
                     $userFan->inMyFans = (bool) false;

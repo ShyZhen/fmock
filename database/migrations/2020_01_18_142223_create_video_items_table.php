@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVideosTable extends Migration
+class CreateVideoItemsTable extends Migration
 {
     /**
      * 视频素材
@@ -15,7 +15,7 @@ class CreateVideosTable extends Migration
      */
     public function up()
     {
-        Schema::create('videos', function (Blueprint $table) {
+        Schema::create('video_items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('uuid', 64)->index();
             $table->unsignedInteger('user_id')->index();
@@ -37,6 +37,6 @@ class CreateVideosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('videos');
+        Schema::dropIfExists('video_items');
     }
 }

@@ -8,7 +8,7 @@
  */
 namespace App\Repositories\Eloquent;
 
-class VideoCollectionRepository extends Repository
+class VideoItemRepository extends Repository
 {
     /**
      * 实现抽象函数获取模型
@@ -20,6 +20,6 @@ class VideoCollectionRepository extends Repository
      */
     public function model()
     {
-        return 'App\Models\VideoCollection';
+        return 'App\Models\VideoItem';
     }
 }

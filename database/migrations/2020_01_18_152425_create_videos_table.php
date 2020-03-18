@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVideoCollectionsTable extends Migration
+class CreateVideosTable extends Migration
 {
     /**
      * 视频集
@@ -15,7 +15,7 @@ class CreateVideoCollectionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('video_collections', function (Blueprint $table) {
+        Schema::create('videos', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('uuid', 64)->index();
             $table->unsignedInteger('user_id')->index();
@@ -24,6 +24,9 @@ class CreateVideoCollectionsTable extends Migration
             $table->string('poster', 128)->default('');                     // 视频集封面
             $table->enum('is_free', ['yes', 'none'])->default('yes');       // 是否免费，只有视频集收费才判断素材是否免费(试看状态)；如果视频集免费，那么不判断素材的状态，全部免费
             $table->enum('is_release', ['yes', 'none', 'review'])->default('none');  // 上线后可观看、购买;上线流程：提交审核 -> 审核通过 -> 上线
+            $table->unsignedInteger('follow_num')->default(0);                       // 被收藏数量
+            $table->unsignedInteger('comment_num')->default(0);                            // 被评论数量
+            $table->enum('deleted', ['yes', 'none'])->default('none');
             $table->timestamps();
         });
     }
@@ -35,6 +38,6 @@ class CreateVideoCollectionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('video_collections');
+        Schema::dropIfExists('videos');
     }
 }

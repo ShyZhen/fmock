@@ -47,9 +47,9 @@ class User extends Authenticatable
      */
     public function myFollowedPosts()
     {
-        return $this->belongsToMany('App\Models\Post', 'users_posts_follow', 'user_id', 'resource_id')
-            ->withPivot('type')
-            ->wherePivot('type', 'post')    // 过滤中间表type为post的
+        return $this->belongsToMany('App\Models\Post', 'posts_follow', 'user_id', 'resource_id')
+//            ->withPivot('type')
+//            ->wherePivot('type', 'post')    // 过滤中间表type为post的
             ->where('deleted', 'none')
             ->orderByDesc('pivot_updated_at')
             ->withTimestamps();
@@ -64,9 +64,25 @@ class User extends Authenticatable
      */
     public function myFollowedAnswers()
     {
-        return $this->belongsToMany('App\Models\Answer', 'users_posts_follow', 'user_id', 'resource_id')
-            ->withPivot('type')
-            ->wherePivot('type', 'answer')    // 过滤中间表type为answer的
+        return $this->belongsToMany('App\Models\Answer', 'answers_follow', 'user_id', 'resource_id')
+//            ->withPivot('type')
+//            ->wherePivot('type', 'answer')    // 过滤中间表type为answer的
+            ->where('deleted', 'none')
+            ->orderByDesc('pivot_updated_at')
+            ->withTimestamps();
+    }
+
+    /**
+     * 获取我关注收藏的视频 按关注时间排序
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function myFollowedVideos()
+    {
+        return $this->belongsToMany('App\Models\Video', 'videos_follow', 'user_id', 'resource_id')
             ->where('deleted', 'none')
             ->orderByDesc('pivot_updated_at')
             ->withTimestamps();

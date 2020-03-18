@@ -142,6 +142,8 @@ FMock墨客社区。
  - [status](#follow-status-user) | 查看某个用户与自己的关注、互粉状态
  - [getFansList](#follows-list) | 查看某个用户的关注列表(包括自己)
  - [getFansList](#fans-list) | 查看某个用户的粉丝列表(包括自己)
+ 
+ - [getTrack](#track-list) | 查看我关注的用户们最新发布的文章、回答、视频
 
 
 #### register-code
@@ -558,12 +560,12 @@ FMock墨客社区。
 
 #### collections
  - GET `server_url/V1/collection/{type}`
- - 获取我收藏的文章、回答
+ - 获取我收藏的文章、回答、视频
  - 支持分页操作
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer` |
+| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer`/`video` |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -579,7 +581,7 @@ FMock墨客社区。
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | `resource_uuid` | Y | String | Y |  | 文章或回答的`uuid` |
-| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer` |
+| `type` | Y | Enum | Y |  | 区分收藏的类型`post`/`answer`/`video` |
 
  - 返回值
  > HTTP/1.1 200 OK
@@ -594,7 +596,7 @@ FMock墨客社区。
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| `type` | Y | Enum | Y |  | 区分类型`post`/`answer` |
+| `type` | Y | Enum | Y |  | 区分类型`post`/`answer`/`video` |
 | `uuid` | Y | String | Y |  | 该文章、回答的`uuid` |
 
  - 返回值
@@ -900,6 +902,22 @@ FMock墨客社区。
  {"data" : <"list">}
  
  > HTTP/1.1 404
+ {"message" : <"message">} 
+
+#### track-list
+ - GET `server_url/V1/track/{type}`
+ - 查看我关注的用户们最新发布的文章、回答、视频
+ - 支持分页 `?page=x`
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `type` | Y | Enum | Y |  | 区分类型`post`/`answer`/`video` |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"list">}
+ 
+ > HTTP/1.1 400
  {"message" : <"message">} 
 
 ## Security Vulnerabilities

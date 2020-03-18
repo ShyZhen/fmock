@@ -22,4 +22,24 @@ class VideoRepository extends Repository
     {
         return 'App\Models\Video';
     }
+
+    /**
+     * 获取某个用户集合的回答
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $userIdArr
+     *
+     * @return mixed
+     */
+    public function getResourcesByUserIdArr($userIdArr)
+    {
+        return $this->model::with('user')
+            ->select('id', 'user_id', 'uuid', 'title', 'summary', 'poster', 'follow_num', 'comment_num', 'created_at')
+            ->where('deleted', 'none')
+            ->whereIn('user_id', $userIdArr)
+            ->orderByDesc('created_at')
+            ->paginate(env('PER_PAGE', 10));
+    }
 }
