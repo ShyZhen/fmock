@@ -85,6 +85,7 @@ class UsersFollowRepository extends Repository
      * https://www.litblc.com
      *
      * @param $userId
+     *
      * @return mixed
      */
     public function getAllFollowIds($userId)

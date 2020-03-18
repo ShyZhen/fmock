@@ -123,6 +123,7 @@ class PostRepository extends Repository
      * https://www.litblc.com
      *
      * @param $userIdArr
+     *
      * @return mixed
      */
     public function getResourcesByUserIdArr($userIdArr)
