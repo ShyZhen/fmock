@@ -267,6 +267,7 @@ class ActionService extends Service
      * https://www.litblc.com
      *
      * @param $type
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getTrack($type)
