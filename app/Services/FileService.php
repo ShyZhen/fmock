@@ -284,9 +284,7 @@ class FileService extends Service
 
             if ($result['code'] === 0) {
 
-                // 七牛设置的图片样式（加水印等其他操作）
-                $imageProcess = '_fmock';
-                $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $imageProcess;
+                $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $this->imageProcess;
 
                 // 记录用户上传的文件,便于后台管理
                 $this->uploadLog($userId, $imageUrl);

@@ -14,6 +14,13 @@ use Illuminate\Http\Request;
 
 class Service
 {
+    // 七牛设置的图片样式（加水印等其他操作）
+    // imageView2/0/h/1080/q/100|watermark/2/text/Rk1vY2suY29t/font/dGVybWluYWw=/fontsize/240/fill/I0VCRUNFNA==/dissolve/75/gravity/SouthEast/dx/10/dy/10|imageslim
+    protected $imageProcess = '_fmock';
+
+    // imageView2/1/w/175/h/140/q/100|watermark/2/text/Rk1vY2suY29t/font/dGVybWluYWw=/fontsize/240/fill/I0VCRUNFNA==/dissolve/75/gravity/SouthEast/dx/10/dy/10
+    protected $imagePosterProcess = '_fmockmin';
+
     /**
      * 生成 uuid
      *
