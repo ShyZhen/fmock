@@ -142,7 +142,7 @@ class PostService extends Service
                 'user_id' => $anonymous ? 0 : $userId,
                 'title' => $title,
                 'summary' => $summary,
-                'poster' => $poster,
+                'poster' => str_replace($this->imageProcess, $this->imagePosterProcess, $poster),
                 'content' => $content,
                 'type' => $type,
             ]);
