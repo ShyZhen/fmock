@@ -283,7 +283,6 @@ class FileService extends Service
             $result = $this->qiniuService->uploadFile($file->path(), $fullName);
 
             if ($result['code'] === 0) {
-
                 $imageUrl = config('filesystems.qiniu.cdnUrl') . '/' . $fullName . $this->imageProcess;
 
                 // 记录用户上传的文件,便于后台管理
