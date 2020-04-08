@@ -36,9 +36,10 @@ FMock墨客社区。
 
  #### 下载代码安装依赖
  - `git clone https://github.com/ShyZhen/fmock.git`
- - `copy .env.example .env` and edit .env (生产环境记得修改env中APP_ENV=production)
+ - `copy .env.example .env` and edit .env
  > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
- 如果想上传文件到七牛，需要开启`.env`中的`QiniuService=true`,并配置好七牛的各项参数。
+ > 根据自己vhost配置 `APP_URL` `CLIENT_URL` `SERVER_URL` `ADMIN_URL`
+ > 如果想上传文件到七牛，需要开启`.env`中的`QiniuService=true`,并配置好七牛的各项参数。
  - composer 全量镜像不稳定，推荐更换`composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/`
  - `composer self-update` && `composer install`
  
@@ -46,7 +47,7 @@ FMock墨客社区。
  - `php artisan fmock:install`
  
  #### 权限设置
- - `chmod -R 766 storage/` and `chmod -R 766 bootstrap/cache/`
+ - `chmod -R 766 storage/` and `chmod -R 766 bootstrap/cache/` 根据自己实际用户组情况设置777或者766
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
 
  
