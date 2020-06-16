@@ -53,8 +53,9 @@ class StringService extends Service
      * author shyZhen <huaixiu.zhen@gmail.com>
      * https://www.litblc.com
      *
-     * @return int
      * @throws \Exception
+     *
+     * @return int
      */
     public static function nextId()
     {
@@ -68,13 +69,13 @@ class StringService extends Service
             self::$sequence = 0;
         }
         if ($timestamp < self::$lastTimestamp) {
-            throw new \Exception("Clock moved backwards. Refusing to generate id for " . (self::$lastTimestamp - $timestamp) . " milliseconds");
+            throw new \Exception('Clock moved backwards. Refusing to generate id for ' . (self::$lastTimestamp - $timestamp) . ' milliseconds');
         }
         self::$lastTimestamp = $timestamp;
         $nextId = ((sprintf('%.0f', $timestamp) - sprintf('%.0f', self::$twepoch)) << self::$timestampLeftShift)
             | (self::$workerId << self::$workerIdShift) | self::$sequence;
 
-        return (int)$nextId;
+        return (int) $nextId;
     }
 
     /**
@@ -87,6 +88,7 @@ class StringService extends Service
     {
         $time = explode(' ', microtime());
         $time2 = substr($time[0], 2, 3);
+
         return $time[1] . $time2;
     }
 
@@ -95,6 +97,7 @@ class StringService extends Service
      * https://www.litblc.com
      *
      * @param $lastTimestamp
+     *
      * @return string
      */
     private static function tilNextMillis($lastTimestamp)
@@ -103,6 +106,7 @@ class StringService extends Service
         while ($timestamp <= $lastTimestamp) {
             $timestamp = self::timeGen();
         }
+
         return $timestamp;
     }
 }
