@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use Throwable;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -30,26 +30,29 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
+     * @param \Throwable $exception
      *
-     * @param \Exception $exception
+     * @throws \Exception
      *
      * @return void
      */
-    public function report(Exception $exception)
+    public function report(Throwable $exception)
     {
         parent::report($exception);
     }
 
     /**
+     * 生成环境报错信息处理
      * Render an exception into an HTTP response.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Exception               $exception
+     * @param \Throwable               $exception
      *
-     * @return \Illuminate\Http\Response
+     * @throws \Throwable
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function render($request, Exception $exception)
+    public function render($request, Throwable $exception)
     {
         if (!env('APP_DEBUG')) {
             return self::handler($request, $exception);
@@ -58,7 +61,16 @@ class Handler extends ExceptionHandler
         return parent::render($request, $exception);
     }
 
-    public function handler($request, Exception $exception)
+    /**
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $request
+     * @param Throwable $exception
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function handler($request, Throwable $exception)
     {
 //        记录日志
 //        echo date('Y-m-d H:i:s');
