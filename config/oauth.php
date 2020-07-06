@@ -10,6 +10,7 @@ return [
         'access_token_url' => 'https://github.com/login/oauth/access_token',
         'user_info_url' => 'https://api.github.com/user',
     ],
+
     'wechat' => [
         'app_id' => env('WechatAppID', ''),
         'app_secret' => env('WechatAppSecret', ''),
