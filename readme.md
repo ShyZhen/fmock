@@ -162,6 +162,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、403、422、500
  {"message" : <"message">}
+------------------------------
 
 #### register
  - POST `server_url/V1/register`
@@ -181,6 +182,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、401、422
  {"message" : <"message">}
+------------------------------
 
 #### user-check
  - POST `server_url/V1/user-check`
@@ -196,6 +198,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、403
  {"message" : <"message">}
+------------------------------
 
 #### login
  - POST `server_url/V1/login`
@@ -212,6 +215,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、403、422
  {"message" : <"message">}
+------------------------------
 
 #### password-code
  - POST `server_url/V1/password-code`
@@ -227,6 +231,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、403、422、500
  {"message" : <"message">}
+------------------------------
 
 #### password
  - POST `server_url/V1/password`
@@ -245,6 +250,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、401、403、422
  {"message" : <"message">}
+------------------------------
 
 #### me
  - GET `server_url/V1/me`
@@ -260,6 +266,7 @@ FMock墨客社区。
  
  > HTTP/1.1 401
  {"message" : <"message">}
+------------------------------
 
 #### github-login
  - GET `server_url/V1/oauth/github/login`
@@ -275,7 +282,8 @@ FMock墨客社区。
  
  > HTTP/1.1 500
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### user-info
  - GET `server_url/V1/user/{uuid}`
  - 查看用户信息
@@ -290,6 +298,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### post-me
  - POST `server_url/V1/me`
@@ -314,6 +323,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、500
  {"message" : <"message">}
+------------------------------
 
 #### my-name
  - POST `server_url/V1/my-name`
@@ -329,6 +339,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、403、500
  {"message" : <"message">}
+------------------------------
 
 #### upload-image
  - POST `server_url/V1/file/image`
@@ -344,6 +355,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、422
  {"message" : <"message">}
+------------------------------
 
 #### upload-avatar
  - POST `server_url/V1/file/avatar`
@@ -359,6 +371,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、422
  {"message" : <"message">}
+------------------------------
 
 #### logout
  - GET `server_url/V1/logout`
@@ -371,7 +384,8 @@ FMock墨客社区。
  - 返回值
  > HTTP/1.1 200 OK
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### upload-video
  - POST `server_url/V1/file/video`
  - 上传视频，返回uuid
@@ -386,8 +400,8 @@ FMock墨客社区。
  
  > HTTP/1.1 400、422
  {"message" : <"message">}
+ ------------------------------
 
- 
 #### posts
  - GET `server_url/V1/posts`
  - 获取首页文章列表
@@ -404,6 +418,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400
  {"message" : <"message">}
+------------------------------
 
 #### post
  - GET `server_url/V1/post/{uuid}`
@@ -419,6 +434,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### create-post
  - POST `server_url/V1/post`
@@ -439,6 +455,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、422、500
  {"message" : <"message">}
+------------------------------
 
 #### update-post
  - PUT `server_url/V1/post/{uuid}`
@@ -458,6 +475,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、404、500
  {"message" : <"message">}
+------------------------------
 
 #### delete-post
  - DELETE `server_url/V1/post/{uuid}`
@@ -473,7 +491,8 @@ FMock墨客社区。
  
  > HTTP/1.1 404、500
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### answers
  - GET `server_url/V1/answers/{postUuid}/{type?}`
  - 获取某个文章（问题）的回答列表
@@ -491,7 +510,8 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### answer
  - GET `server_url/V1/answer/detail/{uuid}`
  - 获取某个回答的详细信息
@@ -506,7 +526,8 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### create-answer
  - POST `server_url/V1/answer`
  - 写回答
@@ -526,7 +547,8 @@ FMock墨客社区。
  
  > HTTP/1.1 400、404、422、500
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### update-answer
  - PUT `server_url/V1/answer/{uuid}`
  - 修改我的某篇回答
@@ -544,7 +566,8 @@ FMock墨客社区。
  
  > HTTP/1.1 400、404、500
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### delete-answer
  - DELETE `server_url/V1/answer/{uuid}`
  - 删除我的某篇回答
@@ -559,6 +582,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404、500
  {"message" : <"message">}
+------------------------------
 
 #### collections
  - GET `server_url/V1/collection/{type}`
@@ -575,6 +599,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### post-collection
  - POST `server_url/V1/collection`
@@ -591,6 +616,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### delete-collection
  - DELETE `server_url/V1/collection/{type}/{uuid}`
@@ -607,6 +633,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### like-post
  - POST `server_url/V1/like/post/{uuid}`
@@ -622,6 +649,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### dislike-post
  - POST `server_url/V1/dislike/post/{uuid}`
@@ -637,6 +665,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### status-post
  - GET `server_url/V1/status/post/{uuid}`
@@ -652,6 +681,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### like-answer
  - POST `server_url/V1/like/answer/{uuid}`
@@ -667,6 +697,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### dislike-answer
  - POST `server_url/V1/dislike/answer/{uuid}`
@@ -682,6 +713,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### status-answer
  - GET `server_url/V1/status/answer/{uuid}`
@@ -697,7 +729,8 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
- 
+ ------------------------------
+
 #### like-comment
  - POST `server_url/V1/like/comment/{id}`
  - 赞评论,再次请求取消赞（这里url跟着评论的ID,而不是uuid）
@@ -712,6 +745,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### dislike-comment
  - POST `server_url/V1/dislike/comment/{id}`
@@ -727,6 +761,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### status-comment
  - GET `server_url/V1/status/comment/{id}`
@@ -742,6 +777,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### post-comment
  - GET `server_url/V1/comment/{type}/{postUuid}/{sort?}`
@@ -759,6 +795,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### create-post-comment
  - POST `server_url/V1/comment`
@@ -777,6 +814,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400、404、422、500
  {"message" : <"message">}
+------------------------------
 
 #### delete-post-comment
  - DELETE `server_url/V1/comment/{id}`
@@ -792,6 +830,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404、500
  {"message" : <"message">}
+------------------------------
 
 #### user-comments
  - GET `server_url/V1/user/comments/{userUuid}`
@@ -808,6 +847,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### user-posts
  - GET `server_url/V1/user/posts/{userUuid}`
@@ -824,6 +864,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">}
+------------------------------
 
 #### user-answers
  - GET `server_url/V1/user/answers/{userUuid}`
@@ -840,9 +881,7 @@ FMock墨客社区。
   
   > HTTP/1.1 404
   {"message" : <"message">}
-
-
-
+------------------------------
 
 #### follow-user
  - POST `server_url/V1/follow/{userUuid}`
@@ -858,7 +897,8 @@ FMock墨客社区。
   
   > HTTP/1.1 404、422
   {"message" : <"message">}
-  
+  ------------------------------
+
 #### follow-status-user
  - GET `server_url/V1/follow/status/{userUuid}`
  - 查询对某个用户的关注、互粉状态
@@ -873,7 +913,8 @@ FMock墨客社区。
  
  > HTTP/1.1 404、422
  {"message" : <"message">} 
- 
+ ------------------------------
+
 #### follows-list
  - GET `server_url/V1/follows/list/{userUuid}`
  - 查询某个用户的关注列表（包括我自己）
@@ -889,6 +930,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">} 
+------------------------------
 
 #### fans-list
  - GET `server_url/V1/fans/list/{userUuid}`
@@ -905,6 +947,7 @@ FMock墨客社区。
  
  > HTTP/1.1 404
  {"message" : <"message">} 
+------------------------------
 
 #### track-list
  - GET `server_url/V1/track/{type}`
@@ -921,6 +964,7 @@ FMock墨客社区。
  
  > HTTP/1.1 400
  {"message" : <"message">} 
+------------------------------
 
 ## Security Vulnerabilities
 
