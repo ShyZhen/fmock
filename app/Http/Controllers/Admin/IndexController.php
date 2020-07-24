@@ -14,7 +14,6 @@ use App\Http\Controllers\Admin\Base\AdminBaseController;
 
 class IndexController extends AdminBaseController
 {
-
     /**
      * 管理员 首页
      *
