@@ -54,7 +54,7 @@ class UserController extends AdminBaseController
             return response()->json(
                 [
                     'code' => self::ERROR_CODE,
-                    'message' => $validator->errors()->first()
+                    'message' => $validator->errors()->first(),
                 ]);
         } else {
             return $this->userRepository->update(['closure' => 'yes'], $request->get('uuid'), 'uuid');
