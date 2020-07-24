@@ -33,7 +33,6 @@ return [
     |
     */
 
-
     'mailers' => [
         'smtp' => [
             'transport' => 'smtp',
