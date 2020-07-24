@@ -13,4 +13,25 @@ class AdminBaseController extends Controller
 {
     const SUCCESS_CODE = 0;
     const ERROR_CODE = -1;
+
+    /**
+     * 处理post参数 过滤csrf_token以及空值
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $request
+     *
+     * @return mixed
+     */
+    protected function handlePostRequestParams($request)
+    {
+        foreach ($request as $key => $value) {
+            if ($key == '_token' || !$value) {
+                unset($request[$key]);
+            }
+        }
+
+        return $request;
+    }
 }
