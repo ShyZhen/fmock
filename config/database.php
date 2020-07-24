@@ -119,10 +119,10 @@ return [
 
     'redis' => [
 
-          'client' => 'predis',
+//          'client' => 'predis',
 
         // 使用此driver需要安装redis扩展 https://github.com/phpredis/phpredis
-        //  'client' => env('REDIS_CLIENT', 'phpredis'),
+          'client' => env('REDIS_CLIENT', 'phpredis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),

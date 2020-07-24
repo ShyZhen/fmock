@@ -18,4 +18,5 @@
 @endsection
 
 @section('js')
+    <script src="{{asset('js/admin/users/index.js')}}"></script>
 @endsection

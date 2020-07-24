@@ -34,7 +34,7 @@ FMock墨客社区。
 
 ## Installation
 
- #### 下载代码安装依赖
+ #### 1.下载代码安装依赖
  - `git clone https://github.com/ShyZhen/fmock.git`
  - `copy .env.example .env` and edit .env
  > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
@@ -43,11 +43,11 @@ FMock墨客社区。
  - composer 全量镜像不稳定，推荐更换`composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/`
  - `composer self-update` && `composer install`
  
- #### 执行初始化安装
+ #### 2. 执行初始化安装
  - `php artisan fmock:install`
  
- #### 权限设置
- - `chmod -R 766 storage/` and `chmod -R 766 bootstrap/cache/` 根据自己实际用户组情况设置777或者766
+ #### 3. 权限设置
+ - `chmod -R 766 storage/ && chmod -R 766 bootstrap/cache/` 根据自己实际用户组情况设置777或者766
  - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
 
  
