@@ -14,6 +14,9 @@ use App\Repositories\Eloquent\VideoRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\UsersFollowRepository;
+use App\Repositories\Eloquent\PostsFollowRepository;
+use App\Repositories\Eloquent\VideosFollowRepository;
+use App\Repositories\Eloquent\AnswersFollowRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
 
 class ActionService extends Service
@@ -30,6 +33,12 @@ class ActionService extends Service
 
     private $usersFollowRepository;
 
+    private $postsFollowRepository;
+
+    private $videosFollowRepository;
+
+    private $answersFollowRepository;
+
     private $postsCommentsLikeRepository;
 
     /**
@@ -41,6 +50,9 @@ class ActionService extends Service
      * @param AnswerRepository            $answerRepository
      * @param CommentRepository           $commentRepository
      * @param UsersFollowRepository       $usersFollowRepository
+     * @param PostsFollowRepository       $postsFollowRepository
+     * @param VideosFollowRepository      $videosFollowRepository
+     * @param AnswersFollowRepository     $answersFollowRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(
@@ -50,6 +62,9 @@ class ActionService extends Service
         AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
         UsersFollowRepository $usersFollowRepository,
+        PostsFollowRepository $postsFollowRepository,
+        VideosFollowRepository $videosFollowRepository,
+        AnswersFollowRepository $answersFollowRepository,
         PostsCommentsLikeRepository $postsCommentsLikeRepository
     ) {
         $this->userRepository = $userRepository;
@@ -58,6 +73,9 @@ class ActionService extends Service
         $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
         $this->usersFollowRepository = $usersFollowRepository;
+        $this->postsFollowRepository = $postsFollowRepository;
+        $this->videosFollowRepository = $videosFollowRepository;
+        $this->answersFollowRepository = $answersFollowRepository;
         $this->postsCommentsLikeRepository = $postsCommentsLikeRepository;
     }
 
@@ -191,8 +209,11 @@ class ActionService extends Service
             $resource = $this->commentRepository->find($resourceId);
         } elseif ($resourceType === 'answer') {
             $resource = $this->answerRepository->findBy('uuid', $resourceId);
+        } elseif ($resourceType === 'video') {
+            $resource = $this->videoRepository->findBy('uuid', $resourceId);
         }
 
+        // 目前记录赞和踩都在一张表中，后期可考虑分成单表
         if ($resource) {
             $pivot = $this->postsCommentsLikeRepository->hasAction($resource->id, $type, $resourceType);
 
@@ -236,20 +257,43 @@ class ActionService extends Service
     public function status($resourceId, $resourceType)
     {
         $resource = '';
+        $collected = false;
         if ($resourceType === 'post') {
             $resource = $this->postRepository->findBy('uuid', $resourceId, ['id']);
         } elseif ($resourceType === 'comment') {
             $resource = $this->commentRepository->find($resourceId, ['id']);
         } elseif ($resourceType === 'answer') {
-            $resource = $this->answerRepository->findBy('uuid', $resourceId);
+            $resource = $this->answerRepository->findBy('uuid', $resourceId, ['id']);
+        } elseif ($resourceType === 'video') {
+            $resource = $this->videoRepository->findBy('uuid', $resourceId, ['id']);
         }
 
         if ($resource) {
             $like = $this->postsCommentsLikeRepository->hasAction($resource->id, 'like', $resourceType);
             $dislike = $this->postsCommentsLikeRepository->hasAction($resource->id, 'dislike', $resourceType);
 
+            // 查询文章、回答、视频时候的搜藏状态
+            if (in_array($resourceType, ['post', 'video', 'answer'])) {
+                $userId = Auth::id();
+
+                // PostsFollowRepository answersFollowRepository videosFollowRepository
+                $repository = $resourceType . 's' . 'FollowRepository';
+                $collected = $this->$repository
+                    ->model()::where([
+                        'user_id' => $userId,
+                        'resource_id' => $resource->id
+                    ])
+                    ->first();
+            }
+
             return response()->json(
-                ['data' => ['like' => $like ? true : false, 'dislike' => $dislike ? true : false]],
+                ['data' =>
+                    [
+                        'like' => $like ? true : false,
+                        'dislike' => $dislike ? true : false,
+                        'collected' => $collected ? true : false
+                    ]
+                ],
                 Response::HTTP_OK
             );
         } else {

@@ -70,6 +70,11 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('dislike/answer/{uuid}', 'ActionController@dislikeAnswer');
     Route::get('status/answer/{uuid}', 'ActionController@statusAnswer');
 
+    // 视频 动作状态查询
+    Route::post('like/video/{uuid}', 'ActionController@likeVideo');
+    Route::post('dislike/video/{uuid}', 'ActionController@dislikeVideo');
+    Route::get('status/video/{uuid}', 'ActionController@statusVideo');
+
     // 评论
     Route::get('comment/{type}/{postUuid}/{sort?}', 'CommentController@getCommentByPostUuid');
     Route::post('comment', 'CommentController@createComment');
