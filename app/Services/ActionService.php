@@ -13,8 +13,8 @@ use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\VideoRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
-use App\Repositories\Eloquent\UsersFollowRepository;
 use App\Repositories\Eloquent\PostsFollowRepository;
+use App\Repositories\Eloquent\UsersFollowRepository;
 use App\Repositories\Eloquent\VideosFollowRepository;
 use App\Repositories\Eloquent\AnswersFollowRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
@@ -281,7 +281,7 @@ class ActionService extends Service
                 $collected = $this->$repository
                     ->model()::where([
                         'user_id' => $userId,
-                        'resource_id' => $resource->id
+                        'resource_id' => $resource->id,
                     ])
                     ->first();
             }
@@ -291,8 +291,8 @@ class ActionService extends Service
                     [
                         'like' => $like ? true : false,
                         'dislike' => $dislike ? true : false,
-                        'collected' => $collected ? true : false
-                    ]
+                        'collected' => $collected ? true : false,
+                    ],
                 ],
                 Response::HTTP_OK
             );
