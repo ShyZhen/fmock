@@ -245,6 +245,48 @@ class ActionController extends Controller
     }
 
     /**
+     * 赞、取消赞(视频)
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likeVideo($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'like', 'video');
+    }
+
+    /**
+     * 踩、取消踩(回答)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dislikeVideo($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'dislike', 'video');
+    }
+
+    /**
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusVideo($uuid)
+    {
+        return $this->actionService->status($uuid, 'video');
+    }
+
+    /**
      * 查看我关注的用户们最新发布的文章、回答、视频
      *
      * author shyZhen <huaixiu.zhen@gmail.com>

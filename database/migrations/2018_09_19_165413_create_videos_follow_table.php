@@ -13,7 +13,7 @@ class CreateVideosFollowTable extends Migration
      */
     public function up()
     {
-        // 用户收藏的文章、回答表
+        // 用户收藏的视频表
         Schema::create('videos_follow', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('user_id');

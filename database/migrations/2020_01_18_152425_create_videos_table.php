@@ -26,6 +26,8 @@ class CreateVideosTable extends Migration
             $table->enum('is_release', ['yes', 'none', 'review'])->default('none');  // 上线后可观看、购买;上线流程：提交审核 -> 审核通过 -> 上线
             $table->unsignedInteger('follow_num')->default(0);                       // 被收藏数量
             $table->unsignedInteger('comment_num')->default(0);                            // 被评论数量
+            $table->unsignedInteger('like_num')->default(0);
+            $table->unsignedInteger('dislike_num')->default(0);
             $table->enum('deleted', ['yes', 'none'])->default('none');
             $table->timestamps();
         });

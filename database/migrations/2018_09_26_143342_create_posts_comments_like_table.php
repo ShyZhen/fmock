@@ -19,7 +19,7 @@ class CreatePostsCommentsLikeTable extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('resource_id')->index();            // 资源ID(文章或评论)
             $table->enum('action', ['like', 'dislike']);                // 动作
-            $table->enum('type', ['post', 'comment', 'answer']);        // 区分文章、回答和评论
+            $table->enum('type', ['post', 'comment', 'answer', 'video']);        // 区分文章、回答、视频和评论
             $table->timestamps();
         });
     }

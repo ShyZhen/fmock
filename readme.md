@@ -122,15 +122,19 @@ FMock墨客社区。
  
  - [likePost](#like-post) | 赞/取消赞（文章）
  - [dislikePost](#dislike-post) | 踩/取消踩（文章）
- - [statusPost](#status-post) | 查看赞/踩状态（文章）
+ - [statusPost](#status-post) | 查看赞/踩/收藏状态（文章）
  
  - [likeAnswer](#like-answer) | 赞/取消赞（回答）
  - [dislikeAnswer](#dislike-answer) | 踩/取消踩（回答）
- - [statusAnswer](#status-answer) | 查看赞/踩状态（回答）
+ - [statusAnswer](#status-answer) | 查看赞/踩/收藏状态（回答）
  
  - [likeComment](#like-comment) | 赞/取消赞（评论）
  - [dislikeComment](#dislike-comment) | 踩/取消踩（评论）
- - [statusComment](#status-comment) | 查看赞/踩状态（评论）
+ - [statusComment](#status-comment) | 查看赞/踩/收藏状态（评论）
+ 
+ - [likeVideo](#like-video) | 赞/取消赞（视频）
+ - [dislikeVideo](#dislike-video) | 踩/取消踩（视频）
+ - [statusVideo](#status-video) | 查看赞/踩/收藏状态（视频）
  
  - [getCommentByPostUuid](#post-comment) | 获取文章评论
  - [createComment](#create-post-comment) | 创建评论、回复
@@ -765,6 +769,54 @@ FMock墨客社区。
 
 #### status-comment
  - GET `server_url/V1/status/comment/{id}`
+ - 查询状态
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 无 |  |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"data">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+------------------------------
+
+#### like-video
+ - POST `server_url/V1/like/video/{uuid}`
+ - 赞视频,再次请求取消赞
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `uuid` | Y |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+------------------------------
+
+#### dislike-video
+ - POST `server_url/V1/dislike/video/{uuid}`
+ - 踩视频,再次请求取消踩
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `uuid` | Y |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"message" : <"message">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">}
+------------------------------
+
+#### status-video
+ - GET `server_url/V1/status/video/{uuid}`
  - 查询状态
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |

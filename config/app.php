@@ -194,9 +194,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\ObserversServiceProvider::class,
 
-        // cors
-        Fruitcake\Cors\CorsServiceProvider::class,
-
     ],
 
     /*

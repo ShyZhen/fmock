@@ -13,7 +13,7 @@ class CreatePostsFollowTable extends Migration
      */
     public function up()
     {
-        // 用户收藏的文章、回答表
+        // 用户收藏的文章表
         Schema::create('posts_follow', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('user_id');
