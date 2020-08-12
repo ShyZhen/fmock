@@ -45,7 +45,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function myFollowedPosts()
+    public function myCollectedPosts()
     {
         return $this->belongsToMany('App\Models\Post', 'posts_follow', 'user_id', 'resource_id')
 //            ->withPivot('type')
@@ -62,7 +62,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function myFollowedAnswers()
+    public function myCollectedAnswers()
     {
         return $this->belongsToMany('App\Models\Answer', 'answers_follow', 'user_id', 'resource_id')
 //            ->withPivot('type')
@@ -80,7 +80,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function myFollowedVideos()
+    public function myCollectedVideos()
     {
         return $this->belongsToMany('App\Models\Video', 'videos_follow', 'user_id', 'resource_id')
             ->where('deleted', 'none')

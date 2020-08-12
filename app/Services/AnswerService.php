@@ -101,7 +101,7 @@ class AnswerService extends Service
      */
     public function getAnswerByUuid($uuid)
     {
-        $columns = ['id', 'user_id', 'uuid', 'title', 'content', 'follow_num', 'comment_num', 'like_num', 'dislike_num', 'deleted', 'created_at'];
+        $columns = ['id', 'user_id', 'uuid', 'title', 'content', 'collect_num', 'comment_num', 'like_num', 'dislike_num', 'deleted', 'created_at'];
         $answer = $this->answerRepository->findBy('uuid', $uuid, $columns);
 
         if ($answer) {

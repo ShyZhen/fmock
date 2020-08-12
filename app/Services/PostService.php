@@ -89,7 +89,7 @@ class PostService extends Service
      */
     public function getPostByUuid($uuid)
     {
-        $columns = ['id', 'user_id', 'uuid', 'title', 'content', 'type', 'deleted', 'follow_num', 'comment_num', 'like_num', 'dislike_num', 'created_at'];
+        $columns = ['id', 'user_id', 'uuid', 'title', 'content', 'type', 'deleted', 'collect_num', 'comment_num', 'like_num', 'dislike_num', 'created_at'];
         $post = $this->postRepository->findBy('uuid', $uuid, $columns);
 
         if ($post) {

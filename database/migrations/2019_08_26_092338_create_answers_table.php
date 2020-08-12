@@ -23,7 +23,7 @@ class CreateAnswersTable extends Migration
             $table->string('summary', 128)->default('');                                    // 摘要
             $table->string('poster', 128)->default('');                                     // 第一幅海报图片
             $table->text('content');
-            $table->unsignedInteger('follow_num')->default(0);                             // 被收藏数量
+            $table->unsignedInteger('collect_num')->default(0);                             // 被收藏数量
             $table->unsignedInteger('comment_num')->default(0);                            // 被评论数量
             $table->unsignedInteger('like_num')->default(0);
             $table->unsignedInteger('dislike_num')->default(0);

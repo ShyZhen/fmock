@@ -24,7 +24,7 @@ class CreateVideosTable extends Migration
             $table->string('poster', 128)->default('');                     // 视频集封面
             $table->enum('is_free', ['yes', 'none'])->default('yes');       // 是否免费，只有视频集收费才判断素材是否免费(试看状态)；如果视频集免费，那么不判断素材的状态，全部免费
             $table->enum('is_release', ['yes', 'none', 'review'])->default('none');  // 上线后可观看、购买;上线流程：提交审核 -> 审核通过 -> 上线
-            $table->unsignedInteger('follow_num')->default(0);                       // 被收藏数量
+            $table->unsignedInteger('collect_num')->default(0);                       // 被收藏数量
             $table->unsignedInteger('comment_num')->default(0);                            // 被评论数量
             $table->unsignedInteger('like_num')->default(0);
             $table->unsignedInteger('dislike_num')->default(0);

@@ -289,9 +289,9 @@ class ActionService extends Service
             return response()->json(
                 ['data' =>
                     [
-                        'like' => $like ? true : false,
-                        'dislike' => $dislike ? true : false,
-                        'collected' => $collected ? true : false,
+                        'liked' => $like ? true : false,
+                        'disliked' => $dislike ? true : false,
+                        'collected' => $collected ? true : false
                     ],
                 ],
                 Response::HTTP_OK
