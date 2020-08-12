@@ -13,8 +13,8 @@ use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\VideoRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
-use App\Repositories\Eloquent\UsersFollowRepository;
 use App\Repositories\Eloquent\PostsFollowRepository;
+use App\Repositories\Eloquent\UsersFollowRepository;
 use App\Repositories\Eloquent\VideosFollowRepository;
 use App\Repositories\Eloquent\AnswersFollowRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
@@ -89,9 +89,9 @@ class ActionService extends Service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMyCollected($type)
+    public function getMyFollowed($type)
     {
-        $responses = $this->userRepository->getMyCollected($type);
+        $responses = $this->userRepository->getMyFollowed($type);
 
         if ($responses->count()) {
             foreach ($responses as $post) {
@@ -112,7 +112,7 @@ class ActionService extends Service
     }
 
     /**
-     * 关注操作 并更新collect_num 表字段
+     * 关注操作 并更新follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -122,7 +122,7 @@ class ActionService extends Service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function collect($type, $uuid)
+    public function follow($type, $uuid)
     {
         // postRepository or answerRepository、videoRepository
         $repository = $type . 'Repository';
@@ -130,10 +130,10 @@ class ActionService extends Service
         $post = $this->$repository->findBy('uuid', $uuid);
 
         if ($post) {
-            $follow = $this->userRepository->collect($post->id, $type);
+            $follow = $this->userRepository->follow($post->id, $type);
 
             if (count($follow['attached'])) {
-                $post->collect_num += 1;
+                $post->follow_num += 1;
                 $post->save();
             }
 
@@ -150,7 +150,7 @@ class ActionService extends Service
     }
 
     /**
-     * 取消关注 并更新collect_num 表字段
+     * 取消关注 并更新follow_num 表字段
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -160,7 +160,7 @@ class ActionService extends Service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unCollect($type, $uuid)
+    public function unFollow($type, $uuid)
     {
         // postRepository or answerRepository、videoRepository
         $repository = $type . 'Repository';
@@ -168,13 +168,13 @@ class ActionService extends Service
         $post = $this->$repository->findBy('uuid', $uuid);
 
         if ($post) {
-            if ($this->userRepository->unCollect($post->id, $type)) {
-                $post->collect_num > 0 && $post->collect_num -= 1;
+            if ($this->userRepository->unFollow($post->id, $type)) {
+                $post->follow_num > 0 && $post->follow_num -= 1;
                 $post->save();
             }
 
             return response()->json(
-                ['message' => __('app.cancel') . __('app.collect') . __('app.success')],
+                ['message' => __('app.cancel') . __('app.follow') . __('app.success')],
                 Response::HTTP_OK
             );
         } else {
@@ -281,7 +281,7 @@ class ActionService extends Service
                 $collected = $this->$repository
                     ->model()::where([
                         'user_id' => $userId,
-                        'resource_id' => $resource->id
+                        'resource_id' => $resource->id,
                     ])
                     ->first();
             }
@@ -292,7 +292,7 @@ class ActionService extends Service
                         'liked' => $like ? true : false,
                         'disliked' => $dislike ? true : false,
                         'collected' => $collected ? true : false
-                    ]
+                    ],
                 ],
                 Response::HTTP_OK
             );
