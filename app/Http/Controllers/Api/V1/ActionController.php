@@ -42,10 +42,10 @@ class ActionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMyFollowed($type)
+    public function getMyCollected($type)
     {
         if (in_array($type, $this->type)) {
-            return $this->actionService->getMyFollowed($type);
+            return $this->actionService->getMyCollected($type);
         } else {
             return response()->json(
                 ['message' => __('app.normal_param_err')],
@@ -55,7 +55,7 @@ class ActionController extends Controller
     }
 
     /**
-     * 关注文章、回答、视频
+     * 关注（收藏）文章、回答、视频
      *
      * @Author huaixiu.zhen
      * http://litblc.com
@@ -64,7 +64,7 @@ class ActionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function followed(Request $request)
+    public function collected(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'resource_uuid' => 'required',
@@ -80,7 +80,7 @@ class ActionController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            return $this->actionService->follow($request->get('type'), $request->get('resource_uuid'));
+            return $this->actionService->collect($request->get('type'), $request->get('resource_uuid'));
         }
     }
 
@@ -95,10 +95,10 @@ class ActionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function unFollow($type, $uuid)
+    public function unCollect($type, $uuid)
     {
         if (in_array($type, $this->type)) {
-            return $this->actionService->unFollow($type, $uuid);
+            return $this->actionService->unCollect($type, $uuid);
         } else {
             return response()->json(
                 ['message' => __('app.normal_param_err')],

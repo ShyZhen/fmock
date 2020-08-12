@@ -61,28 +61,14 @@ class UserRepository extends Repository
      *
      * @return mixed
      */
-    public function getMyFollowed($type)
+    public function getMyCollected($type)
     {
-        // myFollowedPosts() or myFollowedAnswers() 方法
-        $func = 'myFollowed' . ucfirst($type) . 's';
+        // myCollectedPosts() or myCollectedAnswers() 方法
+        $func = 'myCollected' . ucfirst($type) . 's';
 
         return Auth::user()->$func()
             ->paginate(env('PER_PAGE', 10));
     }
-
-    /**
-     * 获取我关注收藏的回答
-     * （已废弃）使用 getMyFollowed() 统一方法
-     *
-     * @author z00455118 <zhenhuaixiu@huawei.com>
-     *
-     * @return mixed
-     */
-//    public function getMyFollowedAnswers()
-//    {
-//        return Auth::user()->myFollowedAnswers()
-//            ->paginate(env('PER_PAGE', 10));
-//    }
 
     /**
      * 同步中间表 更新用户关注文章、回答的数据
@@ -95,13 +81,13 @@ class UserRepository extends Repository
      *
      * @return mixed
      */
-    public function follow($postId, $type)
+    public function collect($postId, $type)
     {
         // sync 方法会删掉其他；attach方法会增加相同的；
         // 而syncWithoutDetaching 也就是sync(a, false)不会删掉其他，也不会增加相同的
 
-        // myFollowedPosts or myFollowedAnswers
-        $func = 'myFollowed' . ucfirst($type) . 's';
+        // myCollectedPosts or myCollectedAnswers
+        $func = 'myCollected' . ucfirst($type) . 's';
 
         return Auth::user()->$func()->syncWithoutDetaching($postId);
 //        return Auth::user()->$func()->syncWithoutDetaching([$postId => ['type' => $type]]);
@@ -134,10 +120,10 @@ class UserRepository extends Repository
      *
      * @return mixed
      */
-    public function unFollow($postId, $type)
+    public function unCollect($postId, $type)
     {
         // myFollowedPosts or myFollowedAnswers
-        $func = 'myFollowed' . ucfirst($type) . 's';
+        $func = 'myCollected' . ucfirst($type) . 's';
 
         return Auth::user()->$func()->detach($postId);
     }

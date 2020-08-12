@@ -52,6 +52,7 @@ FMock墨客社区。
 
  
 ## ES Quick Use
+#### Code Info
  - 新建es类并继承抽象类`Base/ElasticSearch`，例如PostElasticSearch
  - 必须实现抽象函数 `createIndex` 和 `getIndexName`，这样就可以完全使用基类中的任意方法（其中createIndex方法仅在es:init中使用）
  - 使用方法参考`Web/TestController@esTest`
@@ -80,7 +81,7 @@ FMock墨客社区。
  - Delta格式富文本编辑器
  - 支持粉丝系统，查看用户关注、粉丝列表等操作，支持redis以及关系型数据库两种存储方式，量小推荐使用数据库
  - 支持ElasticSearch，使用Observer自动插入ES数据
- - 支持短视频上传七牛并切片、添加水印等操作（记得更新最大上传文件限制、最大执行时间）
+ - 支持短视频上传七牛并切片、添加水印等操作（记得更新相关文件上传配置,例如nginx的client_body_temp/client_body_buffer_size 10/client_max_body_size 1024m）
 
 ## API Index
 
