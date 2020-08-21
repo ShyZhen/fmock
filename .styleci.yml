@@ -1,7 +1,6 @@
 preset: psr12
 
 enabled:
-  - concat_with_spaces
   - ereg_to_preg
   - no_extra_consecutive_blank_lines
   - short_array_syntax
