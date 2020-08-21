@@ -33,4 +33,3 @@ enabled:
   - unary_operators_spaces
   - unneeded_control_parentheses
   - no_unused_imports
-  - no_whitespace_in_blank_line
