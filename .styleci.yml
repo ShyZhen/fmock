@@ -1,7 +1,6 @@
-preset: psr2
+preset: psr12
 
 enabled:
-  - concat_with_spaces
   - no_extra_consecutive_blank_lines
   - short_array_syntax
   - method_separation
@@ -23,17 +22,14 @@ enabled:
   - phpdoc_types
   - phpdoc_var_without_name
   - blank_line_before_return
-  - self_accessor
   - no_short_bool_cast
   - single_quote
   - space_after_semicolon
   - cast_spaces
   - standardize_not_equals
-  - ternary_spaces
   - trim_array_spaces
   - unalign_double_arrow
   - unalign_equals
   - unary_operators_spaces
   - unneeded_control_parentheses
   - no_unused_imports
-  - no_whitespace_in_blank_line

@@ -6,6 +6,7 @@
  * Date: 2020/1/20
  * Time: 9:17
  */
+
 namespace App\Repositories\Eloquent;
 
 class AdminUserRepository extends Repository

@@ -6,6 +6,7 @@
  * Date: 2018/8/21
  * Time: 16:41
  */
+
 namespace App\Services\BaseService;
 
 use App\Services\Service;
@@ -15,62 +16,62 @@ use Illuminate\Support\Facades\Redis;
 
 class RedisService extends Service
 {
-    const AFTER = 'after';
-    const BEFORE = 'before';
+    public const AFTER = 'after';
+    public const BEFORE = 'before';
 
     /**
      * Options
      */
-    const OPT_SERIALIZER = 1;
-    const OPT_PREFIX = 2;
-    const OPT_READ_TIMEOUT = 3;
-    const OPT_SCAN = 4;
-    const OPT_SLAVE_FAILOVER = 5;
+    public const OPT_SERIALIZER = 1;
+    public const OPT_PREFIX = 2;
+    public const OPT_READ_TIMEOUT = 3;
+    public const OPT_SCAN = 4;
+    public const OPT_SLAVE_FAILOVER = 5;
 
     /**
      * Cluster options
      */
-    const FAILOVER_NONE = 0;
-    const FAILOVER_ERROR = 1;
-    const FAILOVER_DISTRIBUTE = 2;
+    public const FAILOVER_NONE = 0;
+    public const FAILOVER_ERROR = 1;
+    public const FAILOVER_DISTRIBUTE = 2;
 
     /**
      * SCAN options
      */
-    const SCAN_NORETRY = 0;
-    const SCAN_RETRY = 1;
+    public const SCAN_NORETRY = 0;
+    public const SCAN_RETRY = 1;
 
     /**
      * Serializers
      */
-    const SERIALIZER_NONE = 0;
-    const SERIALIZER_PHP = 1;
-    const SERIALIZER_IGBINARY = 2;
-    const SERIALIZER_MSGPACK = 3;
-    const SERIALIZER_JSON = 4;
+    public const SERIALIZER_NONE = 0;
+    public const SERIALIZER_PHP = 1;
+    public const SERIALIZER_IGBINARY = 2;
+    public const SERIALIZER_MSGPACK = 3;
+    public const SERIALIZER_JSON = 4;
 
     /**
      * Multi
      */
-    const ATOMIC = 0;
-    const MULTI = 1;
-    const PIPELINE = 2;
+    public const ATOMIC = 0;
+    public const MULTI = 1;
+    public const PIPELINE = 2;
 
     /**
      * Type
      */
-    const REDIS_NOT_FOUND = 0;
-    const REDIS_STRING = 1;
-    const REDIS_SET = 2;
-    const REDIS_LIST = 3;
-    const REDIS_ZSET = 4;
-    const REDIS_HASH = 5;
+    public const REDIS_NOT_FOUND = 0;
+    public const REDIS_STRING = 1;
+    public const REDIS_SET = 2;
+    public const REDIS_LIST = 3;
+    public const REDIS_ZSET = 4;
+    public const REDIS_HASH = 5;
 
     //永久生效的ttl值
-    const TTL_NO_EXPIRE = -1;
+    public const TTL_NO_EXPIRE = -1;
 
-    const PINF = '+inf';    // 正无穷大
-    const NINF = '-inf';    // 负无穷大
+    public const PINF = '+inf';    // 正无穷大
+    public const NINF = '-inf';    // 负无穷大
 
     private $redis;
 

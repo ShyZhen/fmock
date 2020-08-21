@@ -6,6 +6,7 @@
  * Date: 2019/4/23
  * Time: 19:48
  */
+
 namespace App\Services\OAuthService;
 
 use App\Models\User;

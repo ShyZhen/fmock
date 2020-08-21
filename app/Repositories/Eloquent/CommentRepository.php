@@ -6,6 +6,7 @@
  * Date: 2018/12/03
  * Time: 15:01
  */
+
 namespace App\Repositories\Eloquent;
 
 class CommentRepository extends Repository

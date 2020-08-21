@@ -6,6 +6,7 @@
  * Date: 2018/8/21
  * Time: 12:34
  */
+
 namespace App\Services;
 
 use Illuminate\Http\Response;

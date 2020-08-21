@@ -4,6 +4,7 @@
  * http://litblc.com
  * User: z00455118
  */
+
 namespace App\Repositories\Eloquent;
 
 use Illuminate\Support\Facades\Auth;

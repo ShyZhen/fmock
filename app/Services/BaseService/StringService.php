@@ -9,18 +9,19 @@
  * Date: 2020/5/13
  * Time: 14:13
  */
+
 namespace App\Services\BaseService;
 
 use App\Services\Service;
 
 class StringService extends Service
 {
-    const debug = 1;
+    public const debug = 1;
 
     /**
      * 毫秒内自增数点的位数
      */
-    const sequenceBits = 10;
+    public const sequenceBits = 10;
 
     private static $sequence = 0;
     private static $sequenceMask = 1023;

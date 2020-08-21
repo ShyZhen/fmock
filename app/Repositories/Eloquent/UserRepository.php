@@ -6,6 +6,7 @@
  * Date: 2018/8/23
  * Time: 14:17
  */
+
 namespace App\Repositories\Eloquent;
 
 use Illuminate\Support\Facades\Auth;
