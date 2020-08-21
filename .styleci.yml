@@ -22,7 +22,6 @@ enabled:
   - phpdoc_types
   - phpdoc_var_without_name
   - blank_line_before_return
-  - self_accessor
   - no_short_bool_cast
   - single_quote
   - space_after_semicolon
