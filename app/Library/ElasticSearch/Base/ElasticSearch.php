@@ -6,6 +6,7 @@
  * Date: 2019/11/21
  * Time: 16:41
  */
+
 namespace App\Library\ElasticSearch\Base;
 
 use Elasticsearch\ClientBuilder;

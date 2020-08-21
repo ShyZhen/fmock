@@ -5,6 +5,7 @@
  * Date: 2020/1/20
  * Time: 9:11
  */
+
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
@@ -55,7 +56,8 @@ class UserController extends AdminBaseController
                 [
                     'code' => self::ERROR_CODE,
                     'message' => $validator->errors()->first(),
-                ]);
+                ]
+            );
         } else {
             return $this->userRepository->update(['closure' => 'yes'], $request->get('uuid'), 'uuid');
         }

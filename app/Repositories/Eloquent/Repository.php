@@ -6,6 +6,7 @@
  * Date: 2018/8/25
  * Time: 14:51
  */
+
 namespace App\Repositories\Eloquent;
 
 use Illuminate\Container\Container;

@@ -8,6 +8,7 @@
  * Date: 2019/5/6
  * Time: 20:39
  */
+
 namespace App\Services\BaseService;
 
 use Qiniu\Auth;

@@ -4,6 +4,7 @@
  * http://litblc.com
  * User: z00455118
  */
+
 namespace App\Repositories\Eloquent;
 
 class AnswersFollowRepository extends Repository

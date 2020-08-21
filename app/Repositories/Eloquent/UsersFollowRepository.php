@@ -4,6 +4,7 @@
  * http://litblc.com
  * User: z00455118
  */
+
 namespace App\Repositories\Eloquent;
 
 class UsersFollowRepository extends Repository
@@ -127,7 +128,8 @@ class UsersFollowRepository extends Repository
     public function getSomeoneFansByIdArr($currId, $userFollowsIdArr)
     {
         return $this->model::where(
-            'master_user_id', $currId
+            'master_user_id',
+            $currId
         )->whereIn('following_user_id', $userFollowsIdArr)->get();
     }
 
@@ -145,7 +147,8 @@ class UsersFollowRepository extends Repository
     public function getSomeoneFollowsByIdArr($currId, $userFansIdArr)
     {
         return $this->model::where(
-            'following_user_id', $currId
+            'following_user_id',
+            $currId
         )->whereIn('master_user_id', $userFansIdArr)->get();
     }
 }

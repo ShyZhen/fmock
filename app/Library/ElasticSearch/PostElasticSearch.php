@@ -5,6 +5,7 @@
  * Date: 2019/12/2
  * Time: 11:25
  */
+
 namespace App\Library\ElasticSearch;
 
 use App\Library\ElasticSearch\Base\ElasticSearch;

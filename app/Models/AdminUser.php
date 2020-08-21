@@ -7,6 +7,7 @@
  * Date: 2018/08/21
  * Time: 16:50
  */
+
 namespace App\Models;
 
 use Laravel\Passport\HasApiTokens;
@@ -15,7 +16,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class AdminUser extends Authenticatable
 {
-    use Notifiable, HasApiTokens;
+    use Notifiable;
+    use HasApiTokens;
 
     protected $table = 'admin_users';
 
