@@ -93,6 +93,7 @@ class OAuthController extends Controller
             );
         }
 
+
         return $response;
     }
 }
