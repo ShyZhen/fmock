@@ -8,6 +8,7 @@
  * Date: 2019/05/08
  * Time: 19:50
  */
+
 namespace App\Repositories\Eloquent;
 
 class UserUploadImageRepository extends Repository

@@ -6,6 +6,7 @@
  * Date: Response::HTTP_CREATED8/8/25
  * Time: 23:25
  */
+
 namespace App\Services;
 
 use Carbon\Carbon;
@@ -37,7 +38,6 @@ class AnswerService extends Service
         UserRepository $userRepository,
         PostRepository $postRepository,
         AnswerRepository $answerRepository
-
     ) {
         $this->redisService = $redisService;
         $this->userRepository = $userRepository;

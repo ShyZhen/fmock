@@ -9,6 +9,7 @@
  * Date: 2019/05/08
  * Time: 19:50
  */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;

@@ -8,6 +8,7 @@
  * Date: 2018/8/21
  * Time: 12:33
  */
+
 namespace App\Services;
 
 use Illuminate\Http\Request;

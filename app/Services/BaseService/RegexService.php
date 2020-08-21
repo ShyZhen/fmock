@@ -8,6 +8,7 @@
  * Date: 2019/4/20
  * Time: 20:39
  */
+
 namespace App\Services\BaseService;
 
 use App\Services\Service;

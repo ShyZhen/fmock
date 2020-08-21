@@ -6,6 +6,7 @@
  * Date: 2019/11/15
  * Time: 14:46
  */
+
 namespace App\Library\ModelToRedis;
 
 use Illuminate\Support\Facades\DB;
@@ -16,29 +17,29 @@ abstract class ModelToRedis extends Model
 {
     use ModelDal;
 
-    const TAG_FIELDS_VERSION = 'fieldsVer';
+    public const TAG_FIELDS_VERSION = 'fieldsVer';
 
-    const TAG_DATA = 'data';
+    public const TAG_DATA = 'data';
 
-    const TAG_VERSION_TABLE = 'VerT';
-    const TAG_VERSION_SHARD = 'VerS';
-    const TAG_VERSION_ALL_SHARDS = 'VerAS';
-    const TAG_VERSION_LINE = 'VerL';
+    public const TAG_VERSION_TABLE = 'VerT';
+    public const TAG_VERSION_SHARD = 'VerS';
+    public const TAG_VERSION_ALL_SHARDS = 'VerAS';
+    public const TAG_VERSION_LINE = 'VerL';
 
-    const TAG_LINE_GET_BY_ID = 'id';
-    const TAG_LINE_GET_BY_UK = 'uk';
+    public const TAG_LINE_GET_BY_ID = 'id';
+    public const TAG_LINE_GET_BY_UK = 'uk';
 
     //表级缓存: 只要表中数据有任意变化，该表的所有表级缓存数据都将失效
-    const CACHE_LEVEL_TABLE = 1;
+    public const CACHE_LEVEL_TABLE = 1;
     //分区级缓存: 意味着修改分区A中的数据，不影响分区B中的数据缓存;
     //这里的分区只是根据某个键进行逻辑上的划分，如用户账单表，最佳的缓存效果是用户A的账单变化不应当影响用户B的账单缓存数据，如此可以将用户ID作为缓存的分区键
-    const CACHE_LEVEL_SHARD = 2;
+    public const CACHE_LEVEL_SHARD = 2;
     //行级缓存: 最精确的缓存管理模式，只对数据库的主键和唯一键查询结果进行行级缓存
-    const CACHE_LEVEL_LINE = 3;
+    public const CACHE_LEVEL_LINE = 3;
 
-    const MAX_VERSION = 999999999;
-    const MIN_VERSION = 1;
-    const INVALID_VERSION = -1;
+    public const MAX_VERSION = 999999999;
+    public const MIN_VERSION = 1;
+    public const INVALID_VERSION = -1;
 
     private $mLineCacheExpireTime = 3600;
     private $mLineCacheVerExpireTime = 86400;

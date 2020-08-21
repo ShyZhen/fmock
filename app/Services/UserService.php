@@ -4,6 +4,7 @@
  * http://litblc.com
  * User: huaixiu.zhen
  */
+
 namespace App\Services;
 
 use Illuminate\Http\Response;

@@ -6,6 +6,7 @@
  * Date: 2018/8/25
  * Time: 15:01
  */
+
 namespace App\Repositories\Eloquent;
 
 class VideoCollectionMiddleRepository extends Repository

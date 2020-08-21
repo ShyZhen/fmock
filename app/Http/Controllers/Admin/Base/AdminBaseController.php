@@ -5,14 +5,15 @@
  * Date: 2020/1/20
  * Time: 15:06
  */
+
 namespace App\Http\Controllers\Admin\Base;
 
 use App\Http\Controllers\Controller;
 
 class AdminBaseController extends Controller
 {
-    const SUCCESS_CODE = 0;
-    const ERROR_CODE = -1;
+    public const SUCCESS_CODE = 0;
+    public const ERROR_CODE = -1;
 
     /**
      * 处理post参数 过滤csrf_token以及空值

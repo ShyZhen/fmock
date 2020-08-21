@@ -7,6 +7,7 @@
  * User: z00455118
  * Date: 2018/9/7
  */
+
 namespace App\Services\BaseService;
 
 use App\Services\Service;
