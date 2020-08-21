@@ -27,7 +27,6 @@ enabled:
   - space_after_semicolon
   - cast_spaces
   - standardize_not_equals
-  - ternary_spaces
   - trim_array_spaces
   - unalign_double_arrow
   - unalign_equals
