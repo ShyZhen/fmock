@@ -85,7 +85,9 @@ class FileService extends Service
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
             if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0666, true);
+                $old = umask(0);
+                mkdir($storagePath, 0755, true);
+                umask($old);
             }
             $fullName = $storagePath . $imageName;
 
@@ -137,7 +139,9 @@ class FileService extends Service
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
             if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0666, true);
+                $old = umask(0);
+                mkdir($storagePath, 0755, true);
+                umask($old);
             }
             $fullName = $storagePath . $imageName;
 
@@ -192,7 +196,9 @@ class FileService extends Service
             $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
             if (!file_exists($storagePath)) {
-                mkdir($storagePath, 0666, true);
+                $old = umask(0);
+                mkdir($storagePath, 0755, true);
+                umask($old);
             }
 
             $fullName = $storagePath . $videoName;
@@ -495,7 +501,9 @@ class FileService extends Service
         $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
 
         if (!file_exists($storagePath)) {
-            mkdir($storagePath, 0666, true);
+            $old = umask(0);
+            mkdir($storagePath, 0755, true);
+            umask($old);
         }
         $fullName = $storagePath . $imageName;
 
