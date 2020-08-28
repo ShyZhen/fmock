@@ -456,7 +456,7 @@ class FileService extends Service
         $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         if ($code == 200) {
-            $imgBase64Code = "data:image/jpeg;base64," . base64_encode($dataImg);
+            $imgBase64Code = 'data:image/jpeg;base64,' . base64_encode($dataImg);
         }
         $img_content = $imgBase64Code;
 
