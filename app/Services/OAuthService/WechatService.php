@@ -12,6 +12,7 @@ namespace App\Services\OAuthService;
 use App\Models\User;
 use GuzzleHttp\Client;
 use App\Services\Service;
+use App\Services\FileService;
 use Illuminate\Http\Response;
 
 class WechatService extends Service
@@ -77,10 +78,11 @@ class WechatService extends Service
      * http://litblc.com
      *
      * @param $code
+     * @param $userInfo
      *
      * @return \Illuminate\Http\JsonResponse|string
      */
-    public static function wechatLogin($code)
+    public static function wechatLogin($code, $userInfo)
     {
         $openIdArr = self::getOpenIdByCode($code);
 
@@ -109,10 +111,11 @@ class WechatService extends Service
                 // 创建用户
                 $uuid = self::uuid('user-');
                 $user = User::create([
-                    'name' => self::uuid('wechat-'),
+                    'name' => self::uuid($userInfo['nickName'] . '-'),
                     'password' => bcrypt(''),
                     'uuid' => $uuid,
                     'wechat_openid' => $openIdArr['openid'],
+                    'avatar' => FileService::saveOriginAvatar($uuid, $userInfo['avatarUrl']),
                 ]);
                 $token = $user->createToken(env('APP_NAME'))->accessToken;
             }

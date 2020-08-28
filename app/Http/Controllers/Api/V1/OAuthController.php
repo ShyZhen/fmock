@@ -80,6 +80,7 @@ class OAuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'code' => 'required',
+            'user' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -89,7 +90,8 @@ class OAuthController extends Controller
             );
         } else {
             $response = WechatService::wechatLogin(
-                $request->get('code')
+                $request->get('code'),
+                $request->get('user')
             );
         }
 

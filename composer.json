@@ -19,7 +19,8 @@
         "laravel/tinker": "^2.0",
         "predis/predis": "^1.1",
         "qiniu/php-sdk": "^7.2",
-        "ramsey/uuid": "^3.8"
+        "ramsey/uuid": "^3.8",
+        "ext-curl": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
