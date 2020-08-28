@@ -427,6 +427,89 @@ class FileService extends Service
     }
 
     /**
+     * 保存远程头像到本地（首次第三方注册的时候需要）
+     * file_get_content 和 file_put_content的太慢了，不推荐使用
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $uuid  // 用户uuid（生成图片文件名字使用）
+     * @param $uri   // 远程图片地址uri
+     *
+     * @return bool|mixed
+     */
+    public static function saveOriginAvatar($uuid, $uri)
+    {
+        $header = [
+            'User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:45.0) Gecko/20100101 Firefox/45.0',
+            'Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding: gzip, deflate',
+        ];
+
+        $imgBase64Code = '';
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $uri);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        $dataImg = curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        if ($code == 200) {
+            $imgBase64Code = "data:image/jpeg;base64," . base64_encode($dataImg);
+        }
+        $img_content = $imgBase64Code;
+
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $img_content, $result)) {
+            $type = $result[2];
+            $avatarPathArr = self::initAvatarPath($uuid, $type);
+
+            if (file_put_contents(
+                $avatarPathArr['save_file'],
+                base64_decode(str_replace($result[1], '', $img_content))
+            )) {
+                return $avatarPathArr['avatar'];
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 设置保存远程头像的保存地址
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $uuid  // 用户uuid
+     * @param $ext   // 图片后缀
+     *
+     * @return array
+     */
+    private static function initAvatarPath($uuid, $ext)
+    {
+        $tmpPath = 'avatar/' . date('Y/m/');                                           // 与本地保存头像路径一致
+        $filePath = '/app/public/' . $tmpPath;                                         // 定义文件的存储路径
+
+        $imageName = $uuid . '.' . $ext;                                         // 头像名与用户uuid一致
+        $storagePath = storage_path($filePath);                                        // 生成系统绝对路径
+
+        if (!file_exists($storagePath)) {
+            mkdir($storagePath, 0666, true);
+        }
+        $fullName = $storagePath . $imageName;
+
+        // 刷新本地缓存
+        $flushCdn = '?v=' . time();
+        $imageUrl = url('/storage/' . $tmpPath . $imageName . $flushCdn);
+
+        return [
+            'save_file' => $fullName,
+            'avatar' => $imageUrl,
+        ];
+    }
+
+    /**
      * 图片上传记录
      *
      * @Author huaixiu.zhen
