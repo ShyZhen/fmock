@@ -86,7 +86,7 @@ class FileService extends Service
 
             if (!file_exists($storagePath)) {
                 $old = umask(0);
-                mkdir($storagePath, 0755, true);
+                mkdir($storagePath, 0766, true);
                 umask($old);
             }
             $fullName = $storagePath . $imageName;
@@ -140,7 +140,7 @@ class FileService extends Service
 
             if (!file_exists($storagePath)) {
                 $old = umask(0);
-                mkdir($storagePath, 0755, true);
+                mkdir($storagePath, 0766, true);
                 umask($old);
             }
             $fullName = $storagePath . $imageName;
@@ -197,7 +197,7 @@ class FileService extends Service
 
             if (!file_exists($storagePath)) {
                 $old = umask(0);
-                mkdir($storagePath, 0755, true);
+                mkdir($storagePath, 0766, true);
                 umask($old);
             }
 
@@ -502,7 +502,7 @@ class FileService extends Service
 
         if (!file_exists($storagePath)) {
             $old = umask(0);
-            mkdir($storagePath, 0755, true);
+            mkdir($storagePath, 0766, true);
             umask($old);
         }
         $fullName = $storagePath . $imageName;
