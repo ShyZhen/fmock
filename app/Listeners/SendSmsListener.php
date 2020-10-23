@@ -3,10 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\SendSms;
-use App\Services\BaseService\EmailService;
-use Illuminate\Http\Response;
 use App\Services\BaseService\SmsService;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Services\BaseService\EmailService;
 use App\Services\BaseService\RedisService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -31,8 +29,9 @@ class SendSmsListener implements ShouldQueue
 
     /**
      * Create the event listener.
-     * @param RedisService   $redisService
-     * @param EmailService   $emailService
+     *
+     * @param RedisService $redisService
+     * @param EmailService $emailService
      *
      * @return void
      */
@@ -43,7 +42,6 @@ class SendSmsListener implements ShouldQueue
         $this->emailService = $emailService;
     }
 
-
     /**
      * Handle the event.
      *
@@ -51,8 +49,10 @@ class SendSmsListener implements ShouldQueue
      * https://www.litblc.com
      *
      * @param SendSms $event
-     * @return \Illuminate\Http\JsonResponse
+     *
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function handle(SendSms $event)
     {
@@ -72,14 +72,14 @@ class SendSmsListener implements ShouldQueue
         switch ($event->type) {
             case 'email':
                 if ($this->sendCodeByEmail($event->code, $event->account, $emailSubject)) {
-                    $this->redisService->setRedis('user:'.$event->action.':account:' . $event->account, $event->code, 'EX', 600);
+                    $this->redisService->setRedis('user:' . $event->action . ':account:' . $event->account, $event->code, 'EX', 600);
                 }
                 break;
 
             case 'mobile':
                 $res = $this->sendCodeBySms($event->code, $event->account);
                 if (is_array($res) && $res['Code'] === 'OK') {
-                    $this->redisService->setRedis('user:'.$event->action.':account:' . $event->account, $event->code, 'EX', 600);
+                    $this->redisService->setRedis('user:' . $event->action . ':account:' . $event->account, $event->code, 'EX', 600);
                 }
                 break;
         }
