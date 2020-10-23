@@ -46,7 +46,7 @@ class Publish
      *
      * @return array
      */
-    public function send($exchange, $queueName, string $msgJson, $type = 'direct')
+    public function send($queueName, string $msgJson, $type = 'direct', $exchange = 'fmock-exchange')
     {
         try {
             // 声明交换机

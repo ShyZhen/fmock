@@ -30,6 +30,7 @@ FMock墨客社区。
  - Nodejs
  - ElasticSearch = 7.4.2
  - ElasticSearch-analysis-ik 7.4.2
+ - RabbitMQ
 
 
 ## Installation
@@ -49,7 +50,7 @@ FMock墨客社区。
  #### 3. 权限设置
  - `chmod -R 766 storage/ && chmod -R 766 bootstrap/cache/` 根据自己实际用户组情况设置777或者766
  
- #### 4.异步、消息队列开启
+ #### 4.异步、消息队列开启(目前仅有发送短信、邮件封装了redis队列，QueueStart=true时必须执行)
  - ~~使用redis做队列：`php artisan queue:work redis --queue=FMockTestQueue,sendSmsQueue --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
 
  
@@ -65,6 +66,23 @@ FMock墨客社区。
  - 创建Observers，例如`app/Observers/PostObserver.php`
  - 在`app/Providers/ObserversServiceProvider.php`中添加观察者模型,例如`Post::observe(PostObserver::class);`
 
+
+## RabbitMQ Quick Use
+#### Code Info
+ - 函数类库在`\app\Library\RabbitMQ`下,分别为生成类、消费类、消费回调业务函数
+#### Consume Bash Start
+ - 启动消费脚本前要确定队列、交换机等存在，可以事先调用一次send：
+ ```php
+    $rabbitMQ = new Publish();
+    $params = ['key1' => 'value1', 'key2' => 'value2', 'action' => 'sms'];
+    print_r($rabbitMQ->send(env('RabbitMQQueueName'), json_encode($params)));
+```
+ - 启动消费脚本命令：
+ ```php
+    php artisan rabbitmq:start
+```
+#### Consume Callback
+ - 启动消费脚本之后，所有的回调逻辑处理函数全部在`app\Library\RabbitMQ\RabbitMQHandle.php`文件中，你只需要更新此处即可
 
 ## API Info
 

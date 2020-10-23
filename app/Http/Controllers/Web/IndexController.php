@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Web;
 use App\Events\Test;
 use App\Models\User;
 use App\Events\SendSms;
+use App\Library\RabbitMQ\Publish;
 use App\Notifications\TestNotifications;
 use App\Repositories\Eloquent\UserRepository;
 
@@ -39,6 +40,19 @@ class IndexController
         print_r(event(new SendSms('{"type":"email","code":"4356","account":"835433343@qq.com","action":"register"}')));
 
         return '<br>事件测试';
+    }
+
+    /**
+     * 测试rabbitmq
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     */
+    public function rabbitmqPublish()
+    {
+        $rabbitMQ = new Publish();
+        $params = ['key1' => 'value1', 'key2' => 'value2', 'action' => 'sms'];
+        print_r($rabbitMQ->send(env('RabbitMQQueueName'), json_encode($params)));
     }
 
     /**

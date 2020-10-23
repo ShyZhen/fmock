@@ -37,28 +37,36 @@ class Consume
      * https://www.litblc.com
      *
      * @param $queueName
+     * @param $callback
      *
      * @throws \ErrorException
      */
-    public function consume($queueName)
+    public function consume($queueName, array $callback)
     {
         $this->channel->queue_declare($queueName, true, true, false, false);
 
         // no_ask参数规定必须消费确认
-        $this->channel->basic_consume($queueName, '', false, false, false, false, [$this, 'mpCallback']);
+        $this->channel->basic_consume($queueName, '', false, false, false, false, $callback);
 
         while (count($this->channel->callbacks)) {
             $this->channel->wait();
         }
     }
 
+    /**
+     * 回调方法移植到 RabbitMQHandle
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $msg
+     */
     public function mpCallback($msg)
     {
-        echo 'callbackkkk：', $msg->body, "\n";
+        echo 'callback：', $msg->body, "\n";
 
         // 消费确认，保证不会丢失数据
         $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
-        sleep(5);
     }
 
     /**

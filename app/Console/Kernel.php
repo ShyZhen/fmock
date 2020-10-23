@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         //
         \App\Console\Commands\EsInit::class,
         \App\Console\Commands\FmockInstall::class,
+        \App\Console\Commands\RabbitMQ::class,
     ];
 
     /**
