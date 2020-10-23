@@ -19,6 +19,7 @@ Route::namespace('Web')->group(function () {
     Route::get('index', 'IndexController@index');
 
     Route::get('event', 'IndexController@event');
+    Route::get('rabbitmq', 'IndexController@rabbitmqPublish');
 
     Route::get('notification', 'IndexController@notification');
     Route::get('getNotification', 'IndexController@getNotification');
