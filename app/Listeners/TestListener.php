@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * 使用队列处理事件必须继承 ShouldQueue
+ * 启动命令：php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3
+ */
+
 namespace App\Listeners;
 
 use App\Events\Test;
@@ -19,7 +24,7 @@ class TestListener implements ShouldQueue
      *
      * @var string|null
      */
-    public $queue = 'FMock';
+    public $queue = 'FMockTestQueue';
 
     /**
      * Create the event listener.
@@ -40,7 +45,7 @@ class TestListener implements ShouldQueue
      */
     public function handle(Test $event)
     {
-        //
+        // 测试更新该用户的头像
         $event->user->avatar = 'test' . rand();
         $event->user->save();
     }

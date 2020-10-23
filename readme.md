@@ -48,7 +48,9 @@ FMock墨客社区。
  
  #### 3. 权限设置
  - `chmod -R 766 storage/ && chmod -R 766 bootstrap/cache/` 根据自己实际用户组情况设置777或者766
- - ~~`php artisan queue:work redis --queue=FMock --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
+ 
+ #### 4.异步、消息队列开启
+ - ~~使用redis做队列：`php artisan queue:work redis --queue=FMockTestQueue,sendSmsQueue --daemon --quiet --delay=3 --sleep=3 --tries=3`~~
 
  
 ## ES Quick Use
