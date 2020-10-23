@@ -25,9 +25,14 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\PruneOldTokens',
         ],
 
-        // 测试事件
+        // 测试事件（使用队列）
         'App\Events\Test' => [
             'App\Listeners\TestListener',
+        ],
+
+        // 发送短信、邮件事件（异步队列）
+        'App\Events\SendSms' => [
+            'App\Listeners\SendSmsListener',
         ],
     ];
 

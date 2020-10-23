@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Events\Test;
 use App\Models\User;
+use App\Events\SendSms;
 use App\Notifications\TestNotifications;
 use App\Repositories\Eloquent\UserRepository;
 
@@ -33,10 +34,11 @@ class IndexController
      */
     public function event(UserRepository $userRepository)
     {
-        $user = $userRepository->find(14);
-        event(new Test($user));
+        $user = $userRepository->find(2);
+//        event(new Test($user));
+        print_r(event(new SendSms('{"type":"email","code":"4356","account":"835433343@qq.com","action":"register"}')));
 
-        return '事件测试';
+        return '<br>事件测试';
     }
 
     /**

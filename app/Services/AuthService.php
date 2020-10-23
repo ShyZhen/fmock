@@ -9,6 +9,7 @@
 
 namespace App\Services;
 
+use App\Events\SendSms;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\SmsService;
@@ -73,46 +74,25 @@ class AuthService extends Service
         } else {
             // 生成验证码
             $code = self::code();
+            $action = 'register';
 
-            switch ($type) {
-                case 'email':
-                    if ($this->sendCodeByEmail($code, $account, __('app.fmock_register_service'))) {
-                        $this->redisService->setRedis('user:register:account:' . $account, $code, 'EX', 600);
+            if (env('QueueStart')) {
+                $params = [
+                    'type' => $type,
+                    'code' => $code,
+                    'account' => $account,
+                    'action' => $action,
+                ];
+                // 使用异步，则没有错误消息提示
+                event(new SendSms(json_encode($params)));
 
-                        return response()->json(
-                            ['message' => __('app.send_email') . __('app.success')],
-                            Response::HTTP_OK
-                        );
-                    } else {
-                        return response()->json(
-                            ['message' => __('app.try_again')],
-                            Response::HTTP_INTERNAL_SERVER_ERROR
-                        );
-                    }
-                    break;
-
-                case 'mobile':
-                    $res = $this->sendCodeBySms($code, $account);
-                    if (is_array($res) && $res['Code'] === 'OK') {
-                        $this->redisService->setRedis('user:register:account:' . $account, $code, 'EX', 600);
-
-                        return response()->json(
-                            ['message' => __('app.send_mobile') . __('app.success')],
-                            Response::HTTP_OK
-                        );
-                    } else {
-                        return response()->json(
-                            ['message' => is_array($res) ? $res['Message'] : $res],
-                            Response::HTTP_INTERNAL_SERVER_ERROR
-                        );
-                    }
-                    break;
+                return response()->json(
+                    ['message' => __('app.send_'.$type) . __('app.success')],
+                    Response::HTTP_OK
+                );
+            } else {
+                return $this->handleSms($action, $type, $code, $account);
             }
-
-            return response()->json(
-                ['message' => __('app.try_again')],
-                Response::HTTP_INTERNAL_SERVER_ERROR
-            );
         }
     }
 
@@ -146,42 +126,25 @@ class AuthService extends Service
             );
         } else {
             $code = self::code();
+            $action = 'password';
 
-            switch ($type) {
+            if (env('QueueStart')) {
+                $params = [
+                    'type' => $type,
+                    'code' => $code,
+                    'account' => $account,
+                    'action' => $action,
+                ];
+                // 使用异步，则没有错误消息提示
+                event(new SendSms(json_encode($params)));
 
-                case 'email':
-                    if ($this->sendCodeByEmail($code, $account, __('app.fmock_reset_pwd_service'))) {
-                        $this->redisService->setRedis('user:password:account:' . $account, $code, 'EX', 600);
-
-                        return response()->json(
-                            ['message' => __('app.send_email') . __('app.success')],
-                            Response::HTTP_OK
-                        );
-                    }
-                    break;
-
-                case 'mobile':
-                    $res = $this->sendCodeBySms($code, $account);
-                    if (is_array($res) && $res['Code'] === 'OK') {
-                        $this->redisService->setRedis('user:password:account:' . $account, $code, 'EX', 600);
-
-                        return response()->json(
-                            ['message' => __('app.send_mobile') . __('app.success')],
-                            Response::HTTP_OK
-                        );
-                    } else {
-                        return response()->json(
-                            ['message' => is_array($res) ? $res['Message'] : $res],
-                            Response::HTTP_INTERNAL_SERVER_ERROR
-                        );
-                    }
-                    break;
+                return response()->json(
+                    ['message' => __('app.send_'.$type) . __('app.success')],
+                    Response::HTTP_OK
+                );
+            } else {
+                return $this->handleSms($action, $type, $code, $account);
             }
-
-            return response()->json(
-                ['message' => __('app.try_again')],
-                Response::HTTP_INTERNAL_SERVER_ERROR
-            );
         }
     }
 
@@ -594,6 +557,75 @@ class AuthService extends Service
 
             return false;
         }
+    }
+
+    /**
+     * 发邮件、发短信（注册|改密）
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $action
+     * @param $type
+     * @param $code
+     * @param $account
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \AlibabaCloud\Client\Exception\ClientException
+     */
+    private function handleSms($action, $type, $code, $account)
+    {
+        switch ($action) {
+            case 'register':
+                $emailSubject = __('app.fmock_register_service');
+                break;
+            case 'password':
+                $emailSubject = __('app.fmock_reset_pwd_service');
+                break;
+            default:
+                $emailSubject = '';
+                break;
+        }
+
+        switch ($type) {
+            case 'email':
+                if ($this->sendCodeByEmail($code, $account, $emailSubject)) {
+                    $this->redisService->setRedis('user:'.$action.':account:' . $account, $code, 'EX', 600);
+
+                    return response()->json(
+                        ['message' => __('app.send_email') . __('app.success')],
+                        Response::HTTP_OK
+                    );
+                } else {
+                    return response()->json(
+                        ['message' => __('app.try_again')],
+                        Response::HTTP_INTERNAL_SERVER_ERROR
+                    );
+                }
+                break;
+
+            case 'mobile':
+                $res = $this->sendCodeBySms($code, $account);
+                if (is_array($res) && $res['Code'] === 'OK') {
+                    $this->redisService->setRedis('user:'.$action.':account:' . $account, $code, 'EX', 600);
+
+                    return response()->json(
+                        ['message' => __('app.send_mobile') . __('app.success')],
+                        Response::HTTP_OK
+                    );
+                } else {
+                    return response()->json(
+                        ['message' => is_array($res) ? $res['Message'] : $res],
+                        Response::HTTP_INTERNAL_SERVER_ERROR
+                    );
+                }
+                break;
+        }
+
+        return response()->json(
+            ['message' => __('app.try_again')],
+            Response::HTTP_INTERNAL_SERVER_ERROR
+        );
     }
 
     /**
