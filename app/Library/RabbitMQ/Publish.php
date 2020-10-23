@@ -8,7 +8,6 @@
 
 namespace App\Library\RabbitMQ;
 
-
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
@@ -24,13 +23,15 @@ class Publish
             $this->config = config('queue.connections.rabbitmq.hosts');
 
             $this->mq = new AMQPStreamConnection(
-                $this->config['host'], $this->config['port'], $this->config['user'], $this->config['password']
+                $this->config['host'],
+                $this->config['port'],
+                $this->config['user'],
+                $this->config['password']
             );
         }
 
         $this->channel = $this->mq->channel();
     }
-
 
     /**
      * 发送消息进入队列
@@ -59,7 +60,6 @@ class Publish
 
             $msg = new AMQPMessage($msgJson);
             $this->channel->basic_publish($msg, $exchange, $queueName);
-
         } catch (\Exception $exception) {
             // throw new \Exception($exception->getMessage());
             return $this->error($exception->getMessage());
@@ -73,13 +73,14 @@ class Publish
      * https://www.litblc.com
      *
      * @param array $data
+     *
      * @return array
      */
     public function success($data = [])
     {
         return [
             'code' => 1,
-            'data' => $data
+            'data' => $data,
         ];
     }
 
@@ -88,13 +89,14 @@ class Publish
      * https://www.litblc.com
      *
      * @param string $message
+     *
      * @return array
      */
     public function error($message = '')
     {
         return [
             'code' => 0,
-            'message' => $message
+            'message' => $message,
         ];
     }
 

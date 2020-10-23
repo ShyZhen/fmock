@@ -87,7 +87,7 @@ class AuthService extends Service
                 event(new SendSms(json_encode($params)));
 
                 return response()->json(
-                    ['message' => __('app.send_'.$type) . __('app.success')],
+                    ['message' => __('app.send_' . $type) . __('app.success')],
                     Response::HTTP_OK
                 );
             } else {
@@ -139,7 +139,7 @@ class AuthService extends Service
                 event(new SendSms(json_encode($params)));
 
                 return response()->json(
-                    ['message' => __('app.send_'.$type) . __('app.success')],
+                    ['message' => __('app.send_' . $type) . __('app.success')],
                     Response::HTTP_OK
                 );
             } else {
@@ -570,8 +570,9 @@ class AuthService extends Service
      * @param $code
      * @param $account
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     private function handleSms($action, $type, $code, $account)
     {
@@ -590,7 +591,7 @@ class AuthService extends Service
         switch ($type) {
             case 'email':
                 if ($this->sendCodeByEmail($code, $account, $emailSubject)) {
-                    $this->redisService->setRedis('user:'.$action.':account:' . $account, $code, 'EX', 600);
+                    $this->redisService->setRedis('user:' . $action . ':account:' . $account, $code, 'EX', 600);
 
                     return response()->json(
                         ['message' => __('app.send_email') . __('app.success')],
@@ -607,7 +608,7 @@ class AuthService extends Service
             case 'mobile':
                 $res = $this->sendCodeBySms($code, $account);
                 if (is_array($res) && $res['Code'] === 'OK') {
-                    $this->redisService->setRedis('user:'.$action.':account:' . $account, $code, 'EX', 600);
+                    $this->redisService->setRedis('user:' . $action . ':account:' . $account, $code, 'EX', 600);
 
                     return response()->json(
                         ['message' => __('app.send_mobile') . __('app.success')],

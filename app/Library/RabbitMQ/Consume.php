@@ -8,8 +8,6 @@
 
 namespace App\Library\RabbitMQ;
 
-
-use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class Consume
@@ -24,7 +22,10 @@ class Consume
             $this->config = config('queue.connections.rabbitmq.hosts');
 
             $this->mq = new AMQPStreamConnection(
-                $this->config['host'], $this->config['port'], $this->config['user'], $this->config['password']
+                $this->config['host'],
+                $this->config['port'],
+                $this->config['user'],
+                $this->config['password']
             );
         }
 
@@ -36,6 +37,7 @@ class Consume
      * https://www.litblc.com
      *
      * @param $queueName
+     *
      * @throws \ErrorException
      */
     public function consume($queueName)
@@ -45,14 +47,14 @@ class Consume
         // no_ask参数规定必须消费确认
         $this->channel->basic_consume($queueName, '', false, false, false, false, [$this, 'mpCallback']);
 
-        while(count($this->channel->callbacks)) {
+        while (count($this->channel->callbacks)) {
             $this->channel->wait();
         }
     }
 
     public function mpCallback($msg)
     {
-        echo "callbackkkk：", $msg->body, "\n";
+        echo 'callbackkkk：', $msg->body, "\n";
 
         // 消费确认，保证不会丢失数据
         $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
@@ -64,13 +66,14 @@ class Consume
      * https://www.litblc.com
      *
      * @param array $data
+     *
      * @return array
      */
     public function success($data = [])
     {
         return [
             'code' => 1,
-            'data' => $data
+            'data' => $data,
         ];
     }
 
@@ -79,13 +82,14 @@ class Consume
      * https://www.litblc.com
      *
      * @param string $message
+     *
      * @return array
      */
     public function error($message = '')
     {
         return [
             'code' => 0,
-            'message' => $message
+            'message' => $message,
         ];
     }
 
