@@ -10,9 +10,9 @@
 namespace App\Http\Controllers\Web;
 
 use App\Events\Test;
-use App\Library\RabbitMQ\Publish;
 use App\Models\User;
 use App\Events\SendSms;
+use App\Library\RabbitMQ\Publish;
 use App\Notifications\TestNotifications;
 use App\Repositories\Eloquent\UserRepository;
 

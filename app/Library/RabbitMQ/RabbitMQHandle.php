@@ -8,10 +8,8 @@
 
 namespace App\Library\RabbitMQ;
 
-
 class RabbitMQHandle
 {
-
     public function __construct()
     {
     }
@@ -26,8 +24,7 @@ class RabbitMQHandle
      */
     public function handle($msg)
     {
-        print_r($msg->body."\r\n");
-
+        print_r($msg->body . "\r\n");
 
         // 消费确认，保证不会丢失数据
         $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
