@@ -1,4 +1,4 @@
-<p align="center"><img src="https://www.litblc.com/usr/themes/pinghsu/images/favicon.ico"></p>
+<p align="center"><img src="http://m.fmock.com/static/img/FMOCK-LOGO.png"></p>
 <p align="center">
 	<a href="https://github.styleci.io/repos/145133991">
         <img src="https://github.styleci.io/repos/145133991/shield" alt="StyleCI">
@@ -24,9 +24,13 @@ FMock墨客社区。
 
 
 ## Environment
+ > 必要
  - PHP >= 7.2.5
  - Mysql
  - Redis
+ 
+ > 以下为非必要
+ 
  - Nodejs
  - ElasticSearch = 7.4.2
  - ElasticSearch-analysis-ik 7.4.2
@@ -55,22 +59,22 @@ FMock墨客社区。
 
  
 ## ES Quick Use
-#### Code Info
+ #### Code Info
  - 新建es类并继承抽象类`Base/ElasticSearch`，例如PostElasticSearch
  - 必须实现抽象函数 `createIndex` 和 `getIndexName`，这样就可以完全使用基类中的任意方法（其中createIndex方法仅在es:init中使用）
  - 使用方法参考`Web/TestController@esTest`
-#### ES Init
+ #### ES Init
  - `php artisan es:init`, 该命令将创建文章默认的index,并设置文章默认的mappings
-#### ES observer
+ #### ES observer
  - 需要提前开启env中的ESToObserver
  - 创建Observers，例如`app/Observers/PostObserver.php`
  - 在`app/Providers/ObserversServiceProvider.php`中添加观察者模型,例如`Post::observe(PostObserver::class);`
 
 
 ## RabbitMQ Quick Use
-#### Code Info
+ #### Code Info
  - 函数类库在`\app\Library\RabbitMQ`下,分别为生成类、消费类、消费回调业务函数
-#### Consume Bash Start
+ #### Consume Bash Start
  - 启动消费脚本前要确定队列、交换机等存在，可以事先调用一次send：
  ```php
     $rabbitMQ = new Publish();
@@ -81,7 +85,7 @@ FMock墨客社区。
  ```php
     php artisan rabbitmq:start
 ```
-#### Consume Callback
+ #### Consume Callback
  - 启动消费脚本之后，所有的回调逻辑处理函数全部在`app\Library\RabbitMQ\RabbitMQHandle.php`文件中，你只需要更新此处即可
 
 ## API Info
@@ -102,6 +106,11 @@ FMock墨客社区。
  - 支持粉丝系统，查看用户关注、粉丝列表等操作，支持redis以及关系型数据库两种存储方式，量小推荐使用数据库
  - 支持ElasticSearch，使用Observer自动插入ES数据
  - 支持短视频上传七牛并切片、添加水印等操作（记得更新相关文件上传配置,例如nginx的client_body_temp/client_body_buffer_size 10/client_max_body_size 1024m）
+
+## Other file
+ - 代码分层架构：/tmp/code.jpg
+ - Postman：/tmp/Fmock.postman_collection.json
+ - rp原型：/tmp/fmock.rp
 
 ## API Index
 
