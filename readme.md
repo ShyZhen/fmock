@@ -84,7 +84,7 @@ FMock墨客社区。
  - 启动消费脚本命令：
  ```php
     php artisan rabbitmq:start
-```
+ ```
  #### Consume Callback
  - 启动消费脚本之后，所有的回调逻辑处理函数全部在`app\Library\RabbitMQ\RabbitMQHandle.php`文件中，你只需要更新此处即可
 
