@@ -52,7 +52,7 @@ class IndexController
     {
         $rabbitMQ = new Publish();
         $params = ['key1' => 'value1', 'key2' => 'value2', 'action' => 'sms'];
-        print_r($rabbitMQ->send(env('RabbitMQQueueName'), json_encode($params)));
+        print_r($rabbitMQ->send(env('RABBITMQ_QUEUE'), json_encode($params)));
     }
 
     /**
