@@ -41,6 +41,7 @@ FMock墨客社区。
 
  #### 1.下载代码安装依赖
  - `git clone https://github.com/ShyZhen/fmock.git`
+ - 创建项目数据库
  - `copy .env.example .env` and edit .env
  > 除了基本的APP配置、数据库配置、以及redis缓存配置（前四个代码块），仍需配置Smtp 邮箱服务、Sms短信服务、Github OAuth 第三方登录。
  > 根据自己vhost配置 `APP_URL` `CLIENT_URL` `SERVER_URL` `ADMIN_URL`
@@ -79,7 +80,7 @@ FMock墨客社区。
  ```php
     $rabbitMQ = new Publish();
     $params = ['key1' => 'value1', 'key2' => 'value2', 'action' => 'sms'];
-    print_r($rabbitMQ->send(env('RabbitMQQueueName'), json_encode($params)));
+    print_r($rabbitMQ->send(env('RABBITMQ_QUEUE'), json_encode($params)));
 ```
  - 启动消费脚本命令：
  ```php

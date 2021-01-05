@@ -42,6 +42,6 @@ class RabbitMQ extends Command
     {
         $rabbitMQ = new Consume();
         $rabbitMQHandle = new RabbitMQHandle();
-        $rabbitMQ->consume(env('RabbitMQQueueName'), [$rabbitMQHandle, 'handle']);
+        $rabbitMQ->consume(env('RABBITMQ_QUEUE'), [$rabbitMQHandle, 'handle']);
     }
 }
