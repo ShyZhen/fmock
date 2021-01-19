@@ -33,6 +33,12 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
 
     // 首页文章列表
     Route::get('posts', 'PostController@getAllPosts');
+
+    // 第三方回调
+    Route::prefix('callback')->group(function () {
+        // 七牛转码
+        Route::get('qiniu', 'CallbackController@qiniu');
+    });
 });
 
 // need access_token
