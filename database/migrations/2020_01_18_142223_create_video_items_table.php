@@ -22,10 +22,13 @@ class CreateVideoItemsTable extends Migration
             $table->string('title', 128)->default('');
             $table->string('summary', 128)->default('');                    // 摘要
             $table->string('poster', 128)->default('');                     // 视频封面，默认使用视频第1s截图
+            $table->string('video_key', 128)->default('')->index();         // 视频key，视频全名，用户七牛回调搜索
             $table->string('url', 128)->default('');                        // 视频源地址
-            $table->string('hls_url', 128)->default('');                    // 视频切片后的地址
-            $table->enum('is_free', ['yes', 'none'])->default('yes');      // 是否免费
-            $table->enum('is_publish', ['yes', 'none'])->default('none');  // 每个视频一个素材，发布后才可以上架，发布后不得更改
+            $table->string('hls_url', 128)->default('');                    // 视频切片后的地址 标清640*480
+            $table->string('hls_hd_url', 128)->default('');                 // 视频切片后的地址 高清1280*720
+            $table->tinyInteger('is_transcode')->default(2);                // 转码状态 0成功、1等待处理、2处理中、3处理失败、5任务被取消、6跳过、7无效
+            $table->enum('is_free', ['yes', 'none'])->default('yes');       // 是否免费
+            $table->enum('is_publish', ['yes', 'none'])->default('none');   // 每个视频一个素材，发布后才可以上架，发布后不得更改
             $table->timestamps();
         });
     }

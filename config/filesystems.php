@@ -89,7 +89,10 @@ return [
         'bucketVideo' => env('BucketVideo', ''),
         'cdnUrlVideo' => env('CdnUrlVideo', ''),
         'watermarkImg' => env('WatermarkImg', ''),
-        'videoPipeline' => env('VideoPipeline', 'fmock-video'),    // 多媒体队列 用来处理hls
+        'videoPipelineHls' => env('VideoPipelineHls', 'fmock-video-hls'),
+        // 用来主动转码的队列（推荐使用异步工作流方式）
+        'videoPipeline' => env('VideoPipeline', 'fmock-video'),
+        // 用于主动转码的参数（推荐使用异步工作流方式）
         'm3u8Fops' => env('M3u8Fops', 'avthumb/m3u8/noDomain/1/segtime/60/ab/128k/ar/44100/acodec/libfaac/r/30/vb/128k/stripmeta/1'),
     ],
 
