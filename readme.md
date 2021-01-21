@@ -132,6 +132,9 @@ FMock墨客社区。
  - [logout](#logout) | 登出
  
   - [uploadVideo](#upload-video) | 上传视频并入库
+  - [qiniu](#callback-qiniu) | 七牛工作流转码回调
+  - [ajaxQueryTranscode](#ajax-transcode) | 七牛工作流转码回调
+  - [updateVideoItem](#update-video) | 更新视频信息,上传转码后调用
  
  - [getAllPosts](#posts) | 获取首页文章列表
  - [getPostByUuid](#post) | 获取指定文章
@@ -436,6 +439,47 @@ FMock墨客社区。
  > HTTP/1.1 400、422
  {"message" : <"message">}
  ------------------------------
+
+#### callback-qiniu
+ - POST `server_url/V1/callback/qiniu`
+ > https://developer.qiniu.com/dora/6504/receive-notifications
+ ------------------------------
+
+#### ajax-transcode
+ - GET `server_url/V1/video/transcode/{uuid}`
+ - ajax轮询查询转码结果,通过is_transcode判断成功与否
+ - is_transcode: 0成功、1等待处理、2处理中、3失败
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `uuid` | Y | String | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"video-item">}
+ 
+ > HTTP/1.1 404
+ {"message" : <"message">} 
+ ------------------------------
+ 
+ #### update-video
+ - PUT `server_url/V1/video/item/{uuid}`
+ - 更新视频信息,视频上传转码后续
+ 
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `title` | Y | String | Y | &lt;64 |  |
+| `summary` | Y | String | Y | &lt;80 |  |
+| `poster` | Y | String | Y | &lt;128 |  |
+| `is_free` | Y | Boolean | Y |  | 是否匿名发布 |
+
+ - 返回值
+ > HTTP/1.1 200 OK
+ {"data" : <"video-item">}
+ 
+ > HTTP/1.1 400、404、500
+ {"message" : <"message">}
+  ------------------------------
 
 #### posts
  - GET `server_url/V1/posts`

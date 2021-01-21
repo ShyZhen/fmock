@@ -112,4 +112,12 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
 
     // 我的关注（与我相关），我关注的朋友发的动态
     Route::get('track/{type}', 'ActionController@getTrack');
+
+    // 视频相关
+    Route::prefix('video')->group(function () {
+        // 轮询转码结果
+        Route::get('transcode/{uuid}', 'VideoController@ajaxQueryTranscode');
+        Route::put('item/{uuid}', 'VideoController@updateVideoItem');
+
+    });
 });
