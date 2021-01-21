@@ -118,6 +118,5 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
         // 轮询转码结果
         Route::get('transcode/{uuid}', 'VideoController@ajaxQueryTranscode');
         Route::put('item/{uuid}', 'VideoController@updateVideoItem');
-
     });
 });

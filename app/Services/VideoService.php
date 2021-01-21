@@ -16,7 +16,6 @@ use App\Services\BaseService\RedisService;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\VideoItemRepository;
 
-
 class VideoService extends Service
 {
     private $videoItemRepository;
@@ -27,8 +26,8 @@ class VideoService extends Service
 
     /**
      * @param VideoItemRepository $videoItemRepository
-     * @param RedisService   $redisService
-     * @param UserRepository $userRepository
+     * @param RedisService        $redisService
+     * @param UserRepository      $userRepository
      */
     public function __construct(
         VideoItemRepository $videoItemRepository,
@@ -45,6 +44,7 @@ class VideoService extends Service
      * 轮询转码结果也使用该方法，通过is_transcode=0判断成功与否
      *
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getMyVideoItemByUuid($uuid)
@@ -110,12 +110,7 @@ class VideoService extends Service
         );
     }
 
-
-
-
-
-
-    /**
+    /*
      * 获取视频集合 video-collect video表
      *
      * @Author huaixiu.zhen@gmail.com
@@ -206,9 +201,7 @@ class VideoService extends Service
      * @return \Illuminate\Http\JsonResponse
      */
 
-
-
-    /**
+    /*
      * 软删除自己的文章服务
      *
      * @Author huaixiu.zhen@gmail.com
@@ -284,5 +277,4 @@ class VideoService extends Service
 
 
     */
-
 }

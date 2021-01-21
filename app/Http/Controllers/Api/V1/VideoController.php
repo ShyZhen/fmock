@@ -35,6 +35,7 @@ class VideoController extends Controller
      * 轮询转码结果,通过is_transcode=0判断成功与否
      *
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function ajaxQueryTranscode($uuid)
@@ -65,7 +66,6 @@ class VideoController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-
             return $this->videoService->updateVideoItem(
                 $uuid,
                 $request->get('title'),
@@ -75,6 +75,4 @@ class VideoController extends Controller
             );
         }
     }
-
-
 }
