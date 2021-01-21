@@ -14,12 +14,10 @@ use App\Repositories\Eloquent\VideoItemRepository;
 
 class CallbackController extends Controller
 {
-    public const SUCCESS = 0;
-
     // 此处前缀为七牛控制台配置的工作流输出路径前缀
-    public const THUMB_PREFIX = 'video-thumb/';
     public const HLS_PREFIX = 'hls/640/';
     public const HLS_HD_PREFIX = 'hls/1280/';
+    public const THUMB_PREFIX = 'video-thumb/';
 
     public $videoItemRepository;
 
@@ -39,7 +37,7 @@ class CallbackController extends Controller
         $key = $data['input']['kodo_file']['key'];
         $videoItem = $this->videoItemRepository->findby('video_key', $key);
 
-        if ($data['code'] === self::SUCCESS) {
+        if ($data['code'] === VideoItemRepository::TRANSCODE_SUCCESS) {
             if (!$videoItem) {
                 return false;
             }
@@ -54,10 +52,11 @@ class CallbackController extends Controller
             }
 
             // 更新数据库
+            $cdnUrlImage = config('filesystems.qiniu.cdnUrl');
             $cdnUrlVideo = config('filesystems.qiniu.cdnUrlVideo');
             foreach ($value as $v) {
                 if (strpos($v['key'], self::THUMB_PREFIX) === 0) {
-                    $videoItem->poster = $cdnUrlVideo . '/' . $v['key'];
+                    $videoItem->poster = $cdnUrlImage . '/' . $v['key'];
                     continue;
                 }
                 if (strpos($v['key'], self::HLS_PREFIX) === 0) {
@@ -70,7 +69,7 @@ class CallbackController extends Controller
                 }
             }
 
-            $videoItem->is_transcode = self::SUCCESS;
+            $videoItem->is_transcode = VideoItemRepository::TRANSCODE_SUCCESS;
             $videoItem->save();
         } else {
             // 转码失败处理 transcode=3

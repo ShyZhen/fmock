@@ -11,6 +11,9 @@ namespace App\Repositories\Eloquent;
 
 class VideoItemRepository extends Repository
 {
+    // 转码成功标志
+    public const TRANSCODE_SUCCESS = 0;
+
     /**
      * 实现抽象函数获取模型
      *
