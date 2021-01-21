@@ -37,7 +37,7 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
     // 第三方回调
     Route::prefix('callback')->group(function () {
         // 七牛转码
-        Route::get('qiniu', 'CallbackController@qiniu');
+        Route::post('qiniu', 'CallbackController@qiniu');
     });
 });
 

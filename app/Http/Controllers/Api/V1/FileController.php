@@ -140,7 +140,8 @@ class FileController extends Controller
             if (env('QiniuService')) {
 
                 // 上传视频到七牛
-                $res = $this->fileService->uploadVideoToQiniu($file, 'video', 'video-');
+                // $res = $this->fileService->uploadVideoToQiniu($file, 'video', 'video-');  // 主动
+                $res = $this->fileService->uploadVideoToQiniuNew($file, 'video', 'video-');  // 异步工作流
             } else {
                 // 上传视频到本地
                 $res = $this->fileService->uploadVideo($file, 'video', 'video-');
