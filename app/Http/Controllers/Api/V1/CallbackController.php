@@ -1,12 +1,12 @@
 <?php
 /**
  * CallbackController
+ *
  * @author DELL
  * 2021/1/19 15:47
  **/
 
 namespace App\Http\Controllers\Api\V1;
-
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,12 +14,12 @@ use App\Repositories\Eloquent\VideoItemRepository;
 
 class CallbackController extends Controller
 {
-    const SUCCESS = 0;
+    public const SUCCESS = 0;
 
     // 此处前缀为七牛控制台配置的工作流输出路径前缀
-    const THUMB_PREFIX = 'video-thumb/';
-    const HLS_PREFIX = 'hls/640/';
-    const HLS_HD_PREFIX = 'hls/1280/';
+    public const THUMB_PREFIX = 'video-thumb/';
+    public const HLS_PREFIX = 'hls/640/';
+    public const HLS_HD_PREFIX = 'hls/1280/';
 
     public $videoItemRepository;
 
@@ -57,22 +57,21 @@ class CallbackController extends Controller
             $cdnUrlVideo = config('filesystems.qiniu.cdnUrlVideo');
             foreach ($value as $v) {
                 if (strpos($v['key'], self::THUMB_PREFIX) === 0) {
-                    $videoItem->poster = $cdnUrlVideo.'/'.$v['key'];
+                    $videoItem->poster = $cdnUrlVideo . '/' . $v['key'];
                     continue;
                 }
                 if (strpos($v['key'], self::HLS_PREFIX) === 0) {
-                    $videoItem->hls_url = $cdnUrlVideo.'/'.$v['key'];
+                    $videoItem->hls_url = $cdnUrlVideo . '/' . $v['key'];
                     continue;
                 }
                 if (strpos($v['key'], self::HLS_HD_PREFIX) === 0) {
-                    $videoItem->hls_hd_url = $cdnUrlVideo.'/'.$v['key'];
+                    $videoItem->hls_hd_url = $cdnUrlVideo . '/' . $v['key'];
                     continue;
                 }
             }
 
             $videoItem->is_transcode = self::SUCCESS;
             $videoItem->save();
-
         } else {
             // 转码失败处理 transcode=3
             $videoItem->is_transcode = $data['code'];
@@ -84,6 +83,7 @@ class CallbackController extends Controller
      * 一些简单的鉴权，防止刷接口
      *
      * @param $data
+     *
      * @return bool
      */
     private function qiniuValidateData($data)
@@ -97,5 +97,4 @@ class CallbackController extends Controller
 
         return false;
     }
-
 }

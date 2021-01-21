@@ -439,9 +439,9 @@ class FileService extends Service
      * @param $savePath
      * @param string $prefix
      *
-     * @return \Illuminate\Http\JsonResponse
-     *
      * @throws \Exception
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function uploadVideoToQiniuNew($file, $savePath, $prefix = '')
     {
