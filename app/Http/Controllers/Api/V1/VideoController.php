@@ -75,4 +75,9 @@ class VideoController extends Controller
             );
         }
     }
+
+    public function deleteVideoItem($uuid)
+    {
+        return $this->videoService->deleteVideoItem($uuid);
+    }
 }

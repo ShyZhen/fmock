@@ -105,7 +105,38 @@ class VideoService extends Service
         }
 
         return response()->json(
-            ['message' => __('app.no_posts')],
+            ['message' => __('app.no_videos')],
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+    /**
+     * 软删除自己的文章服务
+     *
+     * @param $uuid
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteVideoItem($uuid)
+    {
+        $videoItem = $this->videoItemRepository->findBy('uuid', $uuid);
+
+        if ($videoItem && $videoItem->user_id == Auth::id() && $videoItem->deleted == 'none') {
+            $videoItem->deleted = 'yes';
+            if ($videoItem->save()) {
+                return response()->json(
+                    null,
+                    Response::HTTP_NO_CONTENT
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.try_again')],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
+        return response()->json(
+            ['message' => __('app.no_videos')],
             Response::HTTP_NOT_FOUND
         );
     }
@@ -120,161 +151,4 @@ class VideoService extends Service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    /*
-    public function getAllVideos($type)
-    {
-        switch ($type) {
-            case 'all':
-                $posts = $this->postRepository->getNewPost();                   // 全部最新
-                break;
-            case 'hot':
-                $limitDate = Carbon::now()->subDays(90)->toDateString();
-                $posts = $this->postRepository->getFavoritePost($limitDate);    // 三个月内点赞最多的热门
-                break;
-            default:
-                $posts = $this->postRepository->getPostByType($type);           // 分类最新
-                break;
-        }
-
-        if ($posts->count()) {
-            foreach ($posts as $post) {
-                $post->user_info = $this->handleUserInfo($post->user);
-                unset($post->user);
-                unset($post->user_id);
-            }
-        }
-
-        return response()->json(
-            ['data' => $posts],
-            Response::HTTP_OK
-        );
-    }
-
-    /**
-     * 获取文章详情
-     *
-     * @Author huaixiu.zhen@gmail.com
-     * http://litblc.com
-     *
-     * @param $uuid
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    /*
-    public function getVideoItemByUuid($uuid)
-    {
-        $columns = ['id', 'user_id', 'uuid', 'title', 'content', 'type', 'deleted', 'collect_num', 'comment_num', 'like_num', 'dislike_num', 'created_at'];
-        $post = $this->postRepository->findBy('uuid', $uuid, $columns);
-
-        if ($post) {
-            if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
-                $post->user_info = $this->handleUserInfo($post->user);
-                unset($post->user);
-                unset($post->user_id);
-
-                return response()->json(
-                    ['data' => $post],
-                    Response::HTTP_OK
-                );
-            }
-        }
-
-        return response()->json(
-            ['message' => __('app.no_posts')],
-            Response::HTTP_NOT_FOUND
-        );
-    }
-
-    /**
-     * 更新自己的文章服务
-     *
-     * @Author huaixiu.zhen@gmail.com
-     * http://litblc.com
-     *
-     * @param $uuid
-     * @param $summary
-     * @param $poster
-     * @param $content
-     * @param $anonymous
-     * @param $type
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-
-    /*
-     * 软删除自己的文章服务
-     *
-     * @Author huaixiu.zhen@gmail.com
-     * http://litblc.com
-     *
-     * @param $uuid
-     *
-     * @return mixed
-     */
-    /*
-    public function deleteVideoItem($uuid)
-    {
-        $post = $this->postRepository->findBy('uuid', $uuid);
-
-        if ($post && $post->user_id == Auth::id() && $post->deleted == 'none') {
-            $post->deleted = 'yes';
-            if ($post->save()) {
-                return response()->json(
-                    null,
-                    Response::HTTP_NO_CONTENT
-                );
-            }
-
-            return response()->json(
-                ['message' => __('app.try_again')],
-                Response::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
-
-        return response()->json(
-            ['message' => __('app.no_posts')],
-            Response::HTTP_NOT_FOUND
-        );
-    }
-
-    /**
-     * 获取某个用户的所有文章列表
-     *
-     * @Author huaixiu.zhen
-     * http://litblc.com
-     *
-     * @param $userUuid
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    /*
-    public function getUserVideoItems($userUuid)
-    {
-        $user = $this->userRepository->findBy('uuid', $userUuid);
-        if ($user) {
-
-            // 获取评论集合
-            $posts = $this->postRepository->getPostsByUserId($user->id);
-
-            if ($posts->count()) {
-                foreach ($posts as $post) {
-                    $post->user_info = $this->handleUserInfo($post->user);
-                    unset($post->user);
-                }
-            }
-
-            return response()->json(
-                ['data' => $posts],
-                Response::HTTP_OK
-            );
-        }
-
-        return response()->json(
-            ['message' => __('app.user_is_closure')],
-            Response::HTTP_NOT_FOUND
-        );
-    }
-
-
-    */
 }
