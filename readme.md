@@ -135,6 +135,7 @@ FMock墨客社区。
   - [qiniu](#callback-qiniu) | 七牛工作流转码回调
   - [ajaxQueryTranscode](#ajax-transcode) | 七牛工作流转码回调
   - [updateVideoItem](#update-video) | 更新视频信息,上传转码后调用
+  - [deleteVideoItem](#delete-video-item) | 更新视频信息,上传转码后调用
  
  - [getAllPosts](#posts) | 获取首页文章列表
  - [getPostByUuid](#post) | 获取指定文章
@@ -480,6 +481,22 @@ FMock墨客社区。
  > HTTP/1.1 400、404、500
  {"message" : <"message">}
   ------------------------------
+
+#### delete-video-item
+ - DELETE `server_url/V1/video-item/{uuid}`
+ - 删除我的某篇文章
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `uuid` | Y |  | Y |  |  |
+
+ - 返回值
+ > HTTP/1.1 204 OK
+ {null}
+ 
+ > HTTP/1.1 404、500
+ {"message" : <"message">}
+ ------------------------------
 
 #### posts
  - GET `server_url/V1/posts`

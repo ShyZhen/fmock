@@ -29,6 +29,7 @@ class CreateVideoItemsTable extends Migration
             $table->tinyInteger('is_transcode')->default(2);                // 转码状态 0成功、1等待处理、2处理中、3处理失败、5任务被取消、6跳过、7无效
             $table->tinyInteger('is_free')->default(1);                     // 是否免费 1免费，0收费
             $table->tinyInteger('is_publish')->default(0);                  // 每个视频一个素材，发布后才可以上架，发布后不得更改
+            $table->enum('deleted', ['yes', 'none'])->default('none');
             $table->timestamps();
         });
     }
