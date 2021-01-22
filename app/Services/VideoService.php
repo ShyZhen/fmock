@@ -9,7 +9,6 @@
 
 namespace App\Services;
 
-use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\RedisService;
@@ -114,6 +113,7 @@ class VideoService extends Service
      * 软删除自己的文章服务
      *
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function deleteVideoItem($uuid)
