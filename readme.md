@@ -110,7 +110,8 @@ FMock墨客社区。
 
 ## Other file
 
- - ![代码结构](/doc/other/code.jpg)
+ - 代码结构
+ ![代码结构](/doc/other/code.jpg)
  - [Postman合集(仅供参考)](/doc/other/Fmock.postman_collection.json)
  - [rp原型](/doc/other/fmock.rp)
 
