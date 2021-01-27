@@ -185,6 +185,8 @@ FMock墨客社区。
 - [创建评论、回复](/doc/comment.md#create-post-comment)
 - [删除自己的评论、回复](/doc/comment.md#delete-post-comment)
  
+## [Admin管理后台](/doc/admin.md)
+ 
 ## Security Vulnerabilities
 
 If you discover a security vulnerability within FMock, please send an e-mail to huaixiu.zhen via [huaixiu.zhen@gmail.com](mailto:huaixiu.zhen@gmail.com). All security vulnerabilities will be promptly addressed.
