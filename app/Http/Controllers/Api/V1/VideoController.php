@@ -76,6 +76,12 @@ class VideoController extends Controller
         }
     }
 
+    /**
+     * 软删除
+     *
+     * @param $uuid
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deleteVideoItem($uuid)
     {
         return $this->videoService->deleteVideoItem($uuid);

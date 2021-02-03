@@ -18,9 +18,8 @@
 ## About FMock
 A forums build with laravel.
 
-~~我也不知道要做成一个什么东西。~~
-
 FMock墨客社区。
+> 客户端项目地址 https://github.com/ShyZhen/fmock-uniapp
 
 
 ## Environment
@@ -162,8 +161,8 @@ FMock墨客社区。
 - [更新指定(回答)文章](/doc/post.md#update-answer)
 - [删除指定(回答)文章](/doc/post.md#delete-answer)
 - [获取我关注的所有文章](/doc/post.md#collections)
-- [关注某篇文章](/doc/post.md#post-collection)
-- [取消关注文章](/doc/post.md#delete-collection)
+- [收藏某篇文章](/doc/post.md#post-collection)
+- [取消收藏文章](/doc/post.md#delete-collection)
 
 ### [交互动作](/doc/action.md)
 - [赞/取消赞（文章）](/doc/action.md#like-post)
