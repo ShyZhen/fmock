@@ -60,6 +60,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
     Route::post('file/video', 'FileController@uploadVideo');
+    Route::post('file/token/{type}', 'FileController@getUploadToken');
 
     // 文章 赞、取消赞，踩、取消踩
     Route::post('like/post/{uuid}', 'ActionController@likePost');

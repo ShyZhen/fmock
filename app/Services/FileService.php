@@ -20,6 +20,9 @@ use App\Repositories\Eloquent\UserUploadImageRepository;
 
 class FileService extends Service
 {
+    const IMAGE = 'image';
+    const VIDEO = 'video';
+
     private $redisService;
 
     private $imageService;
@@ -494,6 +497,30 @@ class FileService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
+    }
+
+    /**
+     * @param $type
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUploadToken($type)
+    {
+        switch ($type) {
+            case self::IMAGE:
+                $token = $this->qiniuService->getUploadToken(false);
+                break;
+            case self::VIDEO:
+                $token = $this->qiniuService->getUploadToken(true);
+                break;
+            default:
+                $token = '';
+        }
+
+        return response()->json(
+            ['data' => $token],
+            Response::HTTP_OK
+        );
     }
 
     /**

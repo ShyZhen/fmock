@@ -142,6 +142,7 @@ FMock墨客社区。
 - [上传图片](/doc/upload.md#upload-image)
 - [更换用户头像](/doc/upload.md#upload-avatar)
 - [上传视频并入库](/doc/upload.md#upload-video)
+- [前端上传获取token](/doc/upload.md#upload-token)
 - [七牛工作流转码回调](/doc/upload.md#callback-qiniu)
 - [轮询转码结果](/doc/upload.md#ajax-transcode)
 

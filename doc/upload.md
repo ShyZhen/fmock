@@ -48,6 +48,22 @@
  {"message" : <"message">}
  ------------------------------
  
+ #### upload-token
+  - POST `server_url/V1/file/token/{type}`
+  - 客户端使用七牛sdk上传，获取token
+ 
+ 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+ |:---:|:---:|:---:|:---:|:---:|:---:|
+ | `type` | Y | String | Y | `image/video` |  |
+ 
+  - 返回值
+  > HTTP/1.1 201 OK
+  {"data" : <"token">}
+  
+  > HTTP/1.1 400、422
+  {"message" : <"message">}
+  ------------------------------
+ 
 #### callback-qiniu
  - POST `server_url/V1/callback/qiniu`
  > https://developer.qiniu.com/dora/6504/receive-notifications

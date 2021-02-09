@@ -150,4 +150,24 @@ class FileController extends Controller
             return $res;
         }
     }
+
+    /**
+     * 获取客户端上传token
+     *
+     * @param $fileType
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUploadToken($fileType)
+    {
+        if (in_array($fileType, [FileService::IMAGE, FileService::VIDEO])) {
+            $res = $this->fileService->getUploadToken($fileType);
+        } else {
+            $res = response()->json(
+                ['message' => __('app.illegal_input')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        return $res;
+    }
 }

@@ -125,6 +125,19 @@ class QiniuService extends Service
     }
 
     /**
+     * @param $isVideo
+     * @param null $key
+     *
+     * @return string
+     */
+    public function getUploadToken($isVideo, $key = null)
+    {
+        $bucket = $isVideo ? $this->config['bucketVideo'] : $this->config['bucket'];
+
+        return $this->auth->uploadToken($bucket, $key);
+    }
+
+    /**
      * 生成视频某时间的缩略图
      * 直接拼在url后即可
      *
