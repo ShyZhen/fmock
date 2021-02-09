@@ -20,8 +20,8 @@ use App\Repositories\Eloquent\UserUploadImageRepository;
 
 class FileService extends Service
 {
-    const IMAGE = 'image';
-    const VIDEO = 'video';
+    public const IMAGE = 'image';
+    public const VIDEO = 'video';
 
     private $redisService;
 

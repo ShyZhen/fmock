@@ -155,6 +155,7 @@ class FileController extends Controller
      * 获取客户端上传token
      *
      * @param $fileType
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getUploadToken($fileType)
