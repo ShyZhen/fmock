@@ -35,7 +35,7 @@ class CallbackController extends Controller
         }
 
         $key = $data['input']['kodo_file']['key'];
-        $videoItem = $this->videoItemRepository->findby('key', $key);
+        $videoItem = $this->videoItemRepository->findby('video_key', $key);
 
         if ($data['code'] === VideoItemRepository::TRANSCODE_SUCCESS) {
             if (!$videoItem) {
