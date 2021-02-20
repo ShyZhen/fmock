@@ -22,7 +22,8 @@ class CreateVideoItemsTable extends Migration
             $table->string('title', 128)->default('');
             $table->string('summary', 128)->default('');                    // 摘要
             $table->string('poster', 128)->default('');                     // 视频封面，默认使用视频第1s截图
-            $table->string('video_key', 128)->default('')->index();         // 视频key，视频全名，用户七牛回调搜索
+            $table->string('hash', 128)->default('')->index();              // 视频hash，视频全名，用户七牛回调搜索
+            $table->string('video_key', 128)->default('')->index();         // 视频key，视频全名
             $table->string('url', 128)->default('');                        // 视频源地址
             $table->string('hls_url', 128)->default('');                    // 视频切片后的地址 标清640*480
             $table->string('hls_hd_url', 128)->default('');                 // 视频切片后的地址 高清1280*720

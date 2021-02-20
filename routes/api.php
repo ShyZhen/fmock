@@ -120,5 +120,6 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
         Route::get('transcode/{uuid}', 'VideoController@ajaxQueryTranscode');
         Route::put('item/{uuid}', 'VideoController@updateVideoItem');
         Route::delete('item/{uuid}', 'VideoController@deleteVideoItem');
+        Route::post('save', 'FileController@saveVideo');  // 客户端上传完成后，数据入库
     });
 });
