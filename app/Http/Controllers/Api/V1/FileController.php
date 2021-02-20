@@ -176,6 +176,7 @@ class FileController extends Controller
      * 客户端上传文件成功之后，保存数据入本地数据库
      *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function saveVideo(Request $request)
