@@ -61,8 +61,8 @@ class UserService extends Service
     public function follow($userUuid)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -83,7 +83,7 @@ class UserService extends Service
                     $this->redisService->zrem($fansKey, $currId);
 
                     // 更新数据库计数
-                    $this->updateFansAndFollowNum($mime, $user, 'cancel');
+                    $this->updateFansAndFollowNum($mine, $user, 'cancel');
                     $msg = __('app.already') . __('app.cancel');
                 } else {
                     // 关注操作
@@ -97,7 +97,7 @@ class UserService extends Service
                     }
 
                     // 最大关注上限
-                    if ($mime->followed_num >= $this->maxFollowNum) {
+                    if ($mine->followed_num >= $this->maxFollowNum) {
                         return response()->json(
                             ['message' => __('app.cant_exceed_max_follow')],
                             Response::HTTP_UNPROCESSABLE_ENTITY
@@ -107,7 +107,7 @@ class UserService extends Service
                         $this->redisService->zadd($fansKey, time(), $currId);
 
                         // 更新数据库计数
-                        $this->updateFansAndFollowNum($mime, $user, '');
+                        $this->updateFansAndFollowNum($mine, $user, '');
                         $msg = __('app.already') . __('app.follow');
                     }
                 }
@@ -138,8 +138,8 @@ class UserService extends Service
     public function status($userUuid)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -176,8 +176,8 @@ class UserService extends Service
     public function getFollowsList($userUuid, $page)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -235,8 +235,8 @@ class UserService extends Service
     public function getFansList($userUuid, $page)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -294,8 +294,8 @@ class UserService extends Service
     public function followDB($userUuid)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -318,7 +318,7 @@ class UserService extends Service
 
                     $follow->delete();
                     // 更新数据库计数
-                    $this->updateFansAndFollowNum($mime, $user, 'cancel');
+                    $this->updateFansAndFollowNum($mine, $user, 'cancel');
                     $msg = __('app.already') . __('app.cancel');
                 } else {
                     // 关注操作
@@ -331,7 +331,7 @@ class UserService extends Service
                     }
 
                     // 最大关注上限
-                    if ($mime->followed_num >= $this->maxFollowNum) {
+                    if ($mine->followed_num >= $this->maxFollowNum) {
                         return response()->json(
                             ['message' => __('app.cant_exceed_max_follow')],
                             Response::HTTP_UNPROCESSABLE_ENTITY
@@ -354,7 +354,7 @@ class UserService extends Service
                         }
 
                         // 更新数据库计数
-                        $this->updateFansAndFollowNum($mime, $user, '');
+                        $this->updateFansAndFollowNum($mine, $user, '');
                         $msg = __('app.already') . __('app.follow');
                     }
                 }
@@ -385,8 +385,8 @@ class UserService extends Service
     public function statusDB($userUuid)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -420,8 +420,8 @@ class UserService extends Service
     public function getFollowsListDB($userUuid, $page)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -507,8 +507,8 @@ class UserService extends Service
     public function getFansListDB($userUuid, $page)
     {
         // 当前用户ID
-        $mime = Auth::user();
-        $currId = $mime->id;
+        $mine = Auth::user();
+        $currId = $mine->id;
 
         // 目标用户
         $user = $this->userRepository->findBy('uuid', $userUuid);
@@ -586,24 +586,24 @@ class UserService extends Service
      *
      * @author z00455118 <zhenhuaixiu@huawei.com>
      *
-     * @param $mime    // 当前登录用户对象
+     * @param $mine    // 当前登录用户对象
      * @param $user    // 被操作用户对象
      * @param $type    // cancel 为取关
      */
-    private function updateFansAndFollowNum($mime, $user, $type)
+    private function updateFansAndFollowNum($mine, $user, $type)
     {
         // 正向操作
         if ($type !== 'cancel') {
             $user->fans_num += 1;
-            $mime->followed_num += 1;
+            $mine->followed_num += 1;
             $user->save();
-            $mime->save();
+            $mine->save();
         } else {
             // 逆向操作
             $user->fans_num > 0 && $user->fans_num -= 1;
-            $mime->followed_num > 0 && $mime->followed_num -= 1;
+            $mine->followed_num > 0 && $mine->followed_num -= 1;
             $user->save();
-            $mime->save();
+            $mine->save();
         }
     }
 

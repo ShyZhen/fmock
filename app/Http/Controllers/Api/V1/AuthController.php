@@ -131,7 +131,7 @@ class AuthController extends Controller
      *
      * @param Request $request
      *
-     * @return array
+     * @return array|\Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {

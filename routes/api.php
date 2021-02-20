@@ -60,6 +60,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
     Route::post('file/video', 'FileController@uploadVideo');
+    Route::post('file/token/{type}', 'FileController@getUploadToken');
 
     // 文章 赞、取消赞，踩、取消踩
     Route::post('like/post/{uuid}', 'ActionController@likePost');
@@ -119,5 +120,6 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
         Route::get('transcode/{uuid}', 'VideoController@ajaxQueryTranscode');
         Route::put('item/{uuid}', 'VideoController@updateVideoItem');
         Route::delete('item/{uuid}', 'VideoController@deleteVideoItem');
+        Route::post('save', 'FileController@saveVideo');  // 客户端上传完成后，数据入库
     });
 });

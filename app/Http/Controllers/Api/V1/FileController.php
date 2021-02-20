@@ -150,4 +150,66 @@ class FileController extends Controller
             return $res;
         }
     }
+
+    /**
+     * 获取客户端上传token
+     *
+     * @param $fileType
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUploadToken($fileType)
+    {
+        if (in_array($fileType, [FileService::IMAGE, FileService::VIDEO])) {
+            $res = $this->fileService->getUploadToken($fileType);
+        } else {
+            $res = response()->json(
+                ['message' => __('app.illegal_input')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        return $res;
+    }
+
+    /**
+     * 客户端上传文件成功之后，保存数据入本地数据库
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function saveVideo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'key' => 'required|max:128',
+            'url' => 'required|max:128',
+            'hash' => 'required|max:128',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                ['message' => $validator->errors()->first()],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $res = $this->fileService->saveVideo(
+                $request->get('key'),
+                $request->get('url'),
+                $request->get('hash')
+            );
+
+            if ($res) {
+                return response()->json(
+                    ['data' => $res],
+                    Response::HTTP_CREATED
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.try_again')],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }

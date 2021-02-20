@@ -18,9 +18,8 @@
 ## About FMock
 A forums build with laravel.
 
-~~我也不知道要做成一个什么东西。~~
-
 FMock墨客社区。
+> 客户端项目地址 https://github.com/ShyZhen/fmock-uniapp
 
 
 ## Environment
@@ -143,7 +142,9 @@ FMock墨客社区。
 - [上传图片](/doc/upload.md#upload-image)
 - [更换用户头像](/doc/upload.md#upload-avatar)
 - [上传视频并入库](/doc/upload.md#upload-video)
+- [前端上传获取token](/doc/upload.md#upload-token)
 - [七牛工作流转码回调](/doc/upload.md#callback-qiniu)
+- [保存数据入库](/doc/upload.md#video-save)
 - [轮询转码结果](/doc/upload.md#ajax-transcode)
 
 ### [视频(集)模块](/doc/video.md)
@@ -162,8 +163,8 @@ FMock墨客社区。
 - [更新指定(回答)文章](/doc/post.md#update-answer)
 - [删除指定(回答)文章](/doc/post.md#delete-answer)
 - [获取我关注的所有文章](/doc/post.md#collections)
-- [关注某篇文章](/doc/post.md#post-collection)
-- [取消关注文章](/doc/post.md#delete-collection)
+- [收藏某篇文章](/doc/post.md#post-collection)
+- [取消收藏文章](/doc/post.md#delete-collection)
 
 ### [交互动作](/doc/action.md)
 - [赞/取消赞（文章）](/doc/action.md#like-post)

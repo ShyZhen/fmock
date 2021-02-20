@@ -20,6 +20,9 @@ use App\Repositories\Eloquent\UserUploadImageRepository;
 
 class FileService extends Service
 {
+    public const IMAGE = 'image';
+    public const VIDEO = 'video';
+
     private $redisService;
 
     private $imageService;
@@ -365,6 +368,7 @@ class FileService extends Service
 
     /**
      * 上传视频到七牛 切片
+     * (废弃)
      *
      * author shyZhen <huaixiu.zhen@gmail.com>
      * https://www.litblc.com
@@ -404,7 +408,7 @@ class FileService extends Service
                 $videoHlsUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['m3u8'];
 
                 // 保存数据入库
-                $video = $this->saveVideo($fullName, $videoUrl, $videoHlsUrl);
+                $video = $this->saveVideo($fullName, $videoUrl, '', $videoHlsUrl);
 
                 if ($video) {
                     return response()->json(
@@ -434,6 +438,7 @@ class FileService extends Service
     /**
      * 新·上传视频到七牛
      * 只上传,不主动转码,通过七牛配置工作流进行异步转码,callback确认转码成功
+     * (废弃，通过jssdk上传)
      *
      * @param $file
      * @param $savePath
@@ -466,10 +471,11 @@ class FileService extends Service
                 // 添加频率限制key
                 $this->redisService->setRedis($this->uploadVideoRedisKey . $userId, 'create', 'EX', 90);
 
+                $videoHash = $result['data']['hash'];
                 $videoUrl = config('filesystems.qiniu.cdnUrlVideo') . '/' . $result['data']['key'];
 
                 // 保存数据入库
-                $video = $this->saveVideo($fullName, $videoUrl);
+                $video = $this->saveVideo($fullName, $videoUrl, $videoHash);
 
                 if ($video) {
                     return response()->json(
@@ -494,6 +500,30 @@ class FileService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
+    }
+
+    /**
+     * @param $type
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUploadToken($type)
+    {
+        switch ($type) {
+            case self::IMAGE:
+                $token = $this->qiniuService->getUploadToken(false);
+                break;
+            case self::VIDEO:
+                $token = $this->qiniuService->getUploadToken(true);
+                break;
+            default:
+                $token = '';
+        }
+
+        return response()->json(
+            ['data' => $token],
+            Response::HTTP_OK
+        );
     }
 
     /**
@@ -606,17 +636,19 @@ class FileService extends Service
      *
      * @param $videoName
      * @param $videoUrl
+     * @param $hash
      * @param $videoHlsUrl
      * @param $videoHlsHdUrl
      *
      * @return mixed
      */
-    private function saveVideo($videoName, $videoUrl, $videoHlsUrl = '', $videoHlsHdUrl = '')
+    public function saveVideo($videoName, $videoUrl, $hash, $videoHlsUrl = '', $videoHlsHdUrl = '')
     {
         $video = $this->videoItemRepository->create([
             'uuid' => self::uuid('video-'),  // 禁止使用同样的uuid，防止被人猜到暴露
             'user_id' => Auth::id(),
             'video_key' => $videoName,
+            'hash' => $hash,
             'url' => $videoUrl,
             'hls_url' => $videoHlsUrl,
             'hls_hd_url' => $videoHlsHdUrl,

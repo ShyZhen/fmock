@@ -10,7 +10,7 @@ class VideoItem extends Model
     protected $table = 'video_items';
 
     protected $fillable = [
-        'uuid', 'user_id', 'title', 'summary', 'poster', 'video_key', 'url', 'hls_url', 'hls_hd_url', 'is_transcode', 'is_free', 'is_publish',
+        'uuid', 'user_id', 'title', 'summary', 'poster', 'hash', 'video_key', 'url', 'hls_url', 'hls_hd_url', 'is_transcode', 'is_free', 'is_publish',
     ];
 
     /**

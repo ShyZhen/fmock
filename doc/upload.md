@@ -34,7 +34,7 @@
 
 #### upload-video
  - POST `server_url/V1/file/video`
- - 上传视频，返回uuid
+ - 上传视频，返回uuid (推荐使用客户端sdk上传)
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -48,9 +48,43 @@
  {"message" : <"message">}
  ------------------------------
  
+ #### upload-token
+  - POST `server_url/V1/file/token/{type}`
+  - 客户端使用七牛sdk上传，获取token
+ 
+ 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+ |:---:|:---:|:---:|:---:|:---:|:---:|
+ | `type` | Y | String | Y | `image/video` |  |
+ 
+  - 返回值
+  > HTTP/1.1 201 OK
+  {"data" : <"token">}
+  
+  > HTTP/1.1 400、422
+  {"message" : <"message">}
+  ------------------------------
+ 
 #### callback-qiniu
  - POST `server_url/V1/callback/qiniu`
  > https://developer.qiniu.com/dora/6504/receive-notifications
+ ------------------------------
+
+#### video-save
+ - POST `server_url/V1/video/save`
+ - 前端上传完成后，调用保存入库
+
+参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| `key` | Y | String | Y |  | 文件名 |
+| `hash` | Y | String | Y |  | hash |
+| `url` | Y | String | Y |  | 带host的完整可访问路径 |
+
+ - 返回值
+ > HTTP/1.1 201 OK
+ {"data" : <"video-item">}
+ 
+ > HTTP/1.1 500
+ {"message" : <"message">} 
  ------------------------------
 
 #### ajax-transcode
