@@ -144,11 +144,11 @@ FMock墨客社区。
 - [上传视频并入库](/doc/upload.md#upload-video)
 - [前端上传获取token](/doc/upload.md#upload-token)
 - [七牛工作流转码回调](/doc/upload.md#callback-qiniu)
-- [保存数据入库](/doc/upload.md#video-save)
-- [轮询转码结果](/doc/upload.md#ajax-transcode)
+- [保存数据入库](/doc/upload.md#post-video-item)
+- [轮询videoItem获取转码结果](/doc/upload.md#get-video-item)
 
 ### [视频(集)模块](/doc/video.md)
-- [更新视频信息,上传转码后调用](/doc/video.md#update-video)
+- [更新视频信息,上传转码后调用](/doc/video.md#update-video-item)
 - [删除我的某个视频](/doc/video.md#delete-video-item)
 
 ### [文章模块](/doc/post.md)

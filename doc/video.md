@@ -1,6 +1,6 @@
 ## 视频模块
 
-#### update-video
+#### update-video-item
  - PUT `server_url/V1/video/item/{uuid}`
  - 更新视频信息,视频上传转码后续
  

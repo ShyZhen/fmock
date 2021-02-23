@@ -69,8 +69,8 @@
  > https://developer.qiniu.com/dora/6504/receive-notifications
  ------------------------------
 
-#### video-save
- - POST `server_url/V1/video/save`
+#### post-video-item
+ - POST `server_url/V1/video/item`
  - 前端上传完成后，调用保存入库
 
 参数 | 必须 | 类型 | 认证 | 长度 | 备注 |
@@ -87,8 +87,8 @@
  {"message" : <"message">} 
  ------------------------------
 
-#### ajax-transcode
- - GET `server_url/V1/video/transcode/{uuid}`
+#### get-video-item
+ - GET `server_url/V1/video/item/{uuid}`
  - ajax轮询查询转码结果,通过is_transcode判断成功与否
  - is_transcode: 0成功、1等待处理、2处理中、3失败
 

@@ -179,7 +179,7 @@ class FileController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function saveVideo(Request $request)
+    public function saveVideoItem(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'key' => 'required|max:128',
