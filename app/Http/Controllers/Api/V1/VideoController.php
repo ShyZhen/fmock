@@ -38,7 +38,7 @@ class VideoController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function ajaxQueryTranscode($uuid)
+    public function getMyVideoItemByUuid($uuid)
     {
         return $this->videoService->getMyVideoItemByUuid($uuid);
     }

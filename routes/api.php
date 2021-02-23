@@ -116,10 +116,9 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
 
     // 视频相关
     Route::prefix('video')->group(function () {
-        // 轮询转码结果
-        Route::get('transcode/{uuid}', 'VideoController@ajaxQueryTranscode');
+        Route::get('item/{uuid}', 'VideoController@getMyVideoItemByUuid');    // 轮询转码结果(即获取video-item)
         Route::put('item/{uuid}', 'VideoController@updateVideoItem');
         Route::delete('item/{uuid}', 'VideoController@deleteVideoItem');
-        Route::post('save', 'FileController@saveVideo');  // 客户端上传完成后，数据入库
+        Route::post('item', 'FileController@saveVideoItem');                  // 客户端上传完成后，数据入库
     });
 });
