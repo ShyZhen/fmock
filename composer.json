@@ -10,6 +10,7 @@
         "ext-gd": "*",
         "ext-json": "*",
         "alibabacloud/client": "^1.3",
+        "duomai/cps-client": "^1.0",
         "elasticsearch/elasticsearch": "7.4.0",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
