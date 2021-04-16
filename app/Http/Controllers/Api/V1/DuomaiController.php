@@ -91,7 +91,8 @@ class DuomaiController extends Controller
         $data = $this->getRedis($key);
         if (!is_null($data)) {
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         }
@@ -108,7 +109,8 @@ class DuomaiController extends Controller
             $this->setRedis($key, $data);
 
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         } catch (\Exception $exception) {
@@ -129,7 +131,8 @@ class DuomaiController extends Controller
         $data = $this->getRedis($key);
         if (!is_null($data)) {
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         }
@@ -146,7 +149,8 @@ class DuomaiController extends Controller
             $this->setRedis($key, $data);
 
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         } catch (\Exception $exception) {
@@ -198,7 +202,8 @@ class DuomaiController extends Controller
 
         if ($platform == 'custom') {
             return response()->json(
-                ['data' => []],
+//                ['data' => []],
+                [],
                 Response::HTTP_OK
             );
         }
@@ -216,7 +221,8 @@ class DuomaiController extends Controller
             ]);
 
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         } catch (\Exception $exception) {
@@ -377,7 +383,8 @@ class DuomaiController extends Controller
         ]];
 
         return response()->json(
-            ['data' => $itemUrls],
+//            ['data' => $itemUrls],
+            $itemUrls,
             Response::HTTP_OK
         );
     }
@@ -416,7 +423,8 @@ class DuomaiController extends Controller
             ]);
 
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         } catch (\Exception $exception) {
@@ -455,7 +463,8 @@ class DuomaiController extends Controller
             ]);
 
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         } catch (\Exception $exception) {
@@ -500,7 +509,8 @@ class DuomaiController extends Controller
             ]);
 
             return response()->json(
-                ['data' => $data],
+//                ['data' => $data],
+                $data,
                 Response::HTTP_OK
             );
         } catch (\Exception $exception) {
