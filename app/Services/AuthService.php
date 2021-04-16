@@ -748,5 +748,4 @@ class AuthService extends Service
             Response::HTTP_UNPROCESSABLE_ENTITY
         );
     }
-
 }

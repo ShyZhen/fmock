@@ -410,7 +410,6 @@ class AuthController extends Controller
         $type = $this->authService->regexAccountType($account);
 
         if ($type) {
-
             return $this->authService->quickLogin($account, $code, $type);
         } else {
             return response()->json(
