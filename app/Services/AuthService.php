@@ -667,8 +667,10 @@ class AuthService extends Service
     /**
      * @param $account
      * @param $type
-     * @return \Illuminate\Http\JsonResponse
+     *
      * @throws \AlibabaCloud\Client\Exception\ClientException
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendLoginCode($account, $type)
     {
@@ -708,5 +710,4 @@ class AuthService extends Service
             }
         }
     }
-
 }
