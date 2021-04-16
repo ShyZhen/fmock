@@ -39,6 +39,16 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
         // 七牛转码
         Route::post('qiniu', 'CallbackController@qiniu');
     });
+
+    // duomai
+    Route::prefix('duomai')->group(function () {
+        Route::post('list/{platform}', 'DuomaiController@getList');
+        Route::post('search/{platform}', 'DuomaiController@getQueryList');
+        Route::post('detail/{platform}', 'DuomaiController@getDetail');
+        Route::post('link', 'DuomaiController@getLink');
+        Route::post('custom', 'DuomaiController@getCustomProduct');
+        Route::post('html/{platform}', 'DuomaiController@getHtml');
+    });
 });
 
 // need access_token
