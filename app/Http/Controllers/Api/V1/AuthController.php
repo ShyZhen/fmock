@@ -375,6 +375,8 @@ class AuthController extends Controller
         }
     }
 
+    // 以下为干饭组快捷登录接口
+
     /**
      * 快捷登录，发送普通短信验证码
      *
@@ -391,6 +393,25 @@ class AuthController extends Controller
         if ($type) {
 
             return $this->authService->sendLoginCode($account, $type);
+        } else {
+            return response()->json(
+                ['message' => __('app.account_validate_fail')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
+    public function quickLogin(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $account = $request->get('account');
+        $code = $request->get('code');
+
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+
+            return $this->authService->quickLogin($account, $code, $type);
         } else {
             return response()->json(
                 ['message' => __('app.account_validate_fail')],
