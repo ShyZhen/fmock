@@ -381,6 +381,7 @@ class AuthController extends Controller
      * 快捷登录，发送普通短信验证码
      *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function quickLoginCode(Request $request): \Illuminate\Http\JsonResponse
@@ -391,7 +392,6 @@ class AuthController extends Controller
         $type = $this->authService->regexAccountType($account);
 
         if ($type) {
-
             return $this->authService->sendLoginCode($account, $type);
         } else {
             return response()->json(
