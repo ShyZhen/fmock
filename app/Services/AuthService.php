@@ -574,7 +574,7 @@ class AuthService extends Service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    private function handleSms($action, $type, $code, $account)
+    private function handleSms($action, $type, $code, $account): \Illuminate\Http\JsonResponse
     {
         switch ($action) {
             case 'register':
@@ -663,4 +663,50 @@ class AuthService extends Service
 
         return SmsService::sendSms($account, json_encode($data), 'FMock');
     }
+
+    /**
+     * @param $account
+     * @param $type
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \AlibabaCloud\Client\Exception\ClientException
+     */
+    public function sendLoginCode($account, $type)
+    {
+        // 同一IP写入限制，防止用户通过大量账号强行注入
+        if ($this->verifyIpLimit('login-code')) {
+            return response()->json(
+                ['message' => __('app.request_too_much')],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        if ($this->redisService->isRedisExists('user:login:account:' . $account)) {
+            return response()->json(
+                ['message' => __('app.account_ttl') . $this->redisService->getRedisTtl('user:login:account:' . $account) . 's'],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
+        } else {
+            $code = self::code();
+            $action = 'login';
+
+            if (env('QueueStart')) {
+                $params = [
+                    'type' => $type,
+                    'code' => $code,
+                    'account' => $account,
+                    'action' => $action,
+                ];
+                // 使用异步，则没有错误消息提示
+                event(new SendSms(json_encode($params)));
+
+                return response()->json(
+                    ['message' => __('app.send_' . $type) . __('app.success')],
+                    Response::HTTP_OK
+                );
+            } else {
+                return $this->handleSms($action, $type, $code, $account);
+            }
+        }
+    }
+
 }

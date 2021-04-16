@@ -49,6 +49,8 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
         Route::post('custom', 'DuomaiController@getCustomProduct');
         Route::post('html/{platform}', 'DuomaiController@getHtml');
     });
+
+    Route::post('login-code', 'AuthController@quickLoginCode');
 });
 
 // need access_token
