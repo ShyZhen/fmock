@@ -374,4 +374,28 @@ class AuthController extends Controller
             );
         }
     }
+
+    /**
+     * 快捷登录，发送普通短信验证码
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function quickLoginCode(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $account = $request->get('account');
+
+        // 正则验证是邮箱还是手机号
+        $type = $this->authService->regexAccountType($account);
+
+        if ($type) {
+            return $this->authService->sendLoginCode($account, $type);
+        } else {
+            return response()->json(
+                ['message' => __('app.account_validate_fail')],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
 }
