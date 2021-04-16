@@ -1,18 +1,18 @@
 <?php
 /**
  * DuomaiController
+ *
  * @author DELL
  * 2021/4/16 11:22
  **/
 
 namespace App\Http\Controllers\Api\V1;
 
-
-use App\Http\Controllers\Controller;
-use App\Services\BaseService\RedisService;
 use Duomai\CpsClient\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
+use App\Services\BaseService\RedisService;
 
 class DuomaiController extends Controller
 {
@@ -42,7 +42,7 @@ class DuomaiController extends Controller
                 'auth' => [
                     'app_key' => $this->config['appKey'],
                     'app_secret' => $this->config['appSecret'],
-                ]
+                ],
             ];
 
             $this->client = new Client($config);
@@ -76,6 +76,7 @@ class DuomaiController extends Controller
             // 推荐类型 0-1.9包邮, 1-今日爆款, 2-品牌清仓,3-相似商品推荐,4-猜你喜欢,5-实时热销,6-实时收益,7-今日畅销,8-高佣榜单
             $categoryId = $request->get('category_id', 6);
             $page = (int) $request->get('page') ?: 1;
+
             return $this->getPddRecommendList($categoryId, $page);
         }
     }
@@ -86,7 +87,7 @@ class DuomaiController extends Controller
     public function getJingFenList($categoryId, $page)
     {
         // redis缓存
-        $key = $this->pre.':'.__FUNCTION__.':'.md5($categoryId.'-'.$page);
+        $key = $this->pre . ':' . __FUNCTION__ . ':' . md5($categoryId . '-' . $page);
         $data = $this->getRedis($key);
         if (!is_null($data)) {
             return response()->json(
@@ -110,7 +111,6 @@ class DuomaiController extends Controller
                 ['data' => $data],
                 Response::HTTP_OK
             );
-
         } catch (\Exception $exception) {
             return response()->json(
                 ['message' => 'network error'],
@@ -125,7 +125,7 @@ class DuomaiController extends Controller
     public function getPddRecommendList($categoryId, $page)
     {
         // redis缓存
-        $key = $this->pre.':'.__FUNCTION__.':'.md5($categoryId.'-'.$page);
+        $key = $this->pre . ':' . __FUNCTION__ . ':' . md5($categoryId . '-' . $page);
         $data = $this->getRedis($key);
         if (!is_null($data)) {
             return response()->json(
@@ -149,7 +149,6 @@ class DuomaiController extends Controller
                 ['data' => $data],
                 Response::HTTP_OK
             );
-
         } catch (\Exception $exception) {
             return response()->json(
                 ['message' => 'network error'],
@@ -168,6 +167,7 @@ class DuomaiController extends Controller
      *
      * @param $key
      * @param $data
+     *
      * @return string|null
      */
     private function setRedis($key, $data)
@@ -181,6 +181,7 @@ class DuomaiController extends Controller
      *
      * @param $platform
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getQueryList($platform, Request $request): \Illuminate\Http\JsonResponse
@@ -218,7 +219,6 @@ class DuomaiController extends Controller
                 ['data' => $data],
                 Response::HTTP_OK
             );
-
         } catch (\Exception $exception) {
             return response()->json(
                 ['message' => 'network error'],
@@ -387,6 +387,7 @@ class DuomaiController extends Controller
      *
      * @param $platform
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getDetail($platform, Request $request): \Illuminate\Http\JsonResponse
@@ -411,14 +412,13 @@ class DuomaiController extends Controller
             }
 
             $data = $this->client->Request($api, [
-                'id' => $query
+                'id' => $query,
             ]);
 
             return response()->json(
                 ['data' => $data],
                 Response::HTTP_OK
             );
-
         } catch (\Exception $exception) {
             return response()->json(
                 ['message' => 'network error'],
@@ -431,6 +431,7 @@ class DuomaiController extends Controller
      * 转链 返回小程序url
      *
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getLink(Request $request): \Illuminate\Http\JsonResponse
@@ -450,14 +451,13 @@ class DuomaiController extends Controller
             $data = $this->client->Request($api, [
                 'site_id' => $this->config['siteId'],
                 'url' => $query,  // 形如 'https://item.jd.com/100014809454.html'
-                'original' => 1
+                'original' => 1,
             ]);
 
             return response()->json(
                 ['data' => $data],
                 Response::HTTP_OK
             );
-
         } catch (\Exception $exception) {
             return response()->json(
                 ['message' => 'network error'],
@@ -471,6 +471,7 @@ class DuomaiController extends Controller
      *
      * @param $platform
      * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getHtml($platform, Request $request): \Illuminate\Http\JsonResponse
@@ -495,14 +496,13 @@ class DuomaiController extends Controller
             }
 
             $data = $this->client->Request($api, [
-                'id' => $itemId
+                'id' => $itemId,
             ]);
 
             return response()->json(
                 ['data' => $data],
                 Response::HTTP_OK
             );
-
         } catch (\Exception $exception) {
             return response()->json(
                 ['message' => 'network error'],
