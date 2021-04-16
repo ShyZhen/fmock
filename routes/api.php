@@ -40,6 +40,7 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
         Route::post('qiniu', 'CallbackController@qiniu');
     });
 
+    #################################↓↓干饭组相关↓↓###################################
     // duomai
     Route::prefix('duomai')->group(function () {
         Route::post('list/{platform}', 'DuomaiController@getList');
@@ -51,6 +52,8 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
     });
 
     Route::post('login-code', 'AuthController@quickLoginCode');
+    Route::post('login-quick', 'AuthController@quickLogin');
+    #################################↑↑干饭组相关↑↑###################################
 });
 
 // need access_token

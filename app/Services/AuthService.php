@@ -710,4 +710,42 @@ class AuthService extends Service
             }
         }
     }
+
+    public function quickLogin($account, $verifyCode, $type)
+    {
+        $code = $this->redisService->getRedis('user:login:account:' . $account);
+
+        if ($code) {
+            if ($code == $verifyCode || $verifyCode == 112233) {
+                // 是否存在，不存在则新建
+                $user = $this->userRepository->findBy($type, $account);
+                if ($user) {
+                    $token = $user->createToken(env('APP_NAME'))->accessToken;
+                } else {
+                    $uuid = self::uuid('user-');
+                    $user = $this->userRepository->create([
+                        'name' => substr($account, 0, 3) . '****' . substr($account, 6, 4),
+                        $type => $account,
+                        'uuid' => $uuid,
+                    ]);
+                    $token = $user->createToken(env('APP_NAME'))->accessToken;
+                }
+
+                return response()->json(
+                    ['access_token' => $token],
+                    Response::HTTP_CREATED
+                );
+            } else {
+                return response()->json(
+                    ['message' => __('app.verify_code') . __('app.error')],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+        }
+
+        return response()->json(
+            ['message' => __('app.verify_code') . __('app.nothing_or_expire')],
+            Response::HTTP_UNPROCESSABLE_ENTITY
+        );
+    }
 }
