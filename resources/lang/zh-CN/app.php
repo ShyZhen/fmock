@@ -12,7 +12,7 @@ return [
     |
     */
     'test' => '测试',
-    'account_ttl' => '请检查您的邮箱或手机，距离下一次请求时间为',
+    'account_ttl' => '验证码10分钟内有效，距离下一次请求时间为',
     'email_server' => 'FMock邮箱服务',
     'fmock_register_service' => 'FMock注册服务',
     'fmock_reset_pwd_service' => 'FMock改密服务',
@@ -30,7 +30,7 @@ return [
     'change' => '修改',
     'login' => '登录',
     'logout' => '登出',
-    'action_ttl' => '您的操作太频繁，距离下一次请求时间为',
+    'action_ttl' => '操作频繁，距离下一次请求时间为',
     'unknown' => '未知',
     'upload_file_valida_fail' => '文件上传失败',
     'upload_file_qiniu_fail' => '七牛服务上传失败',
