@@ -111,7 +111,9 @@ class WechatService extends Service
                 // 创建用户
                 $uuid = self::uuid('user-');
                 $user = User::create([
-                    'name' => self::uuid($userInfo['nickName'] . '-'),
+                    // 可以重名，使用微信名
+//                    'name' => self::uuid($userInfo['nickName'] . '-'),
+                    'name' => $userInfo['nickName'],
                     'password' => bcrypt(''),
                     'uuid' => $uuid,
                     'wechat_openid' => $openIdArr['openid'],
