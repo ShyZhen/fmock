@@ -727,6 +727,7 @@ class AuthService extends Service
                         'name' => substr($account, 0, 3) . '****' . substr($account, 6, 4),
                         $type => $account,
                         'uuid' => $uuid,
+                        'password' => bcrypt(time()),
                     ]);
                     $token = $user->createToken(env('APP_NAME'))->accessToken;
                 }
