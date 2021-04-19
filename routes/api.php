@@ -53,6 +53,11 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
 
     Route::post('login-code', 'AuthController@quickLoginCode');
     Route::post('login-quick', 'AuthController@quickLogin');
+
+    Route::prefix('timeline')->group(function () {
+        Route::get('list/{type}', 'TimelineController@getAllTimelines');
+        Route::get('detail/{uuid}', 'TimelineController@getTimelineByUuid');
+    });
     #################################↑↑干饭组相关↑↑###################################
 });
 
@@ -136,4 +141,12 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
         Route::delete('item/{uuid}', 'VideoController@deleteVideoItem');
         Route::post('item', 'FileController@saveVideoItem');                  // 客户端上传完成后，数据入库
     });
+
+    #################################↓↓干饭组相关↓↓###################################
+    Route::prefix('timeline')->group(function () {
+        Route::post('created', 'TimelineController@createTimeline');
+        Route::delete('delete/{uuid}', 'TimelineController@deleteTimeline');
+        Route::get('user-timeline/{uuid}', 'TimelineController@userTimeline');
+    });
+    #################################↑↑干饭组相关↑↑###################################
 });

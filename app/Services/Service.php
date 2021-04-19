@@ -88,7 +88,7 @@ class Service
         if ($user) {
             $userInfo['uuid'] = $user->uuid;
             $userInfo['username'] = $user->name;
-            $userInfo['avatar'] = $user->avatar ?: url('/static/image/defaultAvatar.jpg');
+            $userInfo['avatar'] = $user->avatar;
             $userInfo['bio'] = $user->bio;
         } else {
             $userInfo['uuid'] = 'user-anonymous';
