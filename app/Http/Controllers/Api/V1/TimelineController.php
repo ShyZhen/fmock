@@ -12,9 +12,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
-use App\Services\TimelineService;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
+use App\Services\TimelineService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
