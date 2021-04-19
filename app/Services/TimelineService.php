@@ -13,8 +13,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\RedisService;
-use App\Repositories\Eloquent\TimelineRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\TimelineRepository;
 
 class TimelineService extends Service
 {
@@ -26,8 +26,8 @@ class TimelineService extends Service
 
     /**
      * @param TimelineRepository $timelineRepository
-     * @param RedisService   $redisService
-     * @param UserRepository $userRepository
+     * @param RedisService       $redisService
+     * @param UserRepository     $userRepository
      */
     public function __construct(
         TimelineRepository $timelineRepository,
@@ -258,7 +258,6 @@ class TimelineService extends Service
     {
         $user = $this->userRepository->findBy('uuid', $userUuid);
         if ($user) {
-
             $posts = $this->timelineRepository->getPostsByUserId($user->id);
 
             if ($posts->count()) {
