@@ -7,7 +7,6 @@
 
 namespace App\Services;
 
-use App\Repositories\Eloquent\TimelineRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
@@ -15,6 +14,7 @@ use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\VideoRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
+use App\Repositories\Eloquent\TimelineRepository;
 use App\Repositories\Eloquent\PostsFollowRepository;
 use App\Repositories\Eloquent\UsersFollowRepository;
 use App\Repositories\Eloquent\VideosFollowRepository;
@@ -50,7 +50,7 @@ class ActionService extends Service
      *
      * @param UserRepository              $userRepository
      * @param PostRepository              $postRepository
-     * @param TimelineRepository              $timelineRepository
+     * @param TimelineRepository          $timelineRepository
      * @param VideoRepository             $videoRepository
      * @param AnswerRepository            $answerRepository
      * @param CommentRepository           $commentRepository

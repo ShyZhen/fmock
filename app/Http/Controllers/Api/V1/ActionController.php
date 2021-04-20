@@ -309,8 +309,6 @@ class ActionController extends Controller
         }
     }
 
-
-
     /**
      * 赞、取消赞(文章)
      *
