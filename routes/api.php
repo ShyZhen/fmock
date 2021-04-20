@@ -148,5 +148,9 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
         Route::delete('delete/{uuid}', 'TimelineController@deleteTimeline');
         Route::get('user-timeline/{uuid}', 'TimelineController@userTimeline');
     });
+    // 文章 赞、取消赞，踩、取消踩
+    Route::post('like/timeline/{uuid}', 'ActionController@likeTimeline');
+    Route::post('dislike/timeline/{uuid}', 'ActionController@dislikeTimeline');
+    Route::get('status/timeline/{uuid}', 'ActionController@statusTimeline');
     #################################↑↑干饭组相关↑↑###################################
 });

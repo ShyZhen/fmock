@@ -97,6 +97,7 @@ class TimelineService extends Service
         if ($post) {
             if ($post->deleted == 'none' || $post->user_id == Auth::id()) {
                 $post->user_info = $this->handleUserInfo($post->user);
+                $post->poster_list = json_decode($post->poster_list, false);
                 unset($post->user);
                 unset($post->user_id);
 
@@ -134,7 +135,7 @@ class TimelineService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
-            $uuid = self::uuid('post-');
+            $uuid = self::uuid('timeline-');
             $post = $this->timelineRepository->create([
                 'uuid' => $uuid,
                 'user_id' => $userId,

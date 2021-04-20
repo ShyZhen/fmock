@@ -22,7 +22,7 @@ class ActionController extends Controller
     private $actionService;
 
     // 收藏的主体 是文章还是回答
-    private $type = ['post', 'answer', 'video'];
+    private $type = ['post', 'answer', 'video', 'timeline'];
 
     /**
      * ActionController constructor.
@@ -307,5 +307,53 @@ class ActionController extends Controller
                 Response::HTTP_BAD_REQUEST
             );
         }
+    }
+
+
+
+    /**
+     * 赞、取消赞(文章)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function likeTimeline($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'like', 'timeline');
+    }
+
+    /**
+     * 踩、取消踩(文章)
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function dislikeTimeline($uuid)
+    {
+        return $this->actionService->userAction($uuid, 'dislike', 'timeline');
+    }
+
+    /**
+     * 查询 当前用户 对该文章是否存在 赞、踩
+     * 所有 对内查询 可以使用ID，其他一律使用uuid
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @param $uuid
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusTimeline($uuid)
+    {
+        return $this->actionService->status($uuid, 'timeline');
     }
 }

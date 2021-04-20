@@ -7,6 +7,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Eloquent\TimelineRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
@@ -25,6 +26,8 @@ class ActionService extends Service
     private $userRepository;
 
     private $postRepository;
+
+    private $timelineRepository;
 
     private $videoRepository;
 
@@ -47,6 +50,7 @@ class ActionService extends Service
      *
      * @param UserRepository              $userRepository
      * @param PostRepository              $postRepository
+     * @param TimelineRepository              $timelineRepository
      * @param VideoRepository             $videoRepository
      * @param AnswerRepository            $answerRepository
      * @param CommentRepository           $commentRepository
@@ -59,6 +63,7 @@ class ActionService extends Service
     public function __construct(
         UserRepository $userRepository,
         PostRepository $postRepository,
+        TimelineRepository $timelineRepository,
         VideoRepository $videoRepository,
         AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
@@ -70,6 +75,7 @@ class ActionService extends Service
     ) {
         $this->userRepository = $userRepository;
         $this->postRepository = $postRepository;
+        $this->timelineRepository = $timelineRepository;
         $this->videoRepository = $videoRepository;
         $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
@@ -212,6 +218,8 @@ class ActionService extends Service
             $resource = $this->answerRepository->findBy('uuid', $resourceId);
         } elseif ($resourceType === 'video') {
             $resource = $this->videoRepository->findBy('uuid', $resourceId);
+        } elseif ($resourceType === 'timeline') {
+            $resource = $this->timelineRepository->findBy('uuid', $resourceId);
         }
 
         // 目前记录赞和踩都在一张表中，后期可考虑分成单表
@@ -267,6 +275,8 @@ class ActionService extends Service
             $resource = $this->answerRepository->findBy('uuid', $resourceId, ['id']);
         } elseif ($resourceType === 'video') {
             $resource = $this->videoRepository->findBy('uuid', $resourceId, ['id']);
+        } elseif ($resourceType === 'timeline') {
+            $resource = $this->timelineRepository->findBy('uuid', $resourceId);
         }
 
         if ($resource) {
