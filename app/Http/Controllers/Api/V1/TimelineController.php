@@ -79,22 +79,10 @@ class TimelineController extends Controller
      */
     public function createTimeline(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'poster_list' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(
-                ['message' => $validator->errors()->first()],
-                Response::HTTP_BAD_REQUEST
-            );
-        } else {
-            return $this->timelineService->createPost(
-                $request->get('title'),
-                $request->get('poster_list')
-            );
-        }
+        return $this->timelineService->createPost(
+            $request->get('title'),
+            json_encode($request->get('poster_list'))
+        );
     }
 
     /**

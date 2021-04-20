@@ -67,6 +67,7 @@ class TimelineService extends Service
         if ($posts->count()) {
             foreach ($posts as $post) {
                 $post->user_info = $this->handleUserInfo($post->user);
+                $post->poster_list = json_decode($post->poster_list, false);
                 unset($post->user);
                 unset($post->user_id);
             }
@@ -142,8 +143,8 @@ class TimelineService extends Service
             ]);
 
             if ($post) {
-                // 写入限制 2分钟一次
-                $this->redisService->setRedis('timeline:user:' . $userId, 'create', 'EX', 120);
+                // 写入限制 1分钟一次
+                $this->redisService->setRedis('timeline:user:' . $userId, 'create', 'EX', 60);
 
                 return response()->json(
                     ['data' => $uuid],
