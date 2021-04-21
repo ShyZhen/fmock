@@ -23,7 +23,7 @@ class CommentController extends Controller
     private $commentService;
 
     // 评论的主体 是文章还是回答
-    private $type = ['post', 'answer'];
+    private $type = ['post', 'answer', 'video', 'timeline'];
 
     /**
      * CommentController constructor.

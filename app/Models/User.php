@@ -89,4 +89,22 @@ class User extends Authenticatable
             ->orderByDesc('pivot_updated_at')
             ->withTimestamps();
     }
+
+    /**
+     * 获取我关注收藏的文章 按关注时间排序
+     *
+     * @Author huaixiu.zhen
+     * http://litblc.com
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function myCollectedTimelines()
+    {
+        return $this->belongsToMany('App\Models\Timeline', 'timelines_follow', 'user_id', 'resource_id')
+//            ->withPivot('type')
+//            ->wherePivot('type', 'post')    // 过滤中间表type为post的
+            ->where('deleted', 'none')
+            ->orderByDesc('pivot_updated_at')
+            ->withTimestamps();
+    }
 }

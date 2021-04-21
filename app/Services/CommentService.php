@@ -16,10 +16,13 @@ use App\Repositories\Eloquent\PostRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\AnswerRepository;
 use App\Repositories\Eloquent\CommentRepository;
+use App\Repositories\Eloquent\TimelineRepository;
 
 class CommentService extends Service
 {
     private $postRepository;
+
+    private $timelineRepository;
 
     private $answerRepository;
 
@@ -33,6 +36,7 @@ class CommentService extends Service
      * CommentService constructor.
      *
      * @param PostRepository    $postRepository
+     * @param TimelineRepository    $timelineRepository
      * @param AnswerRepository  $answerRepository
      * @param CommentRepository $commentRepository
      * @param RedisService      $redisService
@@ -40,12 +44,14 @@ class CommentService extends Service
      */
     public function __construct(
         PostRepository $postRepository,
+        TimelineRepository $timelineRepository,
         AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
         RedisService $redisService,
         UserRepository $userRepository
     ) {
         $this->postRepository = $postRepository;
+        $this->timelineRepository = $timelineRepository;
         $this->answerRepository = $answerRepository;
         $this->commentRepository = $commentRepository;
         $this->redisService = $redisService;
@@ -164,7 +170,10 @@ class CommentService extends Service
             $repository = $type . 'Repository';
             $post = $this->$repository->findBy('uuid', $postUuid);
 
-            $parentComment = $this->commentRepository->find($parentId);
+            $parentComment = null;
+            if ($parentId !== 0) {
+                $parentComment = $this->commentRepository->find($parentId);
+            }
 
             if ($post) {
                 $comment = $this->commentRepository->create([
@@ -178,13 +187,14 @@ class CommentService extends Service
 
                 if ($comment) {
                     // 写入限制 1分钟一次
-                    $this->redisService->setRedis('comment:user:' . $userId, 'create', 'EX', 60);
-                    $comment->user_info = $this->handleUserInfo($comment->user);
-                    unset($comment->user);
+                    $this->redisService->setRedis('comment:user:' . $userId, 'create', 'EX', 20);
 
                     // 更新评论数量,回复也算在内
                     $post->comment_num += 1;
                     $post->save();
+
+                    // 处理父级
+                    $comment = $this->handleComments([$comment]);
 
                     return response()->json(
                         ['data' => $comment],
