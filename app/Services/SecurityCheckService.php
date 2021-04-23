@@ -99,7 +99,7 @@ class SecurityCheckService extends Service
         }
     }
 
-    public function urlParams($params): string
+    public function urlParams($params)
     {
         $buff = '';
         foreach ($params as $k => $v) {
@@ -117,9 +117,8 @@ class SecurityCheckService extends Service
      * @param array  $params
      * @param bool   $post
      *
-     * @return string
      */
-    public function httpRequest($url, $params, $post = true): ?string
+    public function httpRequest($url, $params, $post = true)
     {
         $header = [
             'Content-Type: application/json; charset=utf-8',
