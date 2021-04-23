@@ -9,16 +9,14 @@
 
 namespace App\Services;
 
-
 use Illuminate\Http\Response;
 use App\Services\BaseService\RedisService;
 
-
 class SecurityCheckService extends Service
 {
-    const MSG_SEC_CHECK = 'https://api.weixin.qq.com/wxa/msg_sec_check?';  // 敏感词
-    const IMG_SEC_CHECK = 'https://api.weixin.qq.com/wxa/img_sec_check?';  // 图片
-    const OAUTH_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?';    // 获取access_token
+    public const MSG_SEC_CHECK = 'https://api.weixin.qq.com/wxa/msg_sec_check?';  // 敏感词
+    public const IMG_SEC_CHECK = 'https://api.weixin.qq.com/wxa/img_sec_check?';  // 图片
+    public const OAUTH_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?';    // 获取access_token
 
     private static $config;
     private $redisService;
@@ -46,8 +44,9 @@ class SecurityCheckService extends Service
         if ($result['errcode'] == '0') {
             return true;
         }
+
         return false;
-}
+    }
 
     public function imgCheck($file): bool
     {
@@ -62,6 +61,7 @@ class SecurityCheckService extends Service
         if ($result['errcode'] == '0') {
             return true;
         }
+
         return false;
     }
 
@@ -94,6 +94,7 @@ class SecurityCheckService extends Service
             return false;
         } else {
             $this->redisService->setRedis($key, $result['access_token'], 'EX', 7000);
+
             return $result['access_token'];
         }
     }
@@ -113,8 +114,9 @@ class SecurityCheckService extends Service
 
     /**
      * @param string $url
-     * @param array $params
-     * @param bool $post
+     * @param array  $params
+     * @param bool   $post
+     *
      * @return string
      */
     public function httpRequest($url, $params, $post = true): ?string
@@ -154,18 +156,19 @@ class SecurityCheckService extends Service
      *
      * @param $url
      * @param $file
+     *
      * @return bool|string
      */
     public function picCheck($url, $file)
     {
         $file_path = $file->getRealPath();
-        $file_data = ['media'  => new \CURLFile($file_path)];
+        $file_data = ['media' => new \CURLFile($file_path)];
 
         $ch = curl_init();
-        curl_setopt($ch , CURLOPT_URL , $url);
-        curl_setopt($ch , CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch , CURLOPT_POST, 1);
-        curl_setopt($ch , CURLOPT_POSTFIELDS, $file_data);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $file_data);
         $data = curl_exec($ch);
 
         if (curl_error($ch)) {
