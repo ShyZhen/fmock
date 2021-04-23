@@ -31,5 +31,4 @@ class ReportRepository extends Repository
             ->where('type', $type)
             ->get();
     }
-
 }

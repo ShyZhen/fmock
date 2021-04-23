@@ -31,7 +31,7 @@ class TimelineService extends Service
      * @param TimelineRepository $timelineRepository
      * @param RedisService       $redisService
      * @param UserRepository     $userRepository
-     * @param ReportRepository     $reportRepository
+     * @param ReportRepository   $reportRepository
      */
     public function __construct(
         TimelineRepository $timelineRepository,
@@ -291,6 +291,7 @@ class TimelineService extends Service
      * 举报操作
      *
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function report($uuid): \Illuminate\Http\JsonResponse
