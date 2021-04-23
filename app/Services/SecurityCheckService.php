@@ -88,7 +88,7 @@ class SecurityCheckService extends Service
         $request_params = $this->urlParams($params);
         $url = self::OAUTH_TOKEN_URL . $request_params;
 
-        $result = json_decode($this->httpRequest($url, [], false), true);
+        $result = $this->httpRequest($url, [], false);
 
         if (!is_array($result) || !isset($result['access_token'])) {
             return false;
