@@ -32,6 +32,8 @@ class CommentService extends Service
 
     private $userRepository;
 
+    private $securityCheckService;
+
     /**
      * CommentService constructor.
      *
@@ -41,6 +43,7 @@ class CommentService extends Service
      * @param CommentRepository  $commentRepository
      * @param RedisService       $redisService
      * @param UserRepository     $userRepository
+     * @param SecurityCheckService     $securityCheckService
      */
     public function __construct(
         PostRepository $postRepository,
@@ -48,7 +51,8 @@ class CommentService extends Service
         AnswerRepository $answerRepository,
         CommentRepository $commentRepository,
         RedisService $redisService,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        SecurityCheckService $securityCheckService
     ) {
         $this->postRepository = $postRepository;
         $this->timelineRepository = $timelineRepository;
@@ -56,6 +60,7 @@ class CommentService extends Service
         $this->commentRepository = $commentRepository;
         $this->redisService = $redisService;
         $this->userRepository = $userRepository;
+        $this->securityCheckService = $securityCheckService;
     }
 
     /**
@@ -166,6 +171,15 @@ class CommentService extends Service
             );
         } else {
             // 简单验证
+
+            // 敏感词校验
+            if (!$this->securityCheckService->stringCheck($content)) {
+                return response()->json(
+                    ['message' => __('app.has_sensitive_words')],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+
             // postRepository or answerRepository
             $repository = $type . 'Repository';
             $post = $this->$repository->findBy('uuid', $postUuid);
