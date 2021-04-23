@@ -30,11 +30,11 @@ class TimelineService extends Service
     private $securityCheckService;
 
     /**
-     * @param TimelineRepository $timelineRepository
-     * @param RedisService       $redisService
-     * @param UserRepository     $userRepository
+     * @param TimelineRepository   $timelineRepository
+     * @param RedisService         $redisService
+     * @param UserRepository       $userRepository
      * @param ReportRepository     $reportRepository
-     * @param SecurityCheckService     $securityCheckService
+     * @param SecurityCheckService $securityCheckService
      */
     public function __construct(
         TimelineRepository $timelineRepository,
@@ -147,7 +147,7 @@ class TimelineService extends Service
             );
         } else {
             // 敏感词校验
-            if (!$this->securityCheckService->stringCheck($title)){
+            if (!$this->securityCheckService->stringCheck($title)) {
                 return response()->json(
                     ['message' => __('app.has_sensitive_words')],
                     Response::HTTP_UNPROCESSABLE_ENTITY
@@ -304,6 +304,7 @@ class TimelineService extends Service
      * 举报操作
      *
      * @param $uuid
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function report($uuid): \Illuminate\Http\JsonResponse

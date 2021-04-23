@@ -26,7 +26,7 @@ class FileController extends Controller
     /**
      * FileController constructor.
      *
-     * @param FileService $fileService
+     * @param FileService          $fileService
      * @param SecurityCheckService $securityCheckService
      */
     public function __construct(FileService $fileService, SecurityCheckService $securityCheckService)
