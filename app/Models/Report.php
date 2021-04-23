@@ -12,5 +12,4 @@ class Report extends Model
     protected $fillable = [
         'reason', 'user_id', 'resource_id', 'type',
     ];
-
 }
