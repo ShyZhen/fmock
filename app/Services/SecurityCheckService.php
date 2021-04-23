@@ -116,7 +116,6 @@ class SecurityCheckService extends Service
      * @param string $url
      * @param array  $params
      * @param bool   $post
-     *
      */
     public function httpRequest($url, $params, $post = true)
     {
