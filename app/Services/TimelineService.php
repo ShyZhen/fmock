@@ -27,22 +27,27 @@ class TimelineService extends Service
 
     private $reportRepository;
 
+    private $securityCheckService;
+
     /**
      * @param TimelineRepository $timelineRepository
      * @param RedisService       $redisService
      * @param UserRepository     $userRepository
      * @param ReportRepository     $reportRepository
+     * @param SecurityCheckService     $securityCheckService
      */
     public function __construct(
         TimelineRepository $timelineRepository,
         RedisService $redisService,
         UserRepository $userRepository,
-        ReportRepository $reportRepository
+        ReportRepository $reportRepository,
+        SecurityCheckService $securityCheckService
     ) {
         $this->timelineRepository = $timelineRepository;
         $this->redisService = $redisService;
         $this->userRepository = $userRepository;
         $this->reportRepository = $reportRepository;
+        $this->securityCheckService = $securityCheckService;
     }
 
     /**
@@ -141,6 +146,14 @@ class TimelineService extends Service
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         } else {
+            // 敏感词校验
+            if (!$this->securityCheckService->stringCheck($title)){
+                return response()->json(
+                    ['message' => __('app.has_sensitive_words')],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+
             $uuid = self::uuid('timeline-');
             $post = $this->timelineRepository->create([
                 'uuid' => $uuid,

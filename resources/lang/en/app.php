@@ -58,4 +58,6 @@ return [
     'no_answers' => 'There is nothing ',
     'no_videos' => 'There is nothing ',
     'has_report' => 'Has reported ',
+    'has_sensitive_words' => 'Has Sensitive Words',
+
 ];

@@ -58,5 +58,6 @@ return [
     'no_answers' => '没有相关回答',
     'no_videos' => '没有相关视频',
     'has_report' => '您已经举报过啦',
+    'has_sensitive_words' => '包含敏感内容',
 
 ];

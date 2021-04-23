@@ -15,20 +15,24 @@ use Illuminate\Http\Request;
 use App\Services\FileService;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
+use App\Services\SecurityCheckService;
 use Illuminate\Support\Facades\Validator;
 
 class FileController extends Controller
 {
     private $fileService;
+    private $securityCheckService;
 
     /**
      * FileController constructor.
      *
      * @param FileService $fileService
+     * @param SecurityCheckService $securityCheckService
      */
-    public function __construct(FileService $fileService)
+    public function __construct(FileService $fileService, SecurityCheckService $securityCheckService)
     {
         $this->fileService = $fileService;
+        $this->securityCheckService = $securityCheckService;
     }
 
     /**
@@ -56,6 +60,14 @@ class FileController extends Controller
             );
         } else {
             $file = $request->file('image');
+
+            // 敏感图片验证
+            if (!$this->securityCheckService->imgCheck($file)) {
+                return response()->json(
+                    ['message' => __('app.has_sensitive_words')],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
 
             if (env('QiniuService')) {
 
