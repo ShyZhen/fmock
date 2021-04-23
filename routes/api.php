@@ -146,6 +146,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::prefix('timeline')->group(function () {
         Route::post('created', 'TimelineController@createTimeline');
         Route::delete('delete/{uuid}', 'TimelineController@deleteTimeline');
+        Route::put('report/{uuid}', 'TimelineController@reportTimeline');
         Route::get('user-timeline/{uuid}', 'TimelineController@userTimeline');
     });
     // 文章 赞、取消赞，踩、取消踩

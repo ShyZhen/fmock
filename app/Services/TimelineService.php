@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BaseService\RedisService;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Eloquent\ReportRepository;
 use App\Repositories\Eloquent\TimelineRepository;
 
 class TimelineService extends Service
@@ -24,19 +25,24 @@ class TimelineService extends Service
 
     private $userRepository;
 
+    private $reportRepository;
+
     /**
      * @param TimelineRepository $timelineRepository
      * @param RedisService       $redisService
      * @param UserRepository     $userRepository
+     * @param ReportRepository     $reportRepository
      */
     public function __construct(
         TimelineRepository $timelineRepository,
         RedisService $redisService,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        ReportRepository $reportRepository
     ) {
         $this->timelineRepository = $timelineRepository;
         $this->redisService = $redisService;
         $this->userRepository = $userRepository;
+        $this->reportRepository = $reportRepository;
     }
 
     /**
@@ -277,6 +283,56 @@ class TimelineService extends Service
 
         return response()->json(
             ['message' => __('app.user_is_closure')],
+            Response::HTTP_NOT_FOUND
+        );
+    }
+
+    /**
+     * 举报操作
+     *
+     * @param $uuid
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function report($uuid): \Illuminate\Http\JsonResponse
+    {
+        $type = 'timeline';
+        $post = $this->timelineRepository->findBy('uuid', $uuid);
+
+        if ($post) {
+            $userId = Auth::id();
+
+            // 防止重复举报
+            $hasReport = $this->reportRepository->hasReport($userId, $post->id, $type);
+            if ($hasReport->count()) {
+                return response()->json(
+                    ['message' => __('app.has_report')],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+
+            // 写举报信息
+            $report = $this->reportRepository->create([
+                'user_id' => $userId,
+                'resource_id' => $post->id,
+                'reason' => '',
+                'type' => $type,
+            ]);
+
+            if ($report) {
+                return response()->json(
+                    ['data' => $report],
+                    Response::HTTP_OK
+                );
+            }
+
+            return response()->json(
+                ['message' => __('app.try_again')],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
+        return response()->json(
+            ['message' => __('app.no_posts')],
             Response::HTTP_NOT_FOUND
         );
     }

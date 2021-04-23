@@ -57,5 +57,5 @@ return [
     'no_comments' => 'There is nothing ',
     'no_answers' => 'There is nothing ',
     'no_videos' => 'There is nothing ',
-
+    'has_report' => 'Has reported ',
 ];

@@ -57,5 +57,6 @@ return [
     'no_comments' => '没有相关评论',
     'no_answers' => '没有相关回答',
     'no_videos' => '没有相关视频',
+    'has_report' => '您已经举报过啦',
 
 ];
