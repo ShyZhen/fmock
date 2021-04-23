@@ -37,13 +37,13 @@ class CommentService extends Service
     /**
      * CommentService constructor.
      *
-     * @param PostRepository     $postRepository
-     * @param TimelineRepository $timelineRepository
-     * @param AnswerRepository   $answerRepository
-     * @param CommentRepository  $commentRepository
-     * @param RedisService       $redisService
-     * @param UserRepository     $userRepository
-     * @param SecurityCheckService     $securityCheckService
+     * @param PostRepository       $postRepository
+     * @param TimelineRepository   $timelineRepository
+     * @param AnswerRepository     $answerRepository
+     * @param CommentRepository    $commentRepository
+     * @param RedisService         $redisService
+     * @param UserRepository       $userRepository
+     * @param SecurityCheckService $securityCheckService
      */
     public function __construct(
         PostRepository $postRepository,
