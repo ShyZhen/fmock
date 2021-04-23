@@ -109,6 +109,14 @@ class FileController extends Controller
         } else {
             $file = $request->file('avatar');
 
+            // 敏感图片验证
+            if (!$this->securityCheckService->imgCheck($file)) {
+                return response()->json(
+                    ['message' => __('app.has_sensitive_words')],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+
             if (env('QiniuService')) {
 
                 // 上传图片到七牛
