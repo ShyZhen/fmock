@@ -114,8 +114,9 @@ class WechatService extends Service
                     // 可以重名，使用微信名
 //                    'name' => self::uuid($userInfo['nickName'] . '-'),
                     'name' => $userInfo['nickName'],
-                    'password' => bcrypt(''),
+                    'password' => bcrypt(time()),
                     'uuid' => $uuid,
+                    'gender' => $userInfo['gender'] === 1 ? 'male' : 'female',
                     'wechat_openid' => $openIdArr['openid'],
                     'avatar' => FileService::saveOriginAvatar($uuid, $userInfo['avatarUrl']),
                 ]);
