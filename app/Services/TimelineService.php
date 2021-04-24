@@ -209,6 +209,7 @@ class TimelineService extends Service
 
             if ($post->save()) {
                 $post->user_info = $this->handleUserInfo($post->user);
+                $post->poster_list = json_decode($post->poster_list, false);
                 unset($post->user);
                 unset($post->user_id);
 
@@ -284,6 +285,7 @@ class TimelineService extends Service
             if ($posts->count()) {
                 foreach ($posts as $post) {
                     $post->user_info = $this->handleUserInfo($post->user);
+                    $post->poster_list = json_decode($post->poster_list, false);
                     unset($post->user);
                 }
             }

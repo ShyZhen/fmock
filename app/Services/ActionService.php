@@ -108,6 +108,7 @@ class ActionService extends Service
                 unset($post->pivot);
 
                 $post->user_info = $this->handleUserInfo($post->user);
+                $post->poster_list = json_decode($post->poster_list, false);
                 unset($post->user);
             }
         }
