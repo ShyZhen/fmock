@@ -7,7 +7,6 @@
 
 namespace App\Services;
 
-use App\Repositories\Eloquent\TimelinesFollowRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
@@ -20,6 +19,7 @@ use App\Repositories\Eloquent\PostsFollowRepository;
 use App\Repositories\Eloquent\UsersFollowRepository;
 use App\Repositories\Eloquent\VideosFollowRepository;
 use App\Repositories\Eloquent\AnswersFollowRepository;
+use App\Repositories\Eloquent\TimelinesFollowRepository;
 use App\Repositories\Eloquent\PostsCommentsLikeRepository;
 
 class ActionService extends Service
@@ -61,7 +61,7 @@ class ActionService extends Service
      * @param PostsFollowRepository       $postsFollowRepository
      * @param VideosFollowRepository      $videosFollowRepository
      * @param AnswersFollowRepository     $answersFollowRepository
-     * @param TimelinesFollowRepository     $timelinesFollowRepository
+     * @param TimelinesFollowRepository   $timelinesFollowRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(
