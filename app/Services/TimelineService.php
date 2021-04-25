@@ -147,11 +147,13 @@ class TimelineService extends Service
             );
         } else {
             // 敏感词校验
-            if (!$this->securityCheckService->stringCheck($title)) {
-                return response()->json(
-                    ['message' => __('app.has_sensitive_words')],
-                    Response::HTTP_UNPROCESSABLE_ENTITY
-                );
+            if ($title) {
+                if (!$this->securityCheckService->stringCheck($title)) {
+                    return response()->json(
+                        ['message' => __('app.has_sensitive_words')],
+                        Response::HTTP_UNPROCESSABLE_ENTITY
+                    );
+                }
             }
 
             $uuid = self::uuid('timeline-');

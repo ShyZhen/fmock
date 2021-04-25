@@ -7,6 +7,7 @@
 
 namespace App\Services;
 
+use App\Repositories\Eloquent\TimelinesFollowRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Eloquent\PostRepository;
@@ -43,6 +44,8 @@ class ActionService extends Service
 
     private $answersFollowRepository;
 
+    private $timelinesFollowRepository;
+
     private $postsCommentsLikeRepository;
 
     /**
@@ -58,6 +61,7 @@ class ActionService extends Service
      * @param PostsFollowRepository       $postsFollowRepository
      * @param VideosFollowRepository      $videosFollowRepository
      * @param AnswersFollowRepository     $answersFollowRepository
+     * @param TimelinesFollowRepository     $timelinesFollowRepository
      * @param PostsCommentsLikeRepository $postsCommentsLikeRepository
      */
     public function __construct(
@@ -71,6 +75,7 @@ class ActionService extends Service
         PostsFollowRepository $postsFollowRepository,
         VideosFollowRepository $videosFollowRepository,
         AnswersFollowRepository $answersFollowRepository,
+        TimelinesFollowRepository $timelinesFollowRepository,
         PostsCommentsLikeRepository $postsCommentsLikeRepository
     ) {
         $this->userRepository = $userRepository;
@@ -83,6 +88,7 @@ class ActionService extends Service
         $this->postsFollowRepository = $postsFollowRepository;
         $this->videosFollowRepository = $videosFollowRepository;
         $this->answersFollowRepository = $answersFollowRepository;
+        $this->timelinesFollowRepository = $timelinesFollowRepository;
         $this->postsCommentsLikeRepository = $postsCommentsLikeRepository;
     }
 
@@ -285,18 +291,16 @@ class ActionService extends Service
             $dislike = $this->postsCommentsLikeRepository->hasAction($resource->id, 'dislike', $resourceType);
 
             // 查询文章、回答、视频时候的搜藏状态
-            if (in_array($resourceType, ['post', 'video', 'answer'])) {
-                $userId = Auth::id();
+            $userId = Auth::id();
 
-                // PostsFollowRepository answersFollowRepository videosFollowRepository
-                $repository = $resourceType . 's' . 'FollowRepository';
-                $collected = $this->$repository
-                    ->model()::where([
-                        'user_id' => $userId,
-                        'resource_id' => $resource->id,
-                    ])
-                    ->first();
-            }
+            // PostsFollowRepository answersFollowRepository videosFollowRepository
+            $repository = $resourceType . 's' . 'FollowRepository';
+            $collected = $this->$repository
+                ->model()::where([
+                    'user_id' => $userId,
+                    'resource_id' => $resource->id,
+                ])
+                ->first();
 
             return response()->json(
                 ['data' =>
