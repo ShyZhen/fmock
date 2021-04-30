@@ -33,6 +33,12 @@ Route::prefix('V1')->namespace('Api\V1')->group(function () {
 
     // 首页文章列表
     Route::get('posts', 'PostController@getAllPosts');
+
+    // 第三方回调
+    Route::prefix('callback')->group(function () {
+        // 七牛转码
+        Route::post('qiniu', 'CallbackController@qiniu');
+    });
 });
 
 // need access_token
@@ -54,6 +60,7 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
     Route::post('file/image', 'FileController@uploadImage');
     Route::post('file/avatar', 'FileController@uploadAvatar');
     Route::post('file/video', 'FileController@uploadVideo');
+    Route::post('file/token/{type}', 'FileController@getUploadToken');
 
     // 文章 赞、取消赞，踩、取消踩
     Route::post('like/post/{uuid}', 'ActionController@likePost');
@@ -106,4 +113,12 @@ Route::prefix('V1')->namespace('Api\V1')->middleware(['auth:api'])->group(functi
 
     // 我的关注（与我相关），我关注的朋友发的动态
     Route::get('track/{type}', 'ActionController@getTrack');
+
+    // 视频相关
+    Route::prefix('video')->group(function () {
+        Route::get('item/{uuid}', 'VideoController@getMyVideoItemByUuid');    // 轮询转码结果(即获取video-item)
+        Route::put('item/{uuid}', 'VideoController@updateVideoItem');
+        Route::delete('item/{uuid}', 'VideoController@deleteVideoItem');
+        Route::post('item', 'FileController@saveVideoItem');                  // 客户端上传完成后，数据入库
+    });
 });

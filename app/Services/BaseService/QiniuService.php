@@ -76,7 +76,7 @@ class QiniuService extends Service
     }
 
     /**
-     * 上传视频到七牛 切片、水印等操作
+     * 上传视频到七牛 切片、水印等操作(主动)
      *
      * author shyZhen <huaixiu.zhen@gmail.com>
      * https://www.litblc.com
@@ -122,6 +122,19 @@ class QiniuService extends Service
         }
 
         return $res;
+    }
+
+    /**
+     * @param $isVideo
+     * @param null $key
+     *
+     * @return string
+     */
+    public function getUploadToken($isVideo, $key = null)
+    {
+        $bucket = $isVideo ? $this->config['bucketVideo'] : $this->config['bucket'];
+
+        return $this->auth->uploadToken($bucket, $key);
     }
 
     /**
