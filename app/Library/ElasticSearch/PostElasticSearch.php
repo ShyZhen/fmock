@@ -12,9 +12,20 @@ use App\Library\ElasticSearch\Base\ElasticSearch;
 
 class PostElasticSearch extends ElasticSearch
 {
-    // 文章索引
+    public static $pre = 'post_';
+
+    public static $type = 'post';
+
+    // 在config中进行配置索引名
     private $indexKey = 'post_index';
 
+    /**
+     * Override
+     *
+     * text通用字段、需要分词的字段
+     *
+     * @var string[]
+     */
     public $fields = ['title', 'content', 'username'];
 
     public function __construct()
@@ -30,7 +41,7 @@ class PostElasticSearch extends ElasticSearch
      *
      * @return string
      */
-    public function getIndexName()
+    public function getIndexName(): string
     {
         return $this->esConfig[$this->indexKey];
     }
@@ -46,46 +57,28 @@ class PostElasticSearch extends ElasticSearch
      */
     public function createIndex()
     {
-        $mappings = $this->articleMappingsConfig();
-        $params = $this->articleSettingConfig($mappings);
+        $mappings = $this->getMappingsConfig();
+        $params = $this->getSettingConfig($mappings);
         $response = $this->esClient->indices()->create($params);
 
         return $response;
     }
 
     /**
-     * 获取mapping配置参数
+     * @overload 获取mapping配置参数
      *
      * author shyZhen <huaixiu.zhen@gmail.com>
      * https://www.litblc.com
      *
      * @return array
      */
-    private function articleMappingsConfig()
+    protected function getMappingsConfig()
     {
-        $properties = [];
-        $common = [
-            'type' => 'text',
-            'analyzer' => $this->tokenizer,
-            'search_analyzer' => $this->tokenizer,
-            'search_quote_analyzer' => $this->tokenizer,
-        ];
-
-        foreach ($this->fields as $val) {
-            $properties[$val] = $common;
-        }
-
-        // 添加单独的时间字段
-        $properties['date'] = [
-            'type' => 'date',
-            'format' => 'year_month_day ',
-        ];
-
-        return $properties;
+        return parent::getMappingsConfig();
     }
 
     /**
-     * 获取setting参数
+     * @overload 获取setting参数
      *
      * author shyZhen <huaixiu.zhen@gmail.com>
      * https://www.litblc.com
@@ -94,43 +87,8 @@ class PostElasticSearch extends ElasticSearch
      *
      * @return array
      */
-    private function articleSettingConfig($properties)
+    protected function getSettingConfig($properties)
     {
-        $params = [
-            'index' => $this->getIndexName(),
-            'body' => [
-                'settings' => [
-                    'number_of_shards' => $this->esConfig['number_of_shards'],       // 分片 默认5
-                    'number_of_replicas' => $this->esConfig['number_of_replicas'],   // 副本、备份 默认1
-                    // 自定义分析过滤器
-                    'analysis' => [
-                        'filter' => [
-                            'my_english_stemmer' => [
-                                'type' => 'stemmer',
-                                'name' => 'english',
-                            ],
-                        ],
-                        'analyzer' => [
-                            'optimizeIK' => [
-                                'type' => 'custom',
-                                'tokenizer' => $this->tokenizer,
-                                'filter' => [
-                                    'my_english_stemmer',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                // 设置mappings
-                'mappings' => [
-                    '_source' => [
-                        'enabled' => true,
-                    ],
-                    'properties' => $properties,
-                ],
-            ],
-        ];
-
-        return $params;
+        return parent::getSettingConfig($properties);
     }
 }

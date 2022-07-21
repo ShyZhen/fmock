@@ -70,9 +70,9 @@ class FileService extends Service
      * @Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param  $file
-     * @param  $savePath (路径，一般为一个文件夹与prefix对应)
-     * @param string $prefix (前缀，一般为avatar或post)
+     * @param        $file
+     * @param        $savePath (路径，一般为一个文件夹与prefix对应)
+     * @param string $prefix   (前缀，一般为avatar或post)
      *
      * @return mixed
      */
