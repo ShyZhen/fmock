@@ -45,12 +45,19 @@ abstract class ElasticSearch
 
         if (!$this->esClient) {
             $host = $this->esConfig['elasticsearch_host_node'];
+            $username = $this->esConfig['username'] ?? '';
+            $password = $this->esConfig['password'] ?? '';
 
             $this->esClient = ClientBuilder::create()
                 ->setHosts($host)
                 ->setSelector($this->esConfig['selector']['sticky_round_robin'])
-                ->setRetries($this->esConfig['retries'])
-                ->build();
+                ->setRetries($this->esConfig['retries']);
+
+            if ($username && $password) {
+                $this->esClient->setBasicAuthentication($username, $password);
+            }
+
+            $this->esClient = $this->esClient->build();
         }
 
         $this->setIndexName();
@@ -64,7 +71,7 @@ abstract class ElasticSearch
      *
      * @return string
      */
-    abstract public function getIndexName();
+    abstract public function getIndexName(): string;
 
     /**
      * 设置当前index
@@ -74,7 +81,7 @@ abstract class ElasticSearch
      *
      * @return mixed
      */
-    public function setIndexName()
+    public function setIndexName(): string
     {
         return $this->index = $this->getIndexName();
     }
@@ -89,6 +96,42 @@ abstract class ElasticSearch
      * @return array
      */
     abstract public function createIndex();
+
+    /**
+     * 判断一个索引是否存在
+     *
+     * @return bool
+     */
+    public function existsIndex(): bool
+    {
+        $params = [
+            'index' => $this->index,
+        ];
+
+        if ($this->esClient->indices()->exists($params)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断doc文档是否存在
+     *
+     * @param $id
+     * @return bool
+     */
+    public function existsDoc($id): bool
+    {
+        $params = [
+            'index' => $this->index,
+            'id' => $id,
+        ];
+
+        if ($this->esClient->exists($params)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * 删除一个索引（index,类似于删除一个库）
@@ -282,12 +325,13 @@ abstract class ElasticSearch
      * http://litblc.com
      *
      * @param $query string
+     * @param $filter array doc中的筛选条件，键值对方式
      * @param $page int
      * @param $analyzer string
      *
      * @return array
      */
-    public function search($query, int $page = 1, $analyzer = '')
+    public function search($query, array $filter = [], int $page = 1, $analyzer = '')
     {
         $size = $this->esConfig['web_search_size'];
         $page = $page > 0 ? $page : 1;
@@ -298,31 +342,256 @@ abstract class ElasticSearch
             'from' => $from,
             'size' => $size,
             'body' => [
+
+//                'query' => [
+//                    // 单字段
+//                    // 'match' => [
+//                    //     'key1' => $query
+//                    // ]
+//                    // 多字段
+//                    'multi_match' => [
+//                        'query' => $query,
+//                        'type' => 'best_fields',  // 完全匹配 'type' => 'phrase',
+//                        'operator' => 'or',
+//                        'fields' => $this->fields,
+//                        'analyzer' => $analyzer ?: $this->tokenizer,
+//                    ],
+//                ],
+
                 'query' => [
-                    // 单字段
-                    // 'match' => [
-                    //     'key1' => $query
-                    // ]
-                    // 多字段
-                    'multi_match' => [
-                        'query' => $query,
-                        'type' => 'best_fields',
-                        'operator' => 'or',
-                        'fields' => $this->fields,
-                        'analyzer' => $analyzer ?: $this->tokenizer,
+                    'bool' => [
+                        'must' => [
+                            // 多字段
+                            'multi_match' => [
+                                'query' => $query,
+                                'type' => 'phrase',
+                                'operator' => 'or',
+                                'fields' => $this->fields,
+                                'analyzer' => $analyzer ?: $this->tokenizer,
+                            ],
+                        ],
                     ],
                 ],
+
                 'sort' => [
-                    '_id' => [
+                    'id' => [
                         'order' => 'desc',
                     ],
                 ],
-            ],
 
+                // 匹配到多个敏感词供前端高亮，解决ES高亮数据不完整问题
+                'highlight' => [
+                    'fields' => [
+                        'title' => [
+                            'pre_tags' => ["<em>"],
+                            'post_tags' => ["</em>"],
+                        ],
+                        'content' => [
+                            'pre_tags' => ["<em>"],
+                            'post_tags' => ["</em>"],
+                        ]
+                    ]
+                ],
+            ],
         ];
+
+        // 添加筛选doc的filter
+        if (count($filter)) {
+            $params['body']['query']['bool']['filter']['term'] = $filter;
+        }
 
         $response = $this->esClient->search($params);
 
         return $response['hits']['hits'];
+    }
+
+    /**
+     * 通用mapping配置参数
+     * 可override
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @return array
+     */
+    protected function getMappingsConfig()
+    {
+        $properties = [];
+        $common = [
+            'type' => 'text',
+            'analyzer' => $this->tokenizer,
+            'search_analyzer' => $this->tokenizer,
+            'search_quote_analyzer' => $this->tokenizer,
+        ];
+
+        foreach ($this->fields as $val) {
+            $properties[$val] = $common;
+        }
+
+        // 单独的时间字段
+        $properties['date'] = [
+            'type' => 'date',
+            'format' => 'year_month_day ',
+        ];
+
+        // 单独的ID字段
+        $properties['id'] = [
+            'type' => 'integer',
+        ];
+
+        return $properties;
+    }
+
+    /**
+     * 通用setting参数 （先使用ik分词，后使用拼音分词）
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $properties
+     *
+     * @return array
+     */
+    protected function getSettingConfig($properties)
+    {
+        $params = [
+            'index' => $this->getIndexName(),
+            'body' => [
+                'settings' => [
+                    'number_of_shards' => $this->esConfig['number_of_shards'],       // 分片 默认5
+                    'number_of_replicas' => $this->esConfig['number_of_replicas'],   // 副本、备份 默认1
+                    // 自定义分析过滤器
+                    'analysis' => [
+                        'analyzer' => [
+                            "$this->tokenizer" => [
+                                'type' => 'custom',
+                                'tokenizer' => 'ik_smart',
+                                'filter' => [
+                                    'my_pinyin'
+                                ]
+                            ],
+                        ],
+                        'filter' => [
+                            'my_pinyin' => [
+                                'type' => 'pinyin',
+                                'keep_first_letter' => false,
+                                'keep_joined_full_pinyin' => true,
+                                'limit_first_letter_length' => 32,
+                                'keep_original' => true,
+                            ],
+                        ],
+                    ],
+                ],
+                // 设置mappings
+                'mappings' => [
+                    '_source' => [
+                        'enabled' => true,
+                    ],
+                    'properties' => $properties,
+                ],
+            ],
+        ];
+
+        return $params;
+    }
+
+    /**
+     * 通用setting参数(单独使用拼音的，经测试也可以满足当前需求的搜索)
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $properties
+     *
+     * @return array
+     */
+    protected function getSettingPYConfig($properties)
+    {
+        $params = [
+            'index' => $this->getIndexName(),
+            'body' => [
+                'settings' => [
+                    'number_of_shards' => $this->esConfig['number_of_shards'],
+                    'number_of_replicas' => $this->esConfig['number_of_replicas'],
+                    // 自定义分析过滤器
+                    'analysis' => [
+                        'analyzer' => [
+                            "$this->tokenizer" => [
+                                'tokenizer' => 'my_pinyin',
+                            ],
+                        ],
+                        'tokenizer' => [
+                            'my_pinyin' => [
+                                'type' => 'pinyin',
+                                'keep_first_letter' => false,
+                                'keep_joined_full_pinyin' => true,
+                                'limit_first_letter_length' => 32,
+                                'keep_original' => true,
+                            ],
+                        ],
+                    ],
+                ],
+                // 设置mappings
+                'mappings' => [
+                    '_source' => [
+                        'enabled' => true,
+                    ],
+                    'properties' => $properties,
+                ],
+            ],
+        ];
+
+        return $params;
+    }
+
+    /**
+     * 通用setting参数(单独使用IK分词的设置)
+     *
+     * author shyZhen <huaixiu.zhen@gmail.com>
+     * https://www.litblc.com
+     *
+     * @param $properties
+     *
+     * @return array
+     */
+    protected function getSettingIKConfig($properties)
+    {
+        $tokenizer = 'ik_max_word';
+        $params = [
+            'index' => $this->getIndexName(),
+            'body' => [
+                'settings' => [
+                    'number_of_shards' => $this->esConfig['number_of_shards'],
+                    'number_of_replicas' => $this->esConfig['number_of_replicas'],
+                    // 自定义分析过滤器
+                    'analysis' => [
+                        'filter' => [
+                            'my_english_stemmer' => [
+                                'type' => 'stemmer',
+                                'name' => 'english',
+                            ],
+                        ],
+                        'analyzer' => [
+                            'optimizeIK' => [
+                                'type' => 'custom',
+                                'tokenizer' => $tokenizer,  //$this->tokenizer,
+                                'filter' => [
+                                    'my_english_stemmer',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                // 设置mappings
+                'mappings' => [
+                    '_source' => [
+                        'enabled' => true,
+                    ],
+                    'properties' => $properties,
+                ],
+            ],
+        ];
+
+        return $params;
     }
 }
