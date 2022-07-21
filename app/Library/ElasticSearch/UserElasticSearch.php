@@ -3,6 +3,7 @@
  * UserElasticSearch
  *
  * @author huaixiu.zhen
+ *
  * @link https://www.litblc.com
  * 2022/7/5 17:06
  **/
@@ -20,6 +21,7 @@ class UserElasticSearch extends ElasticSearch
 
     /**
      * 用于区分类型，同时支持ES筛选
+     *
      * @var string[]
      */
     public static $type = [
@@ -50,7 +52,7 @@ class UserElasticSearch extends ElasticSearch
      *
      * @return string
      */
-    public function getIndexName() :string
+    public function getIndexName(): string
     {
         return $this->esConfig[$this->indexKey];
     }
@@ -67,6 +69,7 @@ class UserElasticSearch extends ElasticSearch
     {
         $mappings = $this->getMappingsConfig();
         $params = $this->getSettingConfig($mappings);
+
         return $this->esClient->indices()->create($params);
     }
 }

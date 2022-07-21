@@ -121,8 +121,8 @@ class RedisService extends Service
      * Author huaixiu.zhen
      * http://litblc.com
      *
-     * @param  $key
-     * @param  $val
+     * @param        $key
+     * @param        $val
      * @param string $ex
      * @param int    $ttl
      *
@@ -562,7 +562,8 @@ class RedisService extends Service
         return $this->redis->hExists($h, $key);
     }
 
-    /** 分段扫描hash中的成员
+    /**
+     * 分段扫描hash中的成员
      *
      * @param string $hash
      * @param mix    $cursor  第一次循环使用null, 后续循环传上一次hScan返回的cursor

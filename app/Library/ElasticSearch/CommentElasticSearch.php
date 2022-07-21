@@ -3,6 +3,7 @@
  * CommentElasticSearch
  *
  * @author huaixiu.zhen
+ *
  * @link https://www.litblc.com
  * 2022/7/5 16:37
  **/
@@ -29,6 +30,7 @@ class CommentElasticSearch extends ElasticSearch
      * Override
      *
      * text通用字段、需要分词的字段
+     *
      * @var string[]
      */
     public $fields = ['content'];
@@ -44,7 +46,7 @@ class CommentElasticSearch extends ElasticSearch
      *
      * @return string
      */
-    public function getIndexName() :string
+    public function getIndexName(): string
     {
         return $this->esConfig[$this->indexKey];
     }
@@ -59,6 +61,7 @@ class CommentElasticSearch extends ElasticSearch
     {
         $mappings = $this->getMappingsConfig();
         $params = $this->getSettingConfig($mappings);
+
         return $this->esClient->indices()->create($params);
     }
 }

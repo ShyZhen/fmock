@@ -31,7 +31,7 @@ class TestController
         // 找到最大的放最后
         // 第二个循环减去一个$i，可以减少无用的循环，因为最后的$i个已经排好顺序了
         for ($i = 0; $i < count($arr) - 1; $i++) {
-            for ($j = 0; $j < count($arr) - 1 - $i; $j ++) {
+            for ($j = 0; $j < count($arr) - 1 - $i; $j++) {
                 if ($arr[$j] > $arr[$j + 1]) {
                     $temp = $arr[$j];
                     $arr[$j] = $arr[$j + 1];
@@ -69,7 +69,7 @@ class TestController
         dd($postEs->search('测试'));
     }
 
-    public function test ()
+    public function test()
     {
         set_error_handler('self::errorHandle');
         echo [3];

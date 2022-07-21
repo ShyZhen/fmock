@@ -111,6 +111,7 @@ abstract class ElasticSearch
         if ($this->esClient->indices()->exists($params)) {
             return true;
         }
+
         return false;
     }
 
@@ -118,6 +119,7 @@ abstract class ElasticSearch
      * 判断doc文档是否存在
      *
      * @param $id
+     *
      * @return bool
      */
     public function existsDoc($id): bool
@@ -130,6 +132,7 @@ abstract class ElasticSearch
         if ($this->esClient->exists($params)) {
             return true;
         }
+
         return false;
     }
 
@@ -383,14 +386,14 @@ abstract class ElasticSearch
                 'highlight' => [
                     'fields' => [
                         'title' => [
-                            'pre_tags' => ["<em>"],
-                            'post_tags' => ["</em>"],
+                            'pre_tags' => ['<em>'],
+                            'post_tags' => ['</em>'],
                         ],
                         'content' => [
-                            'pre_tags' => ["<em>"],
-                            'post_tags' => ["</em>"],
-                        ]
-                    ]
+                            'pre_tags' => ['<em>'],
+                            'post_tags' => ['</em>'],
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -467,8 +470,8 @@ abstract class ElasticSearch
                                 'type' => 'custom',
                                 'tokenizer' => 'ik_smart',
                                 'filter' => [
-                                    'my_pinyin'
-                                ]
+                                    'my_pinyin',
+                                ],
                             ],
                         ],
                         'filter' => [

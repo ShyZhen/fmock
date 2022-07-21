@@ -23,6 +23,7 @@ class PostElasticSearch extends ElasticSearch
      * Override
      *
      * text通用字段、需要分词的字段
+     *
      * @var string[]
      */
     public $fields = ['title', 'content', 'username'];
@@ -40,7 +41,7 @@ class PostElasticSearch extends ElasticSearch
      *
      * @return string
      */
-    public function getIndexName() :string
+    public function getIndexName(): string
     {
         return $this->esConfig[$this->indexKey];
     }
