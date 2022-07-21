@@ -5,6 +5,7 @@
  * FeedEnElasticSearch
  *
  * @author huaixiu.zhen
+ *
  * @link https://www.litblc.com
  * 2022/7/4 10:07
  **/
@@ -25,6 +26,7 @@ class FeedElasticSearch extends ElasticSearch
      * Override
      *
      * text通用字段、需要分词的字段
+     *
      * @var string[]
      */
     public $fields = ['title', 'content'];
@@ -60,6 +62,7 @@ class FeedElasticSearch extends ElasticSearch
     {
         $mappings = $this->getMappingsConfig();
         $params = $this->getSettingConfig($mappings);
+
         return $this->esClient->indices()->create($params);
     }
 }

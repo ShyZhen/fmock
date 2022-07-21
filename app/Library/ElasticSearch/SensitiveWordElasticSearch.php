@@ -16,26 +16,23 @@ use App\Library\ElasticSearch\Base\ElasticSearch;
 
 class SensitiveWordElasticSearch extends ElasticSearch
 {
-
     public $indexKey = 'sensitive';
 
     public static $size = 20;
 
     public static $word = 'word';
 
-
     /**
      *  获取index
      *
      * @return string
      */
-    public function getIndexName() :string
+    public function getIndexName(): string
     {
         return $this->indexKey;
     }
 
     /**
-     *
      * @return void
      */
     public function createIndex()
@@ -45,8 +42,9 @@ class SensitiveWordElasticSearch extends ElasticSearch
     /**
      * 重写, 写入敏感词
      *
-     * @param int $id
+     * @param int   $id
      * @param array $body
+     *
      * @return void
      */
     public function createDoc($id, $word)
@@ -57,12 +55,13 @@ class SensitiveWordElasticSearch extends ElasticSearch
             'body' => [
                 'query' => [
                     'match_phrase' => [
-                        self::$word  => $word
-                    ]
+                        self::$word => $word,
+                    ],
                 ],
-                self::$word  => $word,
+                self::$word => $word,
             ],
         ];
+
         return $this->esClient->index($params);
     }
 
@@ -83,16 +82,16 @@ class SensitiveWordElasticSearch extends ElasticSearch
                     'percolate' => [
                         'field' => 'query',
                         'document' => [self::$word => $word],
-                    ]
+                    ],
                 ],
                 'highlight' => [
                     'fields' => [
-                        self::$word  => new stdClass(),
+                        self::$word => new stdClass(),
                         // self::$word  => [
                         //     'pre_tags' => ["<b style='color:red'>"],
                         //     'post_tags' => ["</b>"],
                         // ]
-                    ]
+                    ],
                 ],
             ],
         ];
