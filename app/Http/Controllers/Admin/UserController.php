@@ -35,8 +35,7 @@ class UserController extends AdminBaseController
     public function getAll(Request $request)
     {
         $where = $this->handlePostRequestParams($request->all());
-        $users = $this->userRepository->model()
-            ::where($where)
+        $users = $this->userRepository->model()::where($where)
             ->paginate(env('PER_PAGE', 10));
 
         return response()->json([
