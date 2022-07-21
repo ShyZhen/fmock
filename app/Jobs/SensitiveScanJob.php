@@ -7,19 +7,22 @@
 - 查询所有扫描历史记录 history表
 - 查看扫描数据 scan表（history_id和分类进行筛选查看）
 - 扫描动作，通过所有敏感词进行es匹配，写history和scan表
- *
  */
+
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class SensitiveScanJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new job instance.
@@ -78,6 +81,7 @@ class SensitiveScanJob implements ShouldQueue
      *
      * @param $historyId
      * @param $sensitiveWord
+     *
      * @return bool
      */
     private function searchEs($historyId, $sensitiveWord)
@@ -106,7 +110,7 @@ class SensitiveScanJob implements ShouldQueue
                 unset($search);
 
                 $page++;
-            } while($limit == $countResult);
+            } while ($limit == $countResult);
         }
 
         return true;
@@ -119,7 +123,7 @@ class SensitiveScanJob implements ShouldQueue
      * @param $sensitiveWord
      * @param $esItem
      */
-    private function insertScan ($historyId, $sensitiveWord, $esItem)
+    private function insertScan($historyId, $sensitiveWord, $esItem)
     {
         set_time_limit(0);
 
@@ -128,7 +132,7 @@ class SensitiveScanJob implements ShouldQueue
         // 同一个es_id需要合并敏感词以及高亮数据(正则匹配)
         $scan = SensitiveScan::where(['history_id' => $historyId, 'es_id' => $esItem['_id']])->first();
         if ($scan) {
-            $tempWord = $scan->sensitive_word. ',' .$sensitiveWord;
+            $tempWord = $scan->sensitive_word . ',' . $sensitiveWord;
             $tempHighlight = array_merge($highlight, $scan->highlight);
             $scan->update(['sensitive_word' => $tempWord, 'highlight' => json_encode($tempHighlight)]);
         } else {
@@ -150,9 +154,10 @@ class SensitiveScanJob implements ShouldQueue
      * 合并高亮字段的匹配字段，供前端自己匹配高亮，标签即为高亮默认<em>
      *
      * @param $highlight
+     *
      * @return array
      */
-    private function getBetweenStr ($highlight): array
+    private function getBetweenStr($highlight): array
     {
         $temp = [];
         foreach ($highlight as $item) {
