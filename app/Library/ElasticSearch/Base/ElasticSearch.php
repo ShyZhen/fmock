@@ -36,6 +36,18 @@ abstract class ElasticSearch
     public $fields = [];
 
     /**
+     * 游标查询参数 设置大一点，防止出现 No search context found for id
+     * @var string
+     */
+    public $scrollTtl = '50s';
+
+    /**
+     * 游标查询参数 超过一定数量要删除scroll_id，因为最多保留500个
+     * @var int
+     */
+    public $scrollMaxLimit = 400;
+
+    /**
      * 初始化链接
      * ElasticSearchUtil constructor.
      */
@@ -406,6 +418,106 @@ abstract class ElasticSearch
         $response = $this->esClient->search($params);
 
         return $response['hits']['hits'];
+    }
+
+    /**
+     * 搜索文档 doc 滚动查询
+     *
+     * Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     *
+     * @param $query string
+     * @param $filter array doc中的筛选条件，键值对方式
+     * @param $callback callable
+     * @param $analyzer string
+     *
+     */
+    public function searchScroll($query, array $filter = [], $callback = null, $analyzer = '')
+    {
+        $size = $this->esConfig['web_search_size'];
+
+        $params = [
+            'index' => $this->index,
+            'scroll' => $this->scrollTtl,  // 每次翻页的时间间隔
+            'size' => $size,
+            'body' => [
+
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            // 多字段
+                            'multi_match' => [
+                                'query' => $query,
+                                'type' => 'phrase',
+                                'operator' => 'or',
+                                'fields' => $this->fields,
+                                'analyzer' => $analyzer ?: $this->tokenizer,
+                            ],
+                        ],
+                    ],
+                ],
+
+                'sort' => [
+                    'id' => [
+                        'order' => 'desc',
+                    ],
+                ],
+
+                // 匹配到多个敏感词供前端高亮，解决ES高亮数据不完整问题
+                'highlight' => [
+                    'fields' => [
+                        'title' => [
+                            'pre_tags' => ["<em>"],
+                            'post_tags' => ["</em>"],
+                        ],
+                        'content' => [
+                            'pre_tags' => ["<em>"],
+                            'post_tags' => ["</em>"],
+                        ]
+                    ]
+                ],
+            ],
+        ];
+
+        // 添加筛选doc的filter
+        if (count($filter)) {
+            $params['body']['query']['bool']['filter']['term'] = $filter;
+        }
+
+        $response = $this->esClient->search($params);
+
+        $tempScrollIds = [];
+        while (isset($response['hits']['hits']) && count($response['hits']['hits']) > 0) {
+            // do
+            $callback($response['hits']['hits']);
+
+            $scrollId = $response['_scroll_id'];
+            $tempScrollIds[] = $scrollId;
+            $response = $this->esClient->scroll([
+                'scroll_id' => $scrollId,
+                'scroll' => $this->scrollTtl,
+            ]);
+
+            // 一次性最多500个游标id，需要手动清除\
+            // Trying to create too many scroll contexts. Must be less than or equal to: [500]
+            if (count($tempScrollIds) > $this->scrollMaxLimit) {
+                $this->clearScroll($tempScrollIds[0]);
+            }
+        }
+
+        $this->clearScroll($response['_scroll_id']);
+        return true;
+    }
+
+    /**
+     * Clears the current scroll window if there is a scroll_id stored
+     * @param $scrollId
+     */
+    public function clearScroll($scrollId)
+    {
+        if ($scrollId) {
+            $this->esClient->clearScroll(['scroll_id' => $scrollId]);
+        }
     }
 
     /**

@@ -21,6 +21,10 @@ class SensitiveScanJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $data;
+
+    public $timeout = 3600 * 12;
+
     /**
      * Create a new job instance.
      *
@@ -36,31 +40,45 @@ class SensitiveScanJob implements ShouldQueue
      *
      * @return void
      */
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
     public function handle()
     {
-        set_time_limit(0);
+        try {
+            set_time_limit(0);
 
-        // 写入历史表数据,获取该次扫描ID，扫描完成后进行修改状态以及补全字段
-        $sensitiveWordCount = SensitiveModel::count();
-        $history = SensitiveScanHistory::create(['sensitive_word_count' => $sensitiveWordCount]);
-        $historyId = $history->id;
+            // 写入历史表数据,获取该次扫描ID，扫描完成后进行修改状态以及补全字段
+            $sensitiveWordCount = SensitiveModel::count();
+            $history = SensitiveScanHistory::create(['sensitive_word_count' => $sensitiveWordCount]);
+            $historyId = $history->id;
 
-        // 循环遍历敏感词，进行ES搜索，命中则入库
-        SensitiveModel::orderBy('id')->chunk(500, function ($sensitives) use ($historyId) {
-            foreach ($sensitives as $sensitive) {
-                $this->searchEs($historyId, $sensitive['word']);
+            // 循环遍历敏感词，进行ES搜索，命中则入库
+            SensitiveModel::orderBy('id')->chunk(500, function ($sensitives) use ($historyId) {
+                foreach ($sensitives as $sensitive) {
+                    $this->searchEsScroll($historyId, $sensitive['word']);
+                }
+            });
+
+            // 更新history表
+            $historyRes = [
+                'illegal_name_count' => SensitiveScan::where(['history_id' => $historyId, 'body_type' => 'name'])->count(),
+                'illegal_bio_count' => SensitiveScan::where(['history_id' => $historyId, 'body_type' => 'bio'])->count(),
+                'illegal_feed_count' => SensitiveScan::where(['history_id' => $historyId, 'body_type' => 'feed'])->count(),
+                'illegal_comment_count' => SensitiveScan::where(['history_id' => $historyId, 'es_index' => 'comments'])->count(),
+                'status' => 1,
+            ];
+            $history->update($historyRes);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+            $sensitiveHistory = SensitiveScanHistory::orderBy('id', 'desc')->first();
+            if ($sensitiveHistory) {
+                $sensitiveHistory->status = 2; // 失败
+                $sensitiveHistory->save();
             }
-        });
-
-        // 更新history表
-        $historyRes = [
-            'illegal_name_count' => SensitiveScan::where(['history_id' => $historyId, 'body_type' => 'name'])->count(),
-            'illegal_bio_count' => SensitiveScan::where(['history_id' => $historyId, 'body_type' => 'bio'])->count(),
-            'illegal_feed_count' => SensitiveScan::where(['history_id' => $historyId, 'body_type' => 'feed'])->count(),
-            'illegal_comment_count' => SensitiveScan::where(['history_id' => $historyId, 'es_index' => 'comments'])->count(),
-            'status' => 1,
-        ];
-        $history->update($historyRes);
+        }
     }
 
     /**
@@ -68,8 +86,9 @@ class SensitiveScanJob implements ShouldQueue
      */
     public function fail($exception = null)
     {
-        //错误后操作
-        $this->delete();
+        if ($this->job) {
+            $this->job->fail($exception);
+        }
     }
 
     /**
@@ -82,8 +101,6 @@ class SensitiveScanJob implements ShouldQueue
      */
     private function searchEs($historyId, $sensitiveWord)
     {
-        set_time_limit(0);
-
         $esArray = [new FeedElasticSearch(), new UserElasticSearch(), new CommentElasticSearch(),];
         $limit = config('elasticsearch')['web_search_size'];
 
@@ -106,7 +123,32 @@ class SensitiveScanJob implements ShouldQueue
                 unset($search);
 
                 $page++;
-            } while($limit == $countResult);
+            } while ($limit == $countResult);
+        }
+
+        return true;
+    }
+
+    /**
+     * 搜索ES （滚动查询方式）
+     * 把所有敏感词匹配的所有es数据查出来，并加入到新表中（同时存高亮字段，如果存在，直接加进去）
+     *
+     * @param $historyId
+     * @param $sensitiveWord
+     * @return bool
+     */
+    private function searchEsScroll($historyId, $sensitiveWord)
+    {
+        $esArray = [new FeedElasticSearch(), new UserElasticSearch(), new CommentElasticSearch(),];
+
+        foreach ($esArray as $es) {
+
+            // 实现ES的滚动取出
+            $es->searchScroll($sensitiveWord, [], function ($search) use ($historyId, $sensitiveWord) {
+                foreach ($search as $item) {
+                    $this->insertScan($historyId, $sensitiveWord, $item);
+                }
+            });
         }
 
         return true;
@@ -119,16 +161,14 @@ class SensitiveScanJob implements ShouldQueue
      * @param $sensitiveWord
      * @param $esItem
      */
-    private function insertScan ($historyId, $sensitiveWord, $esItem)
+    private function insertScan($historyId, $sensitiveWord, $esItem)
     {
-        set_time_limit(0);
-
         $highlight = $this->getBetweenStr($esItem['highlight']);
 
         // 同一个es_id需要合并敏感词以及高亮数据(正则匹配)
         $scan = SensitiveScan::where(['history_id' => $historyId, 'es_id' => $esItem['_id']])->first();
         if ($scan) {
-            $tempWord = $scan->sensitive_word. ',' .$sensitiveWord;
+            $tempWord = $scan->sensitive_word . ',' . $sensitiveWord;
             $tempHighlight = array_merge($highlight, $scan->highlight);
             $scan->update(['sensitive_word' => $tempWord, 'highlight' => json_encode($tempHighlight)]);
         } else {
@@ -143,7 +183,7 @@ class SensitiveScanJob implements ShouldQueue
             ];
             SensitiveScan::create($data);
         }
-        usleep(500);
+        usleep(100);
     }
 
     /**
@@ -152,7 +192,7 @@ class SensitiveScanJob implements ShouldQueue
      * @param $highlight
      * @return array
      */
-    private function getBetweenStr ($highlight): array
+    private function getBetweenStr($highlight): array
     {
         $temp = [];
         foreach ($highlight as $item) {
