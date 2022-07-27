@@ -7,19 +7,22 @@
 - 查询所有扫描历史记录 history表
 - 查看扫描数据 scan表（history_id和分类进行筛选查看）
 - 扫描动作，通过所有敏感词进行es匹配，写history和scan表
- *
  */
+
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class SensitiveScanJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public $data;
 
@@ -35,11 +38,6 @@ class SensitiveScanJob implements ShouldQueue
         $this->data = $data;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     /**
      * Execute the job.
      *
@@ -82,6 +80,7 @@ class SensitiveScanJob implements ShouldQueue
     }
 
     /**
+     * 不会自动调用
      * @param null $exception
      */
     public function fail($exception = null)
@@ -97,6 +96,7 @@ class SensitiveScanJob implements ShouldQueue
      *
      * @param $historyId
      * @param $sensitiveWord
+     *
      * @return bool
      */
     private function searchEs($historyId, $sensitiveWord)
@@ -190,6 +190,7 @@ class SensitiveScanJob implements ShouldQueue
      * 合并高亮字段的匹配字段，供前端自己匹配高亮，标签即为高亮默认<em>
      *
      * @param $highlight
+     *
      * @return array
      */
     private function getBetweenStr($highlight): array
