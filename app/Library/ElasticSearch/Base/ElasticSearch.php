@@ -24,7 +24,8 @@ abstract class ElasticSearch
 
     public $esClient;
 
-    public $tokenizer = 'ik_max_word';
+    // 默认分词器
+    public $tokenizer = 'pinyin_analyzer';  // 'ik_max_word';
 
     /**
      * 需要索引的字段、规定添加doc时必须的字段，由子类override
@@ -34,6 +35,20 @@ abstract class ElasticSearch
      * @var array
      */
     public $fields = [];
+
+    /**
+     * 游标查询参数 设置大一点，防止出现 No search context found for id
+     *
+     * @var string
+     */
+    public $scrollTtl = '3m';
+
+    /**
+     * 游标查询参数 超过一定数量要删除scroll_id，因为最多保留500个
+     *
+     * @var int
+     */
+    public $scrollMaxLimit = 400;
 
     /**
      * 初始化链接
@@ -409,6 +424,101 @@ abstract class ElasticSearch
     }
 
     /**
+     * 搜索文档 doc 滚动查询
+     *
+     * startOffset must be non-negative, and endOffset must be >= startOffset, and offsets must not go backwards
+     * https://github.com/medcl/elasticsearch-analysis-pinyin/issues/261
+     *
+     * Author huaixiu.zhen@gmail.com
+     * http://litblc.com
+     *
+     * @param $query string
+     * @param $filter array doc中的筛选条件，键值对方式
+     * @param $callback callable
+     * @param $analyzer string
+     */
+    public function searchScroll($query, array $filter = [], $callback = null, $analyzer = '')
+    {
+        $size = $this->esConfig['web_search_size'];
+
+        $params = [
+            'index' => $this->index,
+            'scroll' => $this->scrollTtl,  // 每次翻页的时间间隔
+            'size' => $size,
+            'body' => [
+
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            // 多字段
+                            'multi_match' => [
+                                'query' => $query,
+                                'type' => 'phrase',
+                                'operator' => 'or',
+                                'fields' => $this->fields,
+                                'analyzer' => $analyzer ?: $this->tokenizer,
+                            ],
+                        ],
+                    ],
+                ],
+
+                'sort' => [
+                    'id' => [
+                        'order' => 'desc',
+                    ],
+                ],
+
+                // 匹配到多个敏感词供前端高亮，解决ES高亮数据不完整问题
+                'highlight' => [
+                    'fields' => [
+                        'title' => [
+                            'pre_tags' => ['<em>'],
+                            'post_tags' => ['</em>'],
+                        ],
+                        'content' => [
+                            'pre_tags' => ['<em>'],
+                            'post_tags' => ['</em>'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        // 添加筛选doc的filter
+        if (count($filter)) {
+            $params['body']['query']['bool']['filter']['term'] = $filter;
+        }
+
+        $response = $this->esClient->search($params);
+
+        while (isset($response['hits']['hits']) && count($response['hits']['hits']) > 0) {
+            $callback($response['hits']['hits']);
+
+            $scrollId = $response['_scroll_id'];
+            $response = $this->esClient->scroll([
+                'scroll_id' => $scrollId,
+                'scroll' => $this->scrollTtl,
+            ]);
+        }
+
+        $this->clearScroll($response['_scroll_id']);
+
+        return true;
+    }
+
+    /**
+     * Clears the current scroll window if there is a scroll_id stored
+     *
+     * @param $scrollId
+     */
+    public function clearScroll($scrollId)
+    {
+        if ($scrollId) {
+            $this->esClient->clearScroll(['scroll_id' => $scrollId]);
+        }
+    }
+
+    /**
      * 通用mapping配置参数
      * 可override
      *
@@ -527,9 +637,10 @@ abstract class ElasticSearch
                             'my_pinyin' => [
                                 'type' => 'pinyin',
                                 'keep_first_letter' => false,
-                                'keep_joined_full_pinyin' => true,
-                                'limit_first_letter_length' => 32,
-                                'keep_original' => true,
+                                'keep_joined_full_pinyin' => false,
+                                'keep_original' => false,
+                                'keep_full_pinyin' => true,
+                                'ignore_pinyin_offset' => false,
                             ],
                         ],
                     ],
