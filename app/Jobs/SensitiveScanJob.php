@@ -81,6 +81,7 @@ class SensitiveScanJob implements ShouldQueue
 
     /**
      * 不会自动调用
+     *
      * @param null $exception
      */
     public function fail($exception = null)
@@ -135,6 +136,7 @@ class SensitiveScanJob implements ShouldQueue
      *
      * @param $historyId
      * @param $sensitiveWord
+     *
      * @return bool
      */
     private function searchEsScroll($historyId, $sensitiveWord)

@@ -38,12 +38,14 @@ abstract class ElasticSearch
 
     /**
      * 游标查询参数 设置大一点，防止出现 No search context found for id
+     *
      * @var string
      */
     public $scrollTtl = '3m';
 
     /**
      * 游标查询参数 超过一定数量要删除scroll_id，因为最多保留500个
+     *
      * @var int
      */
     public $scrollMaxLimit = 400;
@@ -434,7 +436,6 @@ abstract class ElasticSearch
      * @param $filter array doc中的筛选条件，键值对方式
      * @param $callback callable
      * @param $analyzer string
-     *
      */
     public function searchScroll($query, array $filter = [], $callback = null, $analyzer = '')
     {
@@ -471,14 +472,14 @@ abstract class ElasticSearch
                 'highlight' => [
                     'fields' => [
                         'title' => [
-                            'pre_tags' => ["<em>"],
-                            'post_tags' => ["</em>"],
+                            'pre_tags' => ['<em>'],
+                            'post_tags' => ['</em>'],
                         ],
                         'content' => [
-                            'pre_tags' => ["<em>"],
-                            'post_tags' => ["</em>"],
-                        ]
-                    ]
+                            'pre_tags' => ['<em>'],
+                            'post_tags' => ['</em>'],
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -501,11 +502,13 @@ abstract class ElasticSearch
         }
 
         $this->clearScroll($response['_scroll_id']);
+
         return true;
     }
 
     /**
      * Clears the current scroll window if there is a scroll_id stored
+     *
      * @param $scrollId
      */
     public function clearScroll($scrollId)
