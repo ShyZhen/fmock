@@ -9,16 +9,11 @@ namespace App\Library\ElasticSearch;
 use stdClass;
 use App\Library\ElasticSearch\Base\ElasticSearch;
 
-use function GuzzleHttp\Promise\queue;
-
 class QuestionAnswerElasticSearch extends ElasticSearch
 {
-
     public $indexKey = 'question_answer';
 
     public static $size = 20;
-
-
 
     /**
      *  获取index
@@ -31,18 +26,17 @@ class QuestionAnswerElasticSearch extends ElasticSearch
     }
 
     /**
-     *
      * @return void
      */
     public function createIndex()
     {
     }
 
-
     /**
      * 创建或更新文档
      *
      * @param array $params
+     *
      * @return mixed
      */
     public function createOrUpdateDoc($params)
@@ -58,7 +52,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
                 'id' => $params['id'],
                 'refresh' => true,
                 'body' => [
-                    'doc' => $params['body']
+                    'doc' => $params['body'],
                 ],
             ];
             $routing && $params['routing'] = $routing;
@@ -69,7 +63,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
                 'index' => $this->index,
                 'id' => $params['id'],
                 'refresh' => true,
-                'body' => $params['body']
+                'body' => $params['body'],
             ];
             $routing && $params['routing'] = $routing;
 
@@ -92,42 +86,42 @@ class QuestionAnswerElasticSearch extends ElasticSearch
         $query = [
             'bool' => [
                 'filter' => [
-                    "bool" => [
-                        "must" => [
+                    'bool' => [
+                        'must' => [
                             [
-                                "bool" => [
-                                    "should" => [
+                                'bool' => [
+                                    'should' => [
                                         [
-                                            "match_phrase" => ["text" => $keyword],
+                                            'match_phrase' => ['text' => $keyword],
                                         ],
                                         [
-                                            "has_child" => [
-                                                "type" => 'answer',
-                                                "query" => ["match_phrase" => ["text" => $keyword]],
+                                            'has_child' => [
+                                                'type' => 'answer',
+                                                'query' => ['match_phrase' => ['text' => $keyword]],
                                             ],
                                         ],
-                                    ]
-                                ]
+                                    ],
+                                ],
                             ],
                             [
-                                "has_child" => [
-                                    "type" => 'answer',
-                                    "query" => ["match_all" => new stdClass()],
+                                'has_child' => [
+                                    'type' => 'answer',
+                                    'query' => ['match_all' => new stdClass()],
                                     'min_children' => 1, // 最少一个
-                                ]
+                                ],
                             ],
 
-                        ]
+                        ],
                     ],
                 ],
-            ]
+            ],
         ];
 
         // 总数
         $params = [
             'index' => $this->index,
             'body' => [
-                'query' => $query
+                'query' => $query,
             ],
 
         ];
@@ -146,7 +140,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
             'size' => $size,
             'index' => $this->index,
             'body' => [
-                '_source' => ["include" => ['text']],
+                '_source' => ['include' => ['text']],
                 'query' => $query,
                 'sort' => [
                     'created_at' => [
@@ -198,7 +192,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
     /**
      * 获取问题下满足条件的一个答案
      *
-     * @param int $id
+     * @param int    $id
      * @param string $keyword
      *
      * @return array
@@ -209,25 +203,25 @@ class QuestionAnswerElasticSearch extends ElasticSearch
             'size' => 1,
             'index' => $this->index,
             'body' => [
-                '_source' => ["include" => ['text']],
+                '_source' => ['include' => ['text']],
                 'query' => [
                     'bool' => [
                         'filter' => [
-                            "bool" => [
-                                "must" => [
+                            'bool' => [
+                                'must' => [
                                     [
-                                        "match_phrase" => ["text" => $keyword]
+                                        'match_phrase' => ['text' => $keyword],
                                     ],
                                     [
-                                        "parent_id" => [
-                                            "type" => 'answer',
-                                            "id" => $id,
-                                        ]
-                                    ]
-                                ]
-                            ]
+                                        'parent_id' => [
+                                            'type' => 'answer',
+                                            'id' => $id,
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
-                    ]
+                    ],
                 ],
                 'sort' => [
                     'like_count' => [
