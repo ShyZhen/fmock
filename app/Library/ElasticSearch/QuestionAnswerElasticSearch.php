@@ -31,11 +31,34 @@ class QuestionAnswerElasticSearch extends ElasticSearch
     }
 
     /**
-     *
+     * 第一步设置mapping
      * @return void
      */
     public function createIndex()
     {
+        // join查询，mapping设置参考
+        // https://www.elastic.co/guide/en/elasticsearch/reference/8.4/query-dsl-has-child-query.html#has-child-top-level-params
+        // https://www.cnblogs.com/xiaowei123/p/14066151.html
+        $properties =
+        '{
+            "properties": {
+                "join": {
+                    "type": "join",
+                    "relations": {
+                        "question": "answer"
+                    }
+                },
+                "text": {
+                    "type": "text"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "like_count": {
+                    "type": "integer"
+                }
+            }
+        }';
     }
 
 
@@ -80,7 +103,8 @@ class QuestionAnswerElasticSearch extends ElasticSearch
     }
 
     /**
-     * 自定义搜索
+     * 最后一步 搜索
+     * 自定义搜索 搜索参考
      *
      * @param array $word
      *
@@ -160,18 +184,21 @@ class QuestionAnswerElasticSearch extends ElasticSearch
             return ['total' => $total, 'data' => []];
         }
 
-        $questions = [];
+        $questions = $questionIds = [];
         foreach ($response['hits']['hits'] as $v) {
             $questions[] = [
                 'id' => ltrim($v['_id'], 'question_'),
-                'text' => $v['_source']['text'],
+                'title' => $v['_source']['text'],
             ];
+            $questionIds[] =  ltrim($v['_id'], 'question_');
         }
 
         // 第二步， 遍历每个question_id,找出点赞数最高的答案
+        $answerIds = [];
         if ($questions) {
             foreach ($questions as &$q) {
-                $q['answer'] = $this->getAnswerByQuestionId('question_' . $q['id'], $keyword);
+                $q['best_answer'] = $this->getAnswerByQuestionId('question_' . $q['id'], $keyword);
+                isset($q['best_answer']['id']) && $answerIds[] = $q['best_answer']['id'];
             }
             unset($q);
         }
@@ -180,8 +207,8 @@ class QuestionAnswerElasticSearch extends ElasticSearch
         $data = $one = $two = $three = [];
         if ($questions) {
             foreach ($questions as $q) {
-                $questionHasKeyword = mb_strpos($q['text'], $keyword) !== false;
-                if ($questionHasKeyword && $q['answer']) { // 问题+答案都有关键词
+                $questionHasKeyword = mb_strpos($q['title'], $keyword) !== false;
+                if ($questionHasKeyword && $q['best_answer']) { // 问题+答案都有关键词
                     $one[] = $q;
                 } elseif ($questionHasKeyword) { // 问题有关键词
                     $two[] = $q;
@@ -190,6 +217,38 @@ class QuestionAnswerElasticSearch extends ElasticSearch
                 }
             }
             $data = array_merge($one, $two, $three);
+        }
+
+        // 补充其它信息
+        if ($questionIds) {
+            $service = new QuestionService();
+            $qData = $service->querySimple($questionIds);    // ->with(['user'])->whereIn('id', $ids)->get(['id', 'user_id'])
+            $_qData = [];
+            foreach ($qData as $v) {
+                $_qData[$v['id']] = $v;
+            }
+            unset($aQata);
+        }
+        if ($answerIds) {
+            $service  = new AnswerService();
+            $aData = $service->querySimple($answerIds);    // ->with(['user'])->whereIn('id', $ids)->get(['id', 'user_id'])
+            $_aData = [];
+            foreach ($aData as $v) {
+                $_aData[$v['id']] = $v;
+            }
+            unset($aData);
+        }
+
+
+        foreach ($data as &$v) {
+            if (isset($_qData[$v['id']])) {
+                $v['images'] = $_qData[$v['id']]['images'];
+                $v['video'] = $_qData[$v['id']]['video'];
+                $v['user_id'] = $_qData[$v['id']]['user_id'];
+            }
+            if (isset($_aData[$v['id']])) {
+                $v['best_answer']['user_id'] = $_aData[$v['id']]['user_id'];
+            }
         }
 
         return ['total' => $total, 'data' => $data];
@@ -237,6 +296,40 @@ class QuestionAnswerElasticSearch extends ElasticSearch
             ],
         ];
         $response = $this->esClient->search($params);
+
+        // 再查一次不匹配关键词的
+        if (empty($response['hits']['hits'][0])) {
+            $params = [
+                'size' => 1,
+                'index' => $this->index,
+                'body' => [
+                    '_source' => ["include" => ['text']],
+                    'query' => [
+                        'bool' => [
+                            'filter' => [
+                                "bool" => [
+                                    "must" => [
+                                        [
+                                            "parent_id" => [
+                                                "type" => 'answer',
+                                                "id" => $id,
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ],
+                        ]
+                    ],
+                    'sort' => [
+                        'like_count' => [
+                            'order' => 'desc',
+                        ],
+                    ],
+                ],
+            ];
+            $response = $this->esClient->search($params);
+        }
+
         if (empty($response['hits']['hits'][0])) {
             return [];
         }
@@ -250,6 +343,80 @@ class QuestionAnswerElasticSearch extends ElasticSearch
 
         $id = ltrim($hit['_id'], 'answer_');
 
-        return ['id' => $id, 'text' => $text];
+        return ['id' => $id, 'summary' => $text];
     }
+
+
+
+
+
+
+
+
+
+    /**
+     * 第二步索引/创建文档doc
+     * 创建、索引一个新文档 创建上面mapping的doc参考
+     *
+     * @return string
+     */
+    public function handleDoc()
+    {
+        if (empty($this->data)) {
+            return '';
+        }
+
+        $es = new QuestionAnswerElasticSearch();
+        if ($this->data['action'] == 'create') {
+            // 因为问题和答案都在同一个index, 所以id要加上前缀
+            switch ($this->data['type']) {
+                case 'question':
+                    $params = [
+                        'id' => $this->data['type'] . '_' . $this->data['id'],
+                        'body' => [
+                            'text' => $this->data['text'],
+                            'created_at' => $this->data['created_at'],
+                            'join' => ['name' => 'question'],
+                        ]
+                    ];
+
+                    break;
+                case 'answer':
+                    $questionId = 'question_' . $this->data['question_id']; // 注意这里要加前缀
+                    $params = [
+                        'id' => $this->data['type'] . '_' . $this->data['id'],
+                        'routing' => $questionId,  // 答案要加routing参数
+                        'body' => [
+                            'text' => $this->data['text'],
+                            'created_at' => $this->data['created_at'],
+                            'like_count' => $this->data['like_count'],
+                            'join' => ['name' => 'answer', 'parent' => $questionId],
+
+                        ],
+                    ];
+                    break;
+            }
+
+            $es->createOrUpdateDoc($params);
+        } elseif ($this->data['action'] == 'delete') {
+            $id = $this->data['type'] . '_' . $this->data['id'];
+            $es->deleteDoc($id);
+        } elseif ($this->data['action'] == 'update') {
+            // 答案点赞或取消点赞后ES同步更新
+            if ($this->data['type'] == 'answer') {
+                $questionId = 'question_' . $this->data['question_id']; // 注意这里要加前缀
+                $params = [
+                    'id' => $this->data['type'] . '_' . $this->data['id'],
+                    'routing' => $questionId,  // 答案要加routing参数
+                    'body' => [
+                        'like_count' => $this->data['like_count'],
+                    ],
+                ];
+
+                $es->createOrUpdateDoc($params);
+            }
+        }
+    }
+
+
 }
