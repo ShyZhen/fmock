@@ -661,6 +661,6 @@ class AuthService extends Service
     {
         $data = ['code' => $code];
 
-        return SmsService::sendSms($account, json_encode($data), 'FMock');
+        return SmsService::sendSms($account, json_encode($data), env('SignName'));
     }
 }

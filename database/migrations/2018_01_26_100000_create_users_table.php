@@ -45,6 +45,7 @@ class CreateUsersTable extends Migration
             $table->string('github_id', 32)->default('');
             $table->string('wechat_openid', 32)->default('');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
