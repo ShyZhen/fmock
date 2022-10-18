@@ -51,11 +51,13 @@ class QiniuService extends Service
     </form>
      *
      * @param string $bucket
+     *
      * @return string
      */
     public function uploadFileToken($bucket = '')
     {
         $bucket = $bucket ?: $this->config['bucket'];
+
         return $this->auth->uploadToken($bucket);
     }
 
