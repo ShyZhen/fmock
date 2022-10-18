@@ -39,6 +39,27 @@ class QiniuService extends Service
     }
 
     /**
+     * 生成前端上传的token
+     * key：自定义地址
+     * token: 服务端生成
+     *
+     <form method="post" action="http://upload.qiniu.com/" enctype="multipart/form-data">
+        <input name="key" type="hidden" value="image/2022/10/post-3ae7b819-c652-802b-e223-cd30cef2be39.jpg">
+        <input name="token" type="hidden" value="vtbMQjDl0....0=">
+        <input name="file"type="file" />
+        <input type="submit" />
+    </form>
+     *
+     * @param string $bucket
+     * @return string
+     */
+    public function uploadFileToken($bucket = '')
+    {
+        $bucket = $bucket ?: $this->config['bucket'];
+        return $this->auth->uploadToken($bucket);
+    }
+
+    /**
      * 上传文件（这里主要用来上传图片）
      *
      * @Author huaixiu.zhen
