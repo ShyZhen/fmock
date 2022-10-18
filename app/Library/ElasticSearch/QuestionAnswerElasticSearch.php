@@ -27,6 +27,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
 
     /**
      * 第一步设置mapping
+     *
      * @return void
      */
     public function createIndex()
@@ -185,7 +186,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
                 'id' => ltrim($v['_id'], 'question_'),
                 'title' => $v['_source']['text'],
             ];
-            $questionIds[] =  ltrim($v['_id'], 'question_');
+            $questionIds[] = ltrim($v['_id'], 'question_');
         }
 
         // 第二步， 遍历每个question_id,找出点赞数最高的答案
@@ -225,7 +226,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
             unset($aQata);
         }
         if ($answerIds) {
-            $service  = new AnswerService();
+            $service = new AnswerService();
             $aData = $service->querySimple($answerIds);    // ->with(['user'])->whereIn('id', $ids)->get(['id', 'user_id'])
             $_aData = [];
             foreach ($aData as $v) {
@@ -233,7 +234,6 @@ class QuestionAnswerElasticSearch extends ElasticSearch
             }
             unset($aData);
         }
-
 
         foreach ($data as &$v) {
             if (isset($_qData[$v['id']])) {
@@ -298,22 +298,22 @@ class QuestionAnswerElasticSearch extends ElasticSearch
                 'size' => 1,
                 'index' => $this->index,
                 'body' => [
-                    '_source' => ["include" => ['text']],
+                    '_source' => ['include' => ['text']],
                     'query' => [
                         'bool' => [
                             'filter' => [
-                                "bool" => [
-                                    "must" => [
+                                'bool' => [
+                                    'must' => [
                                         [
-                                            "parent_id" => [
-                                                "type" => 'answer',
-                                                "id" => $id,
-                                            ]
-                                        ]
-                                    ]
-                                ]
+                                            'parent_id' => [
+                                                'type' => 'answer',
+                                                'id' => $id,
+                                            ],
+                                        ],
+                                    ],
+                                ],
                             ],
-                        ]
+                        ],
                     ],
                     'sort' => [
                         'like_count' => [
@@ -341,14 +341,6 @@ class QuestionAnswerElasticSearch extends ElasticSearch
         return ['id' => $id, 'summary' => $text];
     }
 
-
-
-
-
-
-
-
-
     /**
      * 第二步索引/创建文档doc
      * 创建、索引一个新文档 创建上面mapping的doc参考
@@ -372,7 +364,7 @@ class QuestionAnswerElasticSearch extends ElasticSearch
                             'text' => $this->data['text'],
                             'created_at' => $this->data['created_at'],
                             'join' => ['name' => 'question'],
-                        ]
+                        ],
                     ];
 
                     break;
@@ -412,6 +404,4 @@ class QuestionAnswerElasticSearch extends ElasticSearch
             }
         }
     }
-
-
 }
